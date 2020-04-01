@@ -1,5 +1,6 @@
 package control;
 
+import java.awt.List;
 import java.io.BufferedReader;
 //TODO
 //import java.io.Console; <- use this to log messages
@@ -18,42 +19,50 @@ public class RetrieveGitLog {
 	
 	//Project name used on GitHub
 	public static final String GIT_PROJ_NAME = "incubator-daffodil";
-	//GIT REST API to retrieve the informations off all commits
-	public static final String GIT_API_URL = "https://api.github.com/repos/apache/"+GIT_PROJ_NAME+"/commits?page=";
-	//110 is the last page
 	
-	//ticket template
-	private static final String TICKET_ID_TEMPLATE = "DAFFODIL-";
+	//GITHUB REST API to retrieve the commit with given (%s to specify later on) ticket ID
+	//sorted by committer date (from latest to earlier)
+	public static final String GIT_API_URL = "https://api.github.com/search/commits?q=repo:apache/"+GIT_PROJ_NAME+"+%s+sort:committer-date";
 	   
 	private RetrieveGitLog() {
 		throw new IllegalStateException("Utility class");
 		}
 	
-	private static void gitLog() throws IOException, MalformedURLException, IOException {
+	//method that has to take a map of string and integer
+	//and write on a csv file how the integer corresponding to each string
+	//TODO
+	private static void writeCSVfile(Map<String, Integer> commitsMap) {
+		
+	}
+	
+	//given a list of (JIRA) tickets, this method will return
+	private static void gitLog(List ticketsID) throws IOException, MalformedURLException, IOException {
 		
 		HttpURLConnection con = null;
 		BufferedReader in = null;
 		StringBuffer response = new StringBuffer();
 		String nextUrl;
 		
-		Map<String, String> commitsMap = new HashMap<String, String>();
-		
-		int page = 1;
+		Map<String, Integer> commitsMap = new HashMap<String, Integer>();
 		
 		try {
-		
-			JSONArray jsonPartialCommits;
 			
-			do {
+			for(String ticketID : ticketsID.getItems()) {
 				
-				nextUrl = GIT_API_URL.concat(String.valueOf(page));
+				nextUrl = String.format(GIT_API_URL, ticketID);
 				
 				//System.out.println(nextUrl);
 				
 				//HTTP GET request
+				//TODO add Accept thing...
 				URL url = new URL(nextUrl);
 				con = (HttpURLConnection) url.openConnection();
+				
+				con.setRequestProperty("Accept", "application/vnd.github.cloak-preview");
+				
 				con.setRequestMethod("GET");
+				
+				System.out.println("HERE");
 				
 				//reading response
 				in = new BufferedReader(new InputStreamReader(con.getInputStream()));
@@ -63,68 +72,53 @@ public class RetrieveGitLog {
 					response.append(inputLine);
 				}
 				
-				jsonPartialCommits = new JSONArray(response.toString());
+				JSONObject jsonResult = new JSONObject(response.toString());
 				
-				for(int i = 0; i < jsonPartialCommits.length(); ++i) {
-					
-					JSONObject jsonSingleCommit = jsonPartialCommits.getJSONObject(i);
-					String commitMessage = (jsonSingleCommit.getJSONObject("commit")).getString("message");				
-					String messageDate = ((jsonSingleCommit.getJSONObject("commit")).getJSONObject("committer")).getString("date");
-					
-					//verifying that message contains Ticket ID
-					int startIndx = commitMessage.indexOf(TICKET_ID_TEMPLATE);
-					if(startIndx != -1) {
-						//if it does then get the ticked ID
-						//and put all in the commit hash map,
-						//this will make easier the search operation
-						//of the last commit of a ticket ID
-						StringBuffer ticketID = new StringBuffer();
-						String[] charsOfTicketId = commitMessage.substring(startIndx+TICKET_ID_TEMPLATE.length()).split("");
-						
-						for(int j = 0; j < charsOfTicketId.length; ++j) {
-							if(charsOfTicketId[j].matches("[0-9]+")) {
-								ticketID.append(charsOfTicketId[j]);
-							}
-						}
-						
-						commitsMap.put(TICKET_ID_TEMPLATE.concat(ticketID.toString()), messageDate);
-					}
+				//if i get NO results from the query, skip the current ticket ID
+				if(jsonResult.getInt("total_count") == 0) {
+					continue;
 				}
 				
-				page++;
+				//otherwise...
+				JSONArray items = jsonResult.getJSONArray("items");
 				
-				//TODO FIX RATE LIMITING REQUESTS
-				//fot now, just test with 3 pages
-			}while(jsonPartialCommits.length()>0 || page < 3);
+				//now take the first item which is the latest..
+				String date = (((items.getJSONObject(0)).getJSONObject("commit")).getJSONObject("committer")).getString("date");
+				
+				if(commitsMap.get(date) == null) {
+					commitsMap.put(date, 1);
+				}else {
+					commitsMap.put(date, commitsMap.get(date)+1);
+				}
+				
+			}
 		
 		}finally{
-			in.close();
+			//in.close();
 			con.disconnect();
 		}
 		
 		//printing results
-		for (Map.Entry<String, String> entry : commitsMap.entrySet()) {
+		for (Map.Entry<String, Integer> entry : commitsMap.entrySet()) {
 	        System.out.println(entry.getKey() + ":" + entry.getValue());
 		}
 		
+		//writing into csv file
+		writeCSVfile(commitsMap);
+		
+		
 	}
 	   
-	public static void main(String[] args) throws Exception{
+	public static void main(String[] args){
 		
-		RetrieveGitLog.gitLog();
-
-		/*
-		String test = "ciaociao sadh k DAFFODIL-123dsf";
+		List l = new List();
+		l.add("DAFFODIL-1034");
 		
-		String[] n = test.substring(test.indexOf("DAFFODIL-")).split("");
-		StringBuffer f = new StringBuffer();
-		for(int i = 0; i < n.length; ++i) {
-			if(n[i].matches("[0-9]+")) {
-				f.append(n[i]);
-			}
+		try {
+			RetrieveGitLog.gitLog(l);
+		}catch(Exception e) {
+			e.printStackTrace();
 		}
-		System.out.println("DAFFODIL-"+ f.toString());
-		*/
 	}
 	
 	
