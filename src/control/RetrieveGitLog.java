@@ -24,7 +24,7 @@ public class RetrieveGitLog {
 	public static final String GIT_PROJ_NAME = "incubator-daffodil";
 	
 	//this token can be public because it has only read permission
-	private static final String GIT_TKN = "d0ca53c473d4e9d5f82ccbf8f3668afc0a7a3b14";
+	private static final String GIT_TKN = "9d0e5f2bee915688cb35faf5ba30dfb62b0b0c42";
 	
 	public static final String CSV_FILENAME ="commitsPerMonth.csv";
 	public static final String LOG_FILE = "log.txt";
@@ -81,7 +81,7 @@ public class RetrieveGitLog {
 				//are permitted 30 search queries each 60 seconds
 				//sleeping more than needed to make sure that 
 				//timer has been reset
-				LOGGER.log(Level.INFO, "Read "+total+" tokens");
+				LOGGER.log(Level.INFO, String.format("Read %d tokens", total));
 				Thread.sleep(70000);
 			}
 			
