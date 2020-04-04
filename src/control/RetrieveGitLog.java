@@ -81,7 +81,7 @@ public class RetrieveGitLog {
 				//are permitted 30 search queries each 60 seconds
 				//sleeping more than needed to make sure that 
 				//timer has been reset
-				LOGGER.log(Level.INFO, String.format("Read %d tokens", total));
+				LOGGER.log(Level.INFO,"Read {} tokens", total);
 				Thread.sleep(70000);
 			}
 			
