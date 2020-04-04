@@ -3,8 +3,7 @@ package control;
 import java.awt.List;
 import java.io.BufferedReader;
 import java.io.FileWriter;
-//TODO
-//import java.io.Console; <- use this to log messages
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -12,6 +11,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -25,11 +28,14 @@ public class RetrieveGitLog {
 	private static final String GIT_TKN = "7bf3a5c0e57a961e4e1303055e5871cc648b3767";
 	
 	public static final String CSV_FILENAME ="commitsPerMonth.csv";
+	public static final String LOG_FILE = "log.txt";
 	
 	//GITHUB REST API to retrieve the commit with given (%s to specify later on) ticket ID
 	//sorted by committer date (from latest to earlier)
 	public static final String GIT_API_URL = "https://api.github.com/search/commits?q=repo:apache/"+GIT_PROJ_NAME+"+%s+sort:committer-date";
 	   
+	private static final Logger LOGGER = Logger.getLogger(RetrieveGitLog.class.getName());
+	
 	private RetrieveGitLog() {
 		throw new IllegalStateException("Utility class");
 		}
@@ -39,31 +45,36 @@ public class RetrieveGitLog {
 	private static void writeCSVfile(Map<String, Integer> commitsMap) throws IOException{
 		
 		FileWriter csvWriter = new FileWriter(CSV_FILENAME);
-		csvWriter.append("Date");
-		csvWriter.append(",");
-		csvWriter.append("Commits");
-		csvWriter.append("\n");
-		
-		for (Map.Entry<String, Integer> entry : commitsMap.entrySet()) {
-			csvWriter.append(entry.getKey());
+		try {
+			
+			csvWriter.append("Date");
 			csvWriter.append(",");
-			csvWriter.append(String.valueOf(entry.getValue()));
-	        csvWriter.append("\n");
-		}
+			csvWriter.append("Commits");
+			csvWriter.append("\n");
+			
+			for (Map.Entry<String, Integer> entry : commitsMap.entrySet()) {
+				csvWriter.append(entry.getKey());
+				csvWriter.append(",");
+				csvWriter.append(String.valueOf(entry.getValue()));
+		        csvWriter.append("\n");
+			}
 
-		csvWriter.flush();
-		csvWriter.close();
+		}finally {
+			csvWriter.flush();
+			csvWriter.close();
+		}
+		
 		
 	}
 	
 	//given a list of (JIRA) tickets, this method will return
-	private static void gitLog(List ticketsID) throws IOException, MalformedURLException, IOException, InterruptedException {
+	private static void gitLog(List ticketsID) throws IOException, InterruptedException {
 		
 		HttpURLConnection con = null;
 		BufferedReader in = null;
-		StringBuffer response = new StringBuffer();
+		StringBuilder response = new StringBuilder();
 		String nextUrl;
-		Map<String, Integer> commitsMap = new HashMap<String, Integer>();
+		Map<String, Integer> commitsMap = new HashMap<>();
 		
 		try {
 			int total = 1;
@@ -102,7 +113,7 @@ public class RetrieveGitLog {
 				//if i get NO results from the query, skip the current ticket ID
 				if(jsonResult.getInt("total_count") == 0) {
 					total++;
-					response = new StringBuffer();
+					response = new StringBuilder();
 					continue;
 				}
 				
@@ -118,7 +129,7 @@ public class RetrieveGitLog {
 				}
 				
 				total++;
-				response = new StringBuffer();
+				response = new StringBuilder();
 			}
 		
 		}finally{
@@ -132,14 +143,18 @@ public class RetrieveGitLog {
 		
 	}
 	   
-	public static void main(String[] args){
+	public static void main(String[] args) throws IOException{
 		
 		try {
+			//setting up the logger
+			Handler fileHandler = new FileHandler(LOG_FILE);
+			LOGGER.addHandler(fileHandler);
+			
 			List tickets = RetrieveTicketsID.retriveTicket();
 			RetrieveGitLog.gitLog(tickets);
 			
 		}catch(Exception e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
 		
 	}
