@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2020-04-04T17:19:47</date>
+  <millis>1586013587193</millis>
+  <sequence>0</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Read 29 tokens</message>
+</record>
+<record>
+  <date>2020-04-04T17:21:09</date>
+  <millis>1586013669342</millis>
+  <sequence>1</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Read 58 tokens</message>
+</record>
+</log>

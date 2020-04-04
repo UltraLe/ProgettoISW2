@@ -7,7 +7,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +24,7 @@ public class RetrieveGitLog {
 	public static final String GIT_PROJ_NAME = "incubator-daffodil";
 	
 	//this token can be public because it has only read permission
-	private static final String GIT_TKN = "7bf3a5c0e57a961e4e1303055e5871cc648b3767";
+	private static final String GIT_TKN = "d0ca53c473d4e9d5f82ccbf8f3668afc0a7a3b14";
 	
 	public static final String CSV_FILENAME ="commitsPerMonth.csv";
 	public static final String LOG_FILE = "log.txt";
@@ -44,8 +43,7 @@ public class RetrieveGitLog {
 	//and write on a csv file how the integer corresponding to each string
 	private static void writeCSVfile(Map<String, Integer> commitsMap) throws IOException{
 		
-		FileWriter csvWriter = new FileWriter(CSV_FILENAME);
-		try {
+		try (FileWriter csvWriter = new FileWriter(CSV_FILENAME)){
 			
 			csvWriter.append("Date");
 			csvWriter.append(",");
@@ -59,9 +57,6 @@ public class RetrieveGitLog {
 		        csvWriter.append("\n");
 			}
 
-		}finally {
-			csvWriter.flush();
-			csvWriter.close();
 		}
 		
 		
@@ -71,37 +66,35 @@ public class RetrieveGitLog {
 	private static void gitLog(List ticketsID) throws IOException, InterruptedException {
 		
 		HttpURLConnection con = null;
-		BufferedReader in = null;
 		StringBuilder response = new StringBuilder();
 		String nextUrl;
 		Map<String, Integer> commitsMap = new HashMap<>();
 		
-		try {
-			int total = 1;
-			for(String ticketID : ticketsID.getItems()) {
-				
-				if(total%29 == 0) {
-					//are permitted 30 search queries each 60 seconds
-					//sleeping more than needed to make sure that 
-					//timer has been reset
-					Thread.sleep(70000);
-				}
-				
-				nextUrl = String.format(GIT_API_URL, ticketID);
-				//HTTP GET request
-				URL url = new URL(nextUrl);
-				con = (HttpURLConnection) url.openConnection();
-				
-				con.setRequestProperty("Accept", "application/vnd.github.cloak-preview");
-				
-				//adding token to avoid rate limitation
-				//this token can be public because it has only read permission
-				con.setRequestProperty("Authorization", "token "+GIT_TKN);
-				
-				con.setRequestMethod("GET");
-				
+		int total = 1;
+		for(String ticketID : ticketsID.getItems()) {
+			
+			nextUrl = String.format(GIT_API_URL, ticketID);
+			//HTTP GET request
+			URL url = new URL(nextUrl);
+			
+			if(total%29 == 0) {
+				//are permitted 30 search queries each 60 seconds
+				//sleeping more than needed to make sure that 
+				//timer has been reset
+				LOGGER.log(Level.INFO, "Read "+total+" tokens");
+				Thread.sleep(70000);
+			}
+			
+			con = (HttpURLConnection) url.openConnection();
+			con.setRequestProperty("Accept", "application/vnd.github.cloak-preview");
+			//adding token to avoid rate limitation
+			//this token can be public because it has only read permission
+			con.setRequestProperty("Authorization", "token "+GIT_TKN);
+			con.setRequestMethod("GET");
+			
+			try(BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
+			
 				//reading response
-				in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 				String inputLine;
 				
 				while((inputLine = in.readLine()) != null) {
@@ -130,12 +123,12 @@ public class RetrieveGitLog {
 				
 				total++;
 				response = new StringBuilder();
-			}
 		
 		}finally{
-			in.close();
 			con.disconnect();
 		}
+		
+	}
 		
 		//writing into csv file
 		writeCSVfile(commitsMap);
