@@ -2,8 +2,8 @@
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
 <record>
-  <date>2020-04-10T11:06:55</date>
-  <millis>1586509615148</millis>
+  <date>2020-04-10T14:25:17</date>
+  <millis>1586521517133</millis>
   <sequence>0</sequence>
   <logger>control.RetrieveGitLog</logger>
   <level>INFO</level>
@@ -13,19 +13,19 @@
   <message>Tokens read: 29</message>
 </record>
 <record>
-  <date>2020-04-10T11:06:55</date>
-  <millis>1586509615152</millis>
+  <date>2020-04-10T14:25:17</date>
+  <millis>1586521517136</millis>
   <sequence>1</sequence>
   <logger>control.RetrieveGitLog</logger>
   <level>INFO</level>
   <class>control.RetrieveGitLog</class>
   <method>gitLog</method>
   <thread>1</thread>
-  <message>Minutes left: 36</message>
+  <message>Minutes left: 34</message>
 </record>
 <record>
-  <date>2020-04-10T11:08:12</date>
-  <millis>1586509692729</millis>
+  <date>2020-04-10T14:26:40</date>
+  <millis>1586521600152</millis>
   <sequence>2</sequence>
   <logger>control.RetrieveGitLog</logger>
   <level>INFO</level>
@@ -35,14 +35,630 @@
   <message>Tokens read: 58</message>
 </record>
 <record>
-  <date>2020-04-10T11:08:12</date>
-  <millis>1586509692731</millis>
+  <date>2020-04-10T14:26:40</date>
+  <millis>1586521600154</millis>
   <sequence>3</sequence>
   <logger>control.RetrieveGitLog</logger>
   <level>INFO</level>
   <class>control.RetrieveGitLog</class>
   <method>gitLog</method>
   <thread>1</thread>
-  <message>Minutes left: 37</message>
+  <message>Minutes left: 32</message>
+</record>
+<record>
+  <date>2020-04-10T14:28:03</date>
+  <millis>1586521683847</millis>
+  <sequence>4</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Tokens read: 87</message>
+</record>
+<record>
+  <date>2020-04-10T14:28:03</date>
+  <millis>1586521683849</millis>
+  <sequence>5</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Minutes left: 31</message>
+</record>
+<record>
+  <date>2020-04-10T14:29:22</date>
+  <millis>1586521762565</millis>
+  <sequence>6</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Tokens read: 116</message>
+</record>
+<record>
+  <date>2020-04-10T14:29:22</date>
+  <millis>1586521762566</millis>
+  <sequence>7</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Minutes left: 30</message>
+</record>
+<record>
+  <date>2020-04-10T14:30:41</date>
+  <millis>1586521841814</millis>
+  <sequence>8</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Tokens read: 145</message>
+</record>
+<record>
+  <date>2020-04-10T14:30:41</date>
+  <millis>1586521841815</millis>
+  <sequence>9</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Minutes left: 29</message>
+</record>
+<record>
+  <date>2020-04-10T14:32:00</date>
+  <millis>1586521920774</millis>
+  <sequence>10</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Tokens read: 174</message>
+</record>
+<record>
+  <date>2020-04-10T14:32:00</date>
+  <millis>1586521920774</millis>
+  <sequence>11</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Minutes left: 28</message>
+</record>
+<record>
+  <date>2020-04-10T14:33:21</date>
+  <millis>1586522001478</millis>
+  <sequence>12</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Tokens read: 203</message>
+</record>
+<record>
+  <date>2020-04-10T14:33:21</date>
+  <millis>1586522001478</millis>
+  <sequence>13</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Minutes left: 27</message>
+</record>
+<record>
+  <date>2020-04-10T14:34:42</date>
+  <millis>1586522082604</millis>
+  <sequence>14</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Tokens read: 232</message>
+</record>
+<record>
+  <date>2020-04-10T14:34:42</date>
+  <millis>1586522082605</millis>
+  <sequence>15</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Minutes left: 25</message>
+</record>
+<record>
+  <date>2020-04-10T14:36:00</date>
+  <millis>1586522160450</millis>
+  <sequence>16</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Tokens read: 261</message>
+</record>
+<record>
+  <date>2020-04-10T14:36:00</date>
+  <millis>1586522160451</millis>
+  <sequence>17</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Minutes left: 24</message>
+</record>
+<record>
+  <date>2020-04-10T14:37:18</date>
+  <millis>1586522238792</millis>
+  <sequence>18</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Tokens read: 290</message>
+</record>
+<record>
+  <date>2020-04-10T14:37:18</date>
+  <millis>1586522238792</millis>
+  <sequence>19</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Minutes left: 23</message>
+</record>
+<record>
+  <date>2020-04-10T14:38:37</date>
+  <millis>1586522317166</millis>
+  <sequence>20</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Tokens read: 319</message>
+</record>
+<record>
+  <date>2020-04-10T14:38:37</date>
+  <millis>1586522317167</millis>
+  <sequence>21</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Minutes left: 22</message>
+</record>
+<record>
+  <date>2020-04-10T14:39:55</date>
+  <millis>1586522395526</millis>
+  <sequence>22</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Tokens read: 348</message>
+</record>
+<record>
+  <date>2020-04-10T14:39:55</date>
+  <millis>1586522395526</millis>
+  <sequence>23</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Minutes left: 21</message>
+</record>
+<record>
+  <date>2020-04-10T14:41:12</date>
+  <millis>1586522472867</millis>
+  <sequence>24</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Tokens read: 377</message>
+</record>
+<record>
+  <date>2020-04-10T14:41:12</date>
+  <millis>1586522472868</millis>
+  <sequence>25</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Minutes left: 20</message>
+</record>
+<record>
+  <date>2020-04-10T14:42:31</date>
+  <millis>1586522551549</millis>
+  <sequence>26</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Tokens read: 406</message>
+</record>
+<record>
+  <date>2020-04-10T14:42:31</date>
+  <millis>1586522551550</millis>
+  <sequence>27</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Minutes left: 19</message>
+</record>
+<record>
+  <date>2020-04-10T14:43:48</date>
+  <millis>1586522628711</millis>
+  <sequence>28</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Tokens read: 435</message>
+</record>
+<record>
+  <date>2020-04-10T14:43:48</date>
+  <millis>1586522628712</millis>
+  <sequence>29</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Minutes left: 17</message>
+</record>
+<record>
+  <date>2020-04-10T14:45:07</date>
+  <millis>1586522707190</millis>
+  <sequence>30</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Tokens read: 464</message>
+</record>
+<record>
+  <date>2020-04-10T14:45:07</date>
+  <millis>1586522707190</millis>
+  <sequence>31</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Minutes left: 16</message>
+</record>
+<record>
+  <date>2020-04-10T14:46:24</date>
+  <millis>1586522784789</millis>
+  <sequence>32</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Tokens read: 493</message>
+</record>
+<record>
+  <date>2020-04-10T14:46:24</date>
+  <millis>1586522784791</millis>
+  <sequence>33</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Minutes left: 15</message>
+</record>
+<record>
+  <date>2020-04-10T14:47:42</date>
+  <millis>1586522862132</millis>
+  <sequence>34</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Tokens read: 522</message>
+</record>
+<record>
+  <date>2020-04-10T14:47:42</date>
+  <millis>1586522862133</millis>
+  <sequence>35</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Minutes left: 14</message>
+</record>
+<record>
+  <date>2020-04-10T14:48:59</date>
+  <millis>1586522939842</millis>
+  <sequence>36</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Tokens read: 551</message>
+</record>
+<record>
+  <date>2020-04-10T14:48:59</date>
+  <millis>1586522939842</millis>
+  <sequence>37</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Minutes left: 13</message>
+</record>
+<record>
+  <date>2020-04-10T14:50:16</date>
+  <millis>1586523016866</millis>
+  <sequence>38</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Tokens read: 580</message>
+</record>
+<record>
+  <date>2020-04-10T14:50:16</date>
+  <millis>1586523016866</millis>
+  <sequence>39</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Minutes left: 12</message>
+</record>
+<record>
+  <date>2020-04-10T14:51:34</date>
+  <millis>1586523094129</millis>
+  <sequence>40</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Tokens read: 609</message>
+</record>
+<record>
+  <date>2020-04-10T14:51:34</date>
+  <millis>1586523094130</millis>
+  <sequence>41</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Minutes left: 10</message>
+</record>
+<record>
+  <date>2020-04-10T14:52:50</date>
+  <millis>1586523170569</millis>
+  <sequence>42</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Tokens read: 638</message>
+</record>
+<record>
+  <date>2020-04-10T14:52:50</date>
+  <millis>1586523170570</millis>
+  <sequence>43</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Minutes left: 9</message>
+</record>
+<record>
+  <date>2020-04-10T14:54:07</date>
+  <millis>1586523247643</millis>
+  <sequence>44</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Tokens read: 667</message>
+</record>
+<record>
+  <date>2020-04-10T14:54:07</date>
+  <millis>1586523247644</millis>
+  <sequence>45</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Minutes left: 8</message>
+</record>
+<record>
+  <date>2020-04-10T14:55:24</date>
+  <millis>1586523324665</millis>
+  <sequence>46</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Tokens read: 696</message>
+</record>
+<record>
+  <date>2020-04-10T14:55:24</date>
+  <millis>1586523324666</millis>
+  <sequence>47</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Minutes left: 7</message>
+</record>
+<record>
+  <date>2020-04-10T14:56:41</date>
+  <millis>1586523401668</millis>
+  <sequence>48</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Tokens read: 725</message>
+</record>
+<record>
+  <date>2020-04-10T14:56:41</date>
+  <millis>1586523401668</millis>
+  <sequence>49</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Minutes left: 6</message>
+</record>
+<record>
+  <date>2020-04-10T14:57:58</date>
+  <millis>1586523478132</millis>
+  <sequence>50</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Tokens read: 754</message>
+</record>
+<record>
+  <date>2020-04-10T14:57:58</date>
+  <millis>1586523478133</millis>
+  <sequence>51</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Minutes left: 5</message>
+</record>
+<record>
+  <date>2020-04-10T14:59:19</date>
+  <millis>1586523559279</millis>
+  <sequence>52</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Tokens read: 783</message>
+</record>
+<record>
+  <date>2020-04-10T14:59:19</date>
+  <millis>1586523559280</millis>
+  <sequence>53</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Minutes left: 3</message>
+</record>
+<record>
+  <date>2020-04-10T15:00:36</date>
+  <millis>1586523636069</millis>
+  <sequence>54</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Tokens read: 812</message>
+</record>
+<record>
+  <date>2020-04-10T15:00:36</date>
+  <millis>1586523636070</millis>
+  <sequence>55</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Minutes left: 2</message>
+</record>
+<record>
+  <date>2020-04-10T15:01:55</date>
+  <millis>1586523715973</millis>
+  <sequence>56</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Tokens read: 841</message>
+</record>
+<record>
+  <date>2020-04-10T15:01:55</date>
+  <millis>1586523715973</millis>
+  <sequence>57</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Minutes left: 1</message>
+</record>
+<record>
+  <date>2020-04-10T15:03:15</date>
+  <millis>1586523795776</millis>
+  <sequence>58</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Tokens read: 870</message>
+</record>
+<record>
+  <date>2020-04-10T15:03:15</date>
+  <millis>1586523795776</millis>
+  <sequence>59</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Minutes left: 0</message>
 </record>
 </log>

@@ -11,6 +11,7 @@ import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -73,6 +74,8 @@ public class RetrieveGitLog {
 		
 		//add zeros for missing month
 		Date currentDate = sortedMap.firstKey();
+		Map<Date, Integer> tempMap = new HashMap<>();
+		
 		for (Map.Entry<Date, Integer> entry : sortedMap.entrySet()) {
 			
 			//if the current date is missing, then we need to add it
@@ -81,17 +84,19 @@ public class RetrieveGitLog {
 					break;
 				}else if(currentDate.compareTo(entry.getKey()) < 0){
 					//if i am here the current month is missing, so i have to add it
-					sortedMap.put(currentDate, 0);
-					
+					tempMap.put(currentDate, 0);
 				}else {
-					LOGGER.log(Level.SEVERE,"Tokens read: {0}",String.valueOf("Something went wrong in date comparison"));
+					LOGGER.log(Level.SEVERE,"Something went wrong in date comparison");
 				}
+				//add 1 month to first date
+				currentDate = addMonth(currentDate, 1);
 			}
 			
 			//add 1 month to first date
 			currentDate = addMonth(currentDate, 1);
-			
 		}
+		
+		sortedMap.putAll(tempMap);
 		
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
 		
