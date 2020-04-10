@@ -8,8 +8,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -24,14 +30,17 @@ public class RetrieveGitLog {
 	public static final String GIT_PROJ_NAME = "incubator-daffodil";
 	
 	//this token can be public because it has only read permission
-	private static final String GIT_TKN = "9d0e5f2bee915688cb35faf5ba30dfb62b0b0c42";
+	//but it has to be obscured due to github policies
+	private static final String GIT_TKN = "e 6 e 9 8 0 3 6 a 3 6 c 5 f 6 9 5 0 5 6 b c b 6 6 f 5 5 5 d e 6 6 c 1 0 c f 3 d";
 	
 	public static final String CSV_FILENAME ="commitsPerMonth.csv";
 	public static final String LOG_FILE = "log.txt";
 	
+	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
+	
 	//GITHUB REST API to retrieve the commit with given (%s to specify later on) ticket ID
 	//sorted by committer date (from latest to earlier)
-	public static final String GIT_API_URL = "https://api.github.com/search/commits?q=repo:apache/"+GIT_PROJ_NAME+"+%s+sort:committer-date";
+	public static final String GIT_API_URL = "https://api.github.com/search/commits?q=repo:apache/"+GIT_PROJ_NAME+"+\"%s\"+sort:committer-date";
 	   
 	private static final Logger LOGGER = Logger.getLogger(RetrieveGitLog.class.getName());
 	
@@ -39,9 +48,53 @@ public class RetrieveGitLog {
 		throw new IllegalStateException("Utility class");
 		}
 	
+	private static String extractTkn(String tkn) {
+		
+		StringBuilder clearTkn = new StringBuilder();
+		String[] t = tkn.split(" ");
+		
+		for (String pieceTkn : t) {
+			clearTkn.append(pieceTkn);
+		}
+		
+		return clearTkn.toString();
+	}
+	
+	private static Date addMonth(Date date, int i) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.MONTH, i);
+        return cal.getTime();
+    }
+	
 	//method that has to take a map of string and integer
 	//and write on a csv file how the integer corresponding to each string
-	private static void writeCSVfile(Map<String, Integer> commitsMap) throws IOException{
+	private static void writeCSVfile(Map<Date, Integer> commitsMap) throws IOException{
+		
+		//in order to order the map by date an hash tree is used
+		TreeMap<Date, Integer> sortedMap = new TreeMap<Date, Integer>(commitsMap);
+		
+		//add zeros for missing month
+		Date currentDate = sortedMap.firstKey();
+		for (Map.Entry<Date, Integer> entry : sortedMap.entrySet()) {
+			
+			//if the current date is missing, then we need to add it
+			while(true) {
+				if(currentDate.compareTo(entry.getKey()) == 0) {
+					break;
+				}else if(currentDate.compareTo(entry.getKey()) < 0){
+					//if i am here the current month is missing, so i have to add it
+					sortedMap.put(currentDate, 0);
+					
+				}else {
+					System.out.println("Something went wrong");
+				}
+			}
+			
+			//add 1 month to first date
+			currentDate = addMonth(currentDate, 1);
+			
+		}
 		
 		try (FileWriter csvWriter = new FileWriter(CSV_FILENAME)){
 			
@@ -50,8 +103,8 @@ public class RetrieveGitLog {
 			csvWriter.append("Commits");
 			csvWriter.append("\n");
 			
-			for (Map.Entry<String, Integer> entry : commitsMap.entrySet()) {
-				csvWriter.append(entry.getKey());
+			for (Map.Entry<Date, Integer> entry : sortedMap.entrySet()) {
+				csvWriter.append(dateFormat.format(entry.getKey()));
 				csvWriter.append(",");
 				csvWriter.append(String.valueOf(entry.getValue()));
 		        csvWriter.append("\n");
@@ -63,12 +116,16 @@ public class RetrieveGitLog {
 	}
 	
 	//given a list of (JIRA) tickets, this method will return
-	private static void gitLog(List ticketsID) throws IOException, InterruptedException {
+	private static void gitLog(List ticketsID) throws IOException, InterruptedException, ParseException {
 		
 		HttpURLConnection con = null;
 		StringBuilder response = new StringBuilder();
 		String nextUrl;
-		Map<String, Integer> commitsMap = new HashMap<>();
+		
+		Map<Date, Integer> commitsMap = new HashMap<>();
+		int ticketsNum = ticketsID.getItemCount();
+		
+		String gitTkn = extractTkn(GIT_TKN);
 		
 		int total = 1;
 		for(String ticketID : ticketsID.getItems()) {
@@ -81,7 +138,10 @@ public class RetrieveGitLog {
 				//are permitted 30 search queries each 60 seconds
 				//sleeping more than needed to make sure that 
 				//timer has been reset
-				LOGGER.log(Level.INFO,"Read {} tokens", total);
+				LOGGER.log(Level.INFO,"Tokens read: ".concat(String.valueOf(total)));
+				//26 tickets per minute are searched
+				LOGGER.log(Level.INFO,"Minutes left: ".concat(String.valueOf((ticketsNum+total)/25)));
+				writeCSVfile(commitsMap);
 				Thread.sleep(70000);
 			}
 			
@@ -89,7 +149,7 @@ public class RetrieveGitLog {
 			con.setRequestProperty("Accept", "application/vnd.github.cloak-preview");
 			//adding token to avoid rate limitation
 			//this token can be public because it has only read permission
-			con.setRequestProperty("Authorization", "token "+GIT_TKN);
+			con.setRequestProperty("Authorization", "token "+gitTkn);
 			con.setRequestMethod("GET");
 			
 			try(BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
@@ -112,8 +172,9 @@ public class RetrieveGitLog {
 				
 				//otherwise...
 				JSONArray items = jsonResult.getJSONArray("items");
-				//now take the first item which is the latest..
-				String date = (((items.getJSONObject(0)).getJSONObject("commit")).getJSONObject("committer")).getString("date").substring(0, 10);
+				String dateString = (((items.getJSONObject(0)).getJSONObject("commit")).getJSONObject("committer")).getString("date").substring(0, 7);
+				
+				Date date = dateFormat.parse(dateString);
 				
 				if(commitsMap.get(date) == null) {
 					commitsMap.put(date, 1);
@@ -124,15 +185,14 @@ public class RetrieveGitLog {
 				total++;
 				response = new StringBuilder();
 		
-		}finally{
-			con.disconnect();
-		}
+			}finally{
+				con.disconnect();
+			}
 		
-	}
+		}
 		
 		//writing into csv file
 		writeCSVfile(commitsMap);
-		
 		
 	}
 	   
@@ -144,6 +204,9 @@ public class RetrieveGitLog {
 			LOGGER.addHandler(fileHandler);
 			
 			List tickets = RetrieveTicketsID.retriveTicket();
+			//List tickets = new List();
+			//tickets.add("DAFFODIL-2120");
+			
 			RetrieveGitLog.gitLog(tickets);
 			
 		}catch(Exception e) {

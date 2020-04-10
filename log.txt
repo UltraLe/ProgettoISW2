@@ -2,14 +2,47 @@
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
 <record>
-  <date>2020-04-04T17:37:34</date>
-  <millis>1586014654414</millis>
+  <date>2020-04-10T11:01:44</date>
+  <millis>1586509304572</millis>
   <sequence>0</sequence>
   <logger>control.RetrieveGitLog</logger>
   <level>INFO</level>
   <class>control.RetrieveGitLog</class>
   <method>gitLog</method>
   <thread>1</thread>
-  <message>Read 29 tokens</message>
+  <message>Tokens read: 29</message>
+</record>
+<record>
+  <date>2020-04-10T11:01:44</date>
+  <millis>1586509304575</millis>
+  <sequence>1</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Minutes left: 35</message>
+</record>
+<record>
+  <date>2020-04-10T11:03:03</date>
+  <millis>1586509383928</millis>
+  <sequence>2</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Tokens read: 58</message>
+</record>
+<record>
+  <date>2020-04-10T11:03:03</date>
+  <millis>1586509383929</millis>
+  <sequence>3</sequence>
+  <logger>control.RetrieveGitLog</logger>
+  <level>INFO</level>
+  <class>control.RetrieveGitLog</class>
+  <method>gitLog</method>
+  <thread>1</thread>
+  <message>Minutes left: 35</message>
 </record>
 </log>
