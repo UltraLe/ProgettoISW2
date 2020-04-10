@@ -10,7 +10,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,8 +34,6 @@ public class RetrieveGitLog {
 	
 	public static final String CSV_FILENAME ="commitsPerMonth.csv";
 	public static final String LOG_FILE = "log.txt";
-	
-	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
 	
 	//GITHUB REST API to retrieve the commit with given (%s to specify later on) ticket ID
 	//sorted by committer date (from latest to earlier)
@@ -72,7 +69,7 @@ public class RetrieveGitLog {
 	private static void writeCSVfile(Map<Date, Integer> commitsMap) throws IOException{
 		
 		//in order to order the map by date an hash tree is used
-		TreeMap<Date, Integer> sortedMap = new TreeMap<Date, Integer>(commitsMap);
+		TreeMap<Date, Integer> sortedMap = new TreeMap<>(commitsMap);
 		
 		//add zeros for missing month
 		Date currentDate = sortedMap.firstKey();
@@ -87,7 +84,7 @@ public class RetrieveGitLog {
 					sortedMap.put(currentDate, 0);
 					
 				}else {
-					System.out.println("Something went wrong");
+					LOGGER.log(Level.SEVERE,"Tokens read: {0}",String.valueOf("Something went wrong in date comparison"));
 				}
 			}
 			
@@ -95,6 +92,8 @@ public class RetrieveGitLog {
 			currentDate = addMonth(currentDate, 1);
 			
 		}
+		
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
 		
 		try (FileWriter csvWriter = new FileWriter(CSV_FILENAME)){
 			
@@ -126,6 +125,7 @@ public class RetrieveGitLog {
 		int ticketsNum = ticketsID.getItemCount();
 		
 		String gitTkn = extractTkn(GIT_TKN);
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
 		
 		int total = 1;
 		for(String ticketID : ticketsID.getItems()) {
@@ -138,9 +138,9 @@ public class RetrieveGitLog {
 				//are permitted 30 search queries each 60 seconds
 				//sleeping more than needed to make sure that 
 				//timer has been reset
-				LOGGER.log(Level.INFO,"Tokens read: ".concat(String.valueOf(total)));
+				LOGGER.log(Level.INFO,"Tokens read: {0}",String.valueOf(total));
 				//26 tickets per minute are searched
-				LOGGER.log(Level.INFO,"Minutes left: ".concat(String.valueOf((ticketsNum+total)/25)));
+				LOGGER.log(Level.INFO,"Minutes left: {0}",String.valueOf((ticketsNum-total)/25));
 				writeCSVfile(commitsMap);
 				Thread.sleep(70000);
 			}
@@ -202,13 +202,8 @@ public class RetrieveGitLog {
 			//setting up the logger
 			Handler fileHandler = new FileHandler(LOG_FILE);
 			LOGGER.addHandler(fileHandler);
-			
 			List tickets = RetrieveTicketsID.retriveTicket();
-			//List tickets = new List();
-			//tickets.add("DAFFODIL-2120");
-			
 			RetrieveGitLog.gitLog(tickets);
-			
 		}catch(Exception e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
