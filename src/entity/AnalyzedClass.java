@@ -1,6 +1,7 @@
 package entity;
 
-import java.util.TreeMap;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AnalyzedClass {
 	
@@ -9,23 +10,23 @@ public class AnalyzedClass {
 	
 	//The following attributes refers to the metrics that
 	//i want to analyze in a project. They are hash map
-	//haveing key = index (project version) and value = Metric Value
-	private TreeMap<Integer, String> buggy;
+	//having key = index (project version) and value = Metric Value
+	private List<Integer> buggy;
 	
 	public AnalyzedClass(String name) {
 		this.name = name;
-		this.buggy = new TreeMap<>();
+		this.buggy = new ArrayList<>();
 	}
 
 	public String getName() {
 		return this.name;
 	}
 	
-	public TreeMap<Integer, String> getBuggy(){
+	public List<Integer> getBuggy(){
 		return this.buggy;
 	}
 	
-	public void addBuggy(Integer key, String value) {
-		this.buggy.put(key, value);
+	public void addBuggy(Integer versionIndx) {
+		this.buggy.add(versionIndx);
 	}
 }

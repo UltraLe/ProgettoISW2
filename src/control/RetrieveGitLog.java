@@ -28,6 +28,9 @@ public class RetrieveGitLog {
 	//Project name used on GitHub
 	public static final String GIT_PROJ_NAME = "incubator-daffodil";
 	
+	//Project name used on JIRA
+	public static String JIRA_PROJ_NAME = "DAFFODIL";
+	
 	//this token can be public because it has only read permission
 	//but it has to be obscured due to github policies
 	private static final String GIT_TKN = "e 6 e 9 8 0 3 6 a 3 6 c 5 f 6 9 5 0 5 6 b c b 6 6 f 5 5 5 d e 6 6 c 1 0 c f 3 d";
@@ -206,7 +209,7 @@ public class RetrieveGitLog {
 			//setting up the logger
 			Handler fileHandler = new FileHandler(LOG_FILE);
 			LOGGER.addHandler(fileHandler);
-			List tickets = RetrieveTicketsID.retriveTicket();
+			List tickets = RetrieveTicketsID.retriveTicket(JIRA_PROJ_NAME);
 			RetrieveGitLog.gitLog(tickets);
 		}catch(Exception e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
