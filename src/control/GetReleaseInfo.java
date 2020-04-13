@@ -10,7 +10,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Collections;
 import java.util.Comparator;
 import java.time.LocalDate;
@@ -36,11 +35,11 @@ public class GetReleaseInfo {
 		return lastIndexOfVersionAalyzable;
 	}
 
-	//the returned Has ha Key = version index and
+	//the returned Has ha Key = version name and
 	//value is a List where:
-	//List[0] = version name
+	//List[0] = version index
 	//List[1] = version date
-	public static HashMap<Integer, List<Object>> getIndexOfVersions(String projName) throws IOException, JSONException {
+	public static HashMap<String, List<Object>> getIndexOfVersions(String projName) throws IOException, JSONException {
 		   
 		   //Fills the arraylist with releases dates and orders them
 		   //Ignores releases with missing dates
@@ -80,15 +79,13 @@ public class GetReleaseInfo {
 		         halfDate = halfDate.plusDays((last.getDayOfMonth()-first.getDayOfMonth())/2);
 		         halfDate = halfDate.plusYears((last.getYear()-first.getYear())/2);
 		         
-		         
-		         
-		         HashMap<Integer, List<Object>> indexesOfVersions = new HashMap<>();
+		         HashMap<String, List<Object>> indexesOfVersions = new HashMap<>();
 		         for ( i = 0; i < releases.size(); i++) {
 		               Integer index = i + 1;
-		               List<Object> nameAndDate = new ArrayList<Object>();
-		               nameAndDate.add(releaseNames.get(releases.get(i)));
-		               nameAndDate.add(releases.get(i));
-		               indexesOfVersions.put(index, nameAndDate);
+		               List<Object> versionAndDate = new ArrayList<Object>();
+		               versionAndDate.add(index);
+		               versionAndDate.add(releases.get(i));
+		               indexesOfVersions.put(releaseNames.get(releases.get(i)), versionAndDate);
 		          
 		               //if current version is 
 		               if(releases.get(i).compareTo(halfDate) <= 0 && lastIndexOfVersionAalyzable <= index) {
@@ -132,18 +129,21 @@ public class GetReleaseInfo {
 		      }
 		      return sb.toString();
 	  }
+	   
 	   /*
 	   public static void main(String[] args) throws JSONException, IOException {
 		   
-		   HashMap<Integer,List<Object>> map = getIndexOfVersions("DAFFODIL");
+		   HashMap<String,List<Object>> map = getIndexOfVersions("DAFFODIL");
 		   
-		   for(Map.Entry<Integer, List<Object>> m : map.entrySet()) {
-			   System.out.println("key: "+m.getKey()+" version name: "+m.getValue().get(0)+" version date: "+m.getValue().get(1).toString());
+		   for(Map.Entry<String, List<Object>> m : map.entrySet()) {
+			   System.out.println("version name: "+m.getKey()+" version index: "+m.getValue().get(0)+" version date: "+m.getValue().get(1).toString());
 		   }
 		   
 		   System.out.println("Last index to analyze: "+GetReleaseInfo.lastIndexOfVersionAalyzable);
 		   
 	   }
 	   */
+	   
+	   
 	   
 }
