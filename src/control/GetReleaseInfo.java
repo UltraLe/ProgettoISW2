@@ -10,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Collections;
 import java.util.Comparator;
 import java.time.LocalDate;
@@ -22,9 +23,9 @@ import org.json.JSONArray;
 
 public class GetReleaseInfo {
 	
-	public static HashMap<LocalDateTime, String> releaseNames;
-	public static HashMap<LocalDateTime, String> releaseID;
-	public static ArrayList<LocalDateTime> releases;
+	public static Map<LocalDateTime, String> releaseNames;
+	public static Map<LocalDateTime, String> releaseID;
+	public static List<LocalDateTime> releases;
 	public static int lastIndexOfVersionAalyzable = 0;
 	
 	private GetReleaseInfo() {
@@ -39,7 +40,7 @@ public class GetReleaseInfo {
 	//value is a List where:
 	//List[0] = version index
 	//List[1] = version date
-	public static HashMap<String, List<Object>> getIndexOfVersions(String projName) throws IOException, JSONException {
+	public static Map<String, List<Object>> getIndexOfVersions(String projName) throws IOException, JSONException {
 		   
 		   //Fills the arraylist with releases dates and orders them
 		   //Ignores releases with missing dates
@@ -48,8 +49,8 @@ public class GetReleaseInfo {
 		         String url = "https://issues.apache.org/jira/rest/api/2/project/" + projName;
 		         JSONObject json = readJsonFromUrl(url);
 		         JSONArray versions = json.getJSONArray("versions");
-		         releaseNames = new HashMap<LocalDateTime, String>();
-		         releaseID = new HashMap<LocalDateTime, String> ();
+		         releaseNames = new HashMap<>();
+		         releaseID = new HashMap<>();
 		         for (i = 0; i < versions.length(); i++ ) {
 		            String name = "";
 		            String id = "";
@@ -82,7 +83,7 @@ public class GetReleaseInfo {
 		         HashMap<String, List<Object>> indexesOfVersions = new HashMap<>();
 		         for ( i = 0; i < releases.size(); i++) {
 		               Integer index = i + 1;
-		               List<Object> versionAndDate = new ArrayList<Object>();
+		               List<Object> versionAndDate = new ArrayList<>();
 		               versionAndDate.add(index);
 		               versionAndDate.add(releases.get(i));
 		               indexesOfVersions.put(releaseNames.get(releases.get(i)), versionAndDate);
@@ -104,7 +105,6 @@ public class GetReleaseInfo {
 		         releases.add(dateTime);
 		      releaseNames.put(dateTime, name);
 		      releaseID.put(dateTime, id);
-		      return;
 		   }
 
 
@@ -114,8 +114,7 @@ public class GetReleaseInfo {
 	      try (BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName(StandardCharsets.UTF_8.displayName())));){
 	    	  
 	         String jsonText = readAll(rd);
-	         JSONObject json = new JSONObject(jsonText);
-	         return json;
+	         return new JSONObject(jsonText);
 	       } finally {
 	         is.close();
 	       }

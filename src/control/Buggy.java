@@ -1,12 +1,12 @@
 package control;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -31,8 +31,8 @@ public class Buggy {
 	//value is a List where:
 	//List[0] = release index
 	//List[1] = release date
-	private HashMap<String, List<Object>> releaseIndexDate;
-	private TreeMap<Integer, LocalDate> indexDate;
+	private Map<String, List<Object>> releaseIndexDate;
+	private Map<Integer, LocalDate> indexDate;
 	private int maxReleaseIndex;
 	private String projName;
 	
@@ -64,7 +64,7 @@ public class Buggy {
 		}
 		
 		this.proportionMovingWindow();
-		System.out.println("Finisched Moving Window, p: "+this.P);
+		System.out.println("Finished Moving Window, p: "+this.P);
 		LOGGER.log(Level.INFO, "Moving Window (proportion) P value: {0}",String.valueOf(this.P));
 	} 
 	
@@ -264,14 +264,14 @@ public class Buggy {
 	//thin method will find the buggy classes and for each class of the given project
 	//it will be maintained the version in which is is buggy. 
 	//The results will be written on a CSV file.
-	public void getBuggyClasses() throws JSONException, IOException {
+	public void getBuggyClasses() throws JSONException, IOException, InterruptedException, ParseException {
 		
 		List<AnalyzedClass> classes = new ArrayList<>();
 		List<String> analyzableTickets = this.getAnalyzableTickets(RetrieveTicketsID.retriveTicket(this.projName));
 		
 		//retrieve the classes that has been modified by this ticket
 		//edit getGitInfo in order to return something...
-		List<List<String>> classesName = RetrieveGitLog.getGitInfo(analyzableTickets, Constants.COMMIT);
+		List<List<String>> classesName = (List<List<String>>) RetrieveGitLog.getGitInfo(analyzableTickets, Constants.COMMIT);
 		
 		List<List<Integer>> affectedVersions = new ArrayList<>();
 		//retrieving the affected version of all tickets
@@ -300,6 +300,11 @@ public class Buggy {
 		}
 		
 		writeBuggyClasses(classes);
+	}
+	
+	public static void main(String[] args) throws JSONException, IOException {
+		Buggy b = new Buggy("DAFFODIL");
+		b.setup();
 	}
 	
 }

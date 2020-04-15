@@ -17,7 +17,7 @@ import org.json.JSONArray;
 
 public class RetrieveTicketsID {
 
-   public RetrieveTicketsID() {
+   private RetrieveTicketsID() {
 	    throw new IllegalStateException("Utility class");
 	  }
 
@@ -51,7 +51,7 @@ public class RetrieveTicketsID {
 
    public static List<String> retriveTicket(String jiraProjName) throws IOException, JSONException {
 	
-	  List<String> tickets = new ArrayList<String>();
+	  List<String> tickets = new ArrayList<>();
 	  
 	  Integer j = 0;
 	  Integer i = 0;

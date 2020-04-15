@@ -31,7 +31,7 @@ public class RetrieveGitLog {
 	public static final String GIT_PROJ_NAME = "incubator-daffodil";
 	
 	//Project name used on JIRA
-	public static String JIRA_PROJ_NAME = "DAFFODIL";
+	public static final String JIRA_PROJ_NAME = "DAFFODIL";
 	
 	//this token can be public because it has only read permission
 	//but it has to be obscured due to github policies
@@ -124,7 +124,7 @@ public class RetrieveGitLog {
 	}
 	
 	//given a list of (JIRA) tickets, this method will return
-	public static void getGitInfo(List<String> ticketsID, String info) throws IOException, InterruptedException, ParseException {
+	public static Object getGitInfo(List<String> ticketsID, String info) throws IOException, InterruptedException, ParseException {
 		
 		HttpURLConnection con = null;
 		StringBuilder response = new StringBuilder();
@@ -202,6 +202,8 @@ public class RetrieveGitLog {
 		
 		//writing into csv file
 		writeCSVfile(commitsMap);
+		
+		return null;
 		
 	}
 	   
