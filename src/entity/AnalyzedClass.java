@@ -26,7 +26,15 @@ public class AnalyzedClass {
 		return this.buggy;
 	}
 	
-	public void addBuggy(Integer versionIndx) {
-		this.buggy.add(versionIndx);
+	public void addBuggy(List<Integer> versionIndx) {
+		if(versionIndx == null) {
+			return;
+		}
+		
+		for(Integer indx: versionIndx) {
+			if(!this.buggy.contains(indx)) {
+				this.buggy.add(indx);
+			}
+		}	
 	}
 }

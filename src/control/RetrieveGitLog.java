@@ -1,6 +1,6 @@
 package control;
 
-import java.awt.List;
+import java.util.List;
 import java.io.BufferedReader;
 import java.io.FileWriter;
 
@@ -22,6 +22,8 @@ import java.util.logging.Logger;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import entity.Constants;
 
 public class RetrieveGitLog {
 	
@@ -122,20 +124,20 @@ public class RetrieveGitLog {
 	}
 	
 	//given a list of (JIRA) tickets, this method will return
-	private static void gitLog(List ticketsID) throws IOException, InterruptedException, ParseException {
+	public static void getGitInfo(List<String> ticketsID, String info) throws IOException, InterruptedException, ParseException {
 		
 		HttpURLConnection con = null;
 		StringBuilder response = new StringBuilder();
 		String nextUrl;
 		
 		Map<Date, Integer> commitsMap = new HashMap<>();
-		int ticketsNum = ticketsID.getItemCount();
+		int ticketsNum = ticketsID.size();
 		
 		String gitTkn = extractTkn(GIT_TKN);
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
 		
 		int total = 1;
-		for(String ticketID : ticketsID.getItems()) {
+		for(String ticketID : ticketsID) {
 			
 			nextUrl = String.format(GIT_API_URL, ticketID);
 			//HTTP GET request
@@ -210,7 +212,7 @@ public class RetrieveGitLog {
 			Handler fileHandler = new FileHandler(LOG_FILE);
 			LOGGER.addHandler(fileHandler);
 			List tickets = RetrieveTicketsID.retriveTicket(JIRA_PROJ_NAME);
-			RetrieveGitLog.gitLog(tickets);
+			RetrieveGitLog.getGitInfo(tickets, Constants.DATE);
 		}catch(Exception e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}

@@ -1,6 +1,7 @@
 package control;
 
-import java.awt.List;
+import java.util.ArrayList;
+import java.util.List;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,9 +49,9 @@ public class RetrieveTicketsID {
    }
 
 
-   public static List retriveTicket(String jiraProjName) throws IOException, JSONException {
+   public static List<String> retriveTicket(String jiraProjName) throws IOException, JSONException {
 	
-	  List tickets = new List();
+	  List<String> tickets = new ArrayList<String>();
 	  
 	  Integer j = 0;
 	  Integer i = 0;
