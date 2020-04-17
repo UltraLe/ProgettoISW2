@@ -10,6 +10,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -21,6 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import entity.Constants;
@@ -37,14 +39,19 @@ public class RetrieveGitLog {
 	//but it has to be obscured due to github policies
 	private static final String GIT_TKN = "e 6 e 9 8 0 3 6 a 3 6 c 5 f 6 9 5 0 5 6 b c b 6 6 f 5 5 5 d e 6 6 c 1 0 c f 3 d";
 	
-	public static final String CSV_FILENAME ="commitsPerMonth.csv";
+	public static final String COMMINTS_MONTH_CSV ="commitsPerMonth.csv";
 	public static final String LOG_FILE = "log.txt";
 	
 	//GITHUB REST API to retrieve the commit with given (%s to specify later on) ticket ID
 	//sorted by committer date (from latest to earlier)
-	public static final String GIT_API_URL = "https://api.github.com/search/commits?q=repo:apache/"+GIT_PROJ_NAME+"+\"%s\"+sort:committer-date";
+	public static final String SEARCHTKT_LASTCOMMIT_URL = "https://api.github.com/search/commits?q=repo:apache/"+GIT_PROJ_NAME+"+\"%s\"+sort:committer-date";
 	   
+	//GITHUB api url to get information of a ginven commit
+	public static final String COMMITINFO_URL = "https://api.github.com/repos/apache/"+GIT_PROJ_NAME+"/commits/%s";
+
 	private static final Logger LOGGER = Logger.getLogger(RetrieveGitLog.class.getName());
+	
+	private static String gitTkn;
 	
 	private RetrieveGitLog() {
 		throw new IllegalStateException("Utility class");
@@ -104,7 +111,7 @@ public class RetrieveGitLog {
 		
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
 		
-		try (FileWriter csvWriter = new FileWriter(CSV_FILENAME)){
+		try (FileWriter csvWriter = new FileWriter(COMMINTS_MONTH_CSV)){
 			
 			csvWriter.append("Date");
 			csvWriter.append(",");
@@ -120,7 +127,6 @@ public class RetrieveGitLog {
 
 		}
 		
-		
 	}
 	
 	//given a list of (JIRA) tickets, this method will return
@@ -133,13 +139,15 @@ public class RetrieveGitLog {
 		Map<Date, Integer> commitsMap = new HashMap<>();
 		int ticketsNum = ticketsID.size();
 		
-		String gitTkn = extractTkn(GIT_TKN);
+		gitTkn = extractTkn(GIT_TKN);
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
+		
+		List<List<String>> classesName = new ArrayList<>();
 		
 		int total = 1;
 		for(String ticketID : ticketsID) {
 			
-			nextUrl = String.format(GIT_API_URL, ticketID);
+			nextUrl = String.format(SEARCHTKT_LASTCOMMIT_URL, ticketID);
 			//HTTP GET request
 			URL url = new URL(nextUrl);
 			
@@ -150,7 +158,6 @@ public class RetrieveGitLog {
 				LOGGER.log(Level.INFO,"Tokens read: {0}",String.valueOf(total));
 				//26 tickets per minute are searched
 				LOGGER.log(Level.INFO,"Minutes left: {0}",String.valueOf((ticketsNum-total)/25));
-				writeCSVfile(commitsMap);
 				Thread.sleep(70000);
 			}
 			
@@ -179,8 +186,24 @@ public class RetrieveGitLog {
 					continue;
 				}
 				
-				//otherwise...
+				//the response
 				JSONArray items = jsonResult.getJSONArray("items");
+				
+				//Here the method can retrieve the last commit date
+				//associated to the ticked id, or the commit ID
+				//that will we used in another method (that does not use search limited
+				//github rest api) to get all the files edited in that commit.	
+				if(info.compareTo(Constants.COMMIT_CLASS_NAME) == 0) {
+					
+					String commitSha = (items.getJSONObject(0)).getString("sha");
+					classesName.add(commitClasses(commitSha, "modified"));
+					
+					total++;
+					response = new StringBuilder();
+					continue;
+				}
+				
+				//otherwise, get the date from the last commit associated to the ticket id
 				String dateString = (((items.getJSONObject(0)).getJSONObject("commit")).getJSONObject("committer")).getString("date").substring(0, 7);
 				
 				Date date = dateFormat.parse(dateString);
@@ -200,11 +223,65 @@ public class RetrieveGitLog {
 		
 		}
 		
+		if(info.compareTo(Constants.COMMIT_CLASS_NAME) == 0) {
+			return classesName;
+		}
+		
+		//otherwise
 		//writing into csv file
 		writeCSVfile(commitsMap);
-		
 		return null;
 		
+	}
+	
+	//get classes of a commit with a given status,
+	//if status = null, take all
+	private static List<String> commitClasses(String commitSha, String status) throws JSONException, IOException{
+		List<String> classes = new ArrayList<>();
+		String stringUrl = String.format(COMMITINFO_URL, commitSha);
+		HttpURLConnection con = null;
+		URL url = new URL(stringUrl);
+		
+		StringBuilder response = new StringBuilder();
+		JSONObject jsonResult;
+		//use authenticated requests
+		con = (HttpURLConnection) url.openConnection();
+		//adding token to avoid rate limitation
+		//this token can be public because it has only read permission
+		con.setRequestProperty("Authorization", "token "+gitTkn);
+		con.setRequestMethod("GET");
+		
+		try(BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
+			
+			//reading response
+			String inputLine;
+			
+			while((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			
+			jsonResult = new JSONObject(response.toString());
+			
+		}finally {
+			con.disconnect();
+		}
+		
+		JSONArray files = jsonResult.getJSONArray("files");
+		
+		for(int i = 0; i < files.length(); ++i) {
+			
+			if(status == null) {
+				classes.add(files.getJSONObject(i).getString("filename"));
+				continue;
+			}
+			
+			if(status.compareTo(files.getJSONObject(i).getString("status")) == 0) {
+				classes.add(files.getJSONObject(i).getString("filename"));
+			}
+			
+		}
+		
+		return classes;
 	}
 	   
 	public static void main(String[] args) throws IOException{
@@ -213,7 +290,7 @@ public class RetrieveGitLog {
 			//setting up the logger
 			Handler fileHandler = new FileHandler(LOG_FILE);
 			LOGGER.addHandler(fileHandler);
-			List tickets = RetrieveTicketsID.retriveTicket(JIRA_PROJ_NAME);
+			List<String> tickets = RetrieveTicketsID.retriveTicket(JIRA_PROJ_NAME);
 			RetrieveGitLog.getGitInfo(tickets, Constants.DATE);
 		}catch(Exception e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());

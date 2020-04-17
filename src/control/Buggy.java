@@ -36,7 +36,7 @@ public class Buggy {
 	private int maxReleaseIndex;
 	private String projName;
 	
-	private double P;
+	private double estimatedP;
 	
 	public Buggy(String projName) {
 		this.projName = projName;
@@ -63,9 +63,9 @@ public class Buggy {
 			this.indexDate.put((Integer)entry.getValue().get(0), ((LocalDateTime)entry.getValue().get(1)).toLocalDate());
 		}
 		
+		LOGGER.log(Level.INFO, "Moving Window method (proportion) starting...");
 		this.proportionMovingWindow();
-		System.out.println("Finished Moving Window, p: "+this.P);
-		LOGGER.log(Level.INFO, "Moving Window (proportion) P value: {0}",String.valueOf(this.P));
+		LOGGER.log(Level.INFO, "Moving Window method (proportion) compleated, P value: {0}",String.valueOf(this.estimatedP));
 	} 
 	
 	private int retrieveOpeningVersion(String OVdate) {
@@ -174,7 +174,7 @@ public class Buggy {
 			maxResults += maxResults;
 		}while(ticketWithAV < total*percentage && count < total);
 		
-		this.P = partialP/total;
+		this.estimatedP = partialP/total;
 	}
 	
 	//This method return the AV of a ticket if provided or by using
@@ -192,7 +192,9 @@ public class Buggy {
         int indexOV = retrieveOpeningVersion(OVdate);
         
         if(indexOV > this.maxReleaseIndex) {
-        	return null;
+        	//returning an empty list
+        	indexesAVs.clear();
+        	return indexesAVs;
         }
         
         JSONArray affectedVersions = (((json.getJSONArray("issues")).getJSONObject(0)).getJSONObject("fields")).getJSONArray("versions");  
@@ -201,24 +203,43 @@ public class Buggy {
         	for(int i = 0; i < affectedVersions.length(); ++i) {
         		//this is the name of the version
         		String versName = affectedVersions.getJSONObject(i).getString("name");
-        		indexesAVs.add((Integer)releaseIndexDate.get(versName).get(0));
-        	
+        		//if the affected version has not been released yet
+        		if(releaseIndexDate.get(versName) != null) {
+        			indexesAVs.add((Integer)releaseIndexDate.get(versName).get(0));
+        		}else {
+        			return indexesAVs;
+        		}
         	}
+        	
         	return indexesAVs;
         }
         
         //otherwise extract OV from first date and extract FV
         //calculate predicted IV=FV-(FV-OV)*P, and return AV = [IV, FV)
-        String fixVersion = (((((json.getJSONArray("issues")).getJSONObject(0)).getJSONObject("fields")).getJSONArray("fixVersions")).getJSONObject(0)).getString("name");
+        String fixVersion;
+        //now extracting FV
+    	JSONArray fixVersionJson = (((((json.getJSONArray("issues")).getJSONObject(0)).getJSONObject("fields")).getJSONArray("fixVersions")));
+    	//we may not have specified fv
+    	if(fixVersionJson.length() > 0) {
+    		//the version may not have been released yet
+    		fixVersion = fixVersionJson.getJSONObject(0).getString("name");
+    	}else {
+    		//returning an empty list
+        	indexesAVs.clear();
+        	return indexesAVs;
+    	}
+    	
         //it may happen that the fix version refers to a release that has not been released yet
         //in this case ignore the ticket. This should not happen because
         //it will be considered the first half life of the project.	
         if(releaseIndexDate.get(fixVersion) == null) {
-        	return null;
+        	//returning an empty list
+        	indexesAVs.clear();
+        	return indexesAVs;
         }
         int indexFV = (Integer) releaseIndexDate.get(fixVersion).get(0);
         
-        int predictedIV = (int)(indexFV-(indexFV-indexOV)*P);
+        int predictedIV = (int)(indexFV-(indexFV-indexOV)*estimatedP);
         //AV = [predictedIV, FV)
         for(int i = predictedIV; i < indexFV; ++i) {
         	indexesAVs.add(i);
@@ -266,14 +287,21 @@ public class Buggy {
 	//The results will be written on a CSV file.
 	public void getBuggyClasses() throws JSONException, IOException, InterruptedException, ParseException {
 		
+		LOGGER.log(Level.INFO, "Retrieving all tickets of type BUG");
+		List<String> allBugTickets = RetrieveTicketsID.retriveTicket(this.projName);
+		LOGGER.log(Level.INFO, "Filtering {0} 'BUG' tickets to analyze", allBugTickets.size());
 		List<AnalyzedClass> classes = new ArrayList<>();
-		List<String> analyzableTickets = this.getAnalyzableTickets(RetrieveTicketsID.retriveTicket(this.projName));
-		
+		List<String> analyzableTickets = this.getAnalyzableTickets(allBugTickets);
+		LOGGER.log(Level.INFO, "Obtained {0} analyzable tickets", analyzableTickets.size());
+
 		//retrieve the classes that has been modified by this ticket
 		//edit getGitInfo in order to return something...
-		List<List<String>> classesName = (List<List<String>>) RetrieveGitLog.getGitInfo(analyzableTickets, Constants.COMMIT);
+		@SuppressWarnings("unchecked")
+		//TODO trunk the function to  test the output
+		List<List<String>> classesName = (List<List<String>>) RetrieveGitLog.getGitInfo(analyzableTickets, Constants.COMMIT_CLASS_NAME);
 		
 		List<List<Integer>> affectedVersions = new ArrayList<>();
+		
 		//retrieving the affected version of all tickets
 		for(String tkt : analyzableTickets) {
 			List<Integer> AVs = this.getAffectedVersion(tkt);
@@ -281,13 +309,14 @@ public class Buggy {
 		}
 		
 		//TODO check if classes name size = analyzableTickets and they refers to the same tickets
+		System.out.println("AVs size: "+affectedVersions.size()+" classesName size: "+classesName.size());
 		
 		//building classes
 		for(int i = 0; i < classesName.size(); ++i) {
 			
 			//if the commit associated to the ticket id
 			//was not found, just skip it
-			if(classesName.get(i) == null) {
+			if(classesName.get(i).isEmpty()) {
 				continue;
 			}
 			
@@ -298,13 +327,23 @@ public class Buggy {
 				newClass.addBuggy(affectedVersions.get(i));
 			}
 		}
-		
+		//TODO write the function
 		writeBuggyClasses(classes);
+		
+		//TODO create file.
 	}
 	
-	public static void main(String[] args) throws JSONException, IOException {
-		Buggy b = new Buggy("DAFFODIL");
-		b.setup();
+	public static void main(String[] args){
+	
+			Buggy b = new Buggy("DAFFODIL");
+			try {
+				b.getBuggyClasses();
+			} catch (JSONException | IOException | InterruptedException | ParseException e) {
+				
+				e.printStackTrace();
+				LOGGER.log(Level.SEVERE, e.getMessage());
+			}
+	
 	}
 	
 }

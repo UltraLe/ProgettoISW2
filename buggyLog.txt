@@ -2,25 +2,58 @@
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
 <record>
-  <date>2020-04-15T11:49:39</date>
-  <millis>1586944179518</millis>
+  <date>2020-04-17T11:46:36</date>
+  <millis>1587116796996</millis>
   <sequence>0</sequence>
   <logger>control.Buggy</logger>
   <level>INFO</level>
   <class>control.Buggy</class>
   <method>setup</method>
   <thread>1</thread>
-  <message>Moving Window (proportion) P value: 0.23269012485811577</message>
+  <message>Moving Window method (proportion) starting...</message>
 </record>
 <record>
-  <date>2020-04-15T11:50:26</date>
-  <millis>1586944226660</millis>
+  <date>2020-04-17T11:46:37</date>
+  <millis>1587116797010</millis>
   <sequence>1</sequence>
   <logger>control.Buggy</logger>
   <level>INFO</level>
   <class>control.Buggy</class>
   <method>setup</method>
   <thread>1</thread>
-  <message>Moving Window (proportion) P value: 0.23269012485811577</message>
+  <message>Moving Window method (proportion) compleated, P value: 0.23</message>
+</record>
+<record>
+  <date>2020-04-17T11:46:37</date>
+  <millis>1587116797011</millis>
+  <sequence>2</sequence>
+  <logger>control.Buggy</logger>
+  <level>INFO</level>
+  <class>control.Buggy</class>
+  <method>getBuggyClasses</method>
+  <thread>1</thread>
+  <message>Retrieving all tickets of type BUG</message>
+</record>
+<record>
+  <date>2020-04-17T11:46:39</date>
+  <millis>1587116799222</millis>
+  <sequence>3</sequence>
+  <logger>control.Buggy</logger>
+  <level>INFO</level>
+  <class>control.Buggy</class>
+  <method>getBuggyClasses</method>
+  <thread>1</thread>
+  <message>Filtering 881 BUG tickets to analyze</message>
+</record>
+<record>
+  <date>2020-04-17T11:48:26</date>
+  <millis>1587116906320</millis>
+  <sequence>4</sequence>
+  <logger>control.Buggy</logger>
+  <level>INFO</level>
+  <class>control.Buggy</class>
+  <method>getBuggyClasses</method>
+  <thread>1</thread>
+  <message>Obtained 490 analyzable tickets</message>
 </record>
 </log>

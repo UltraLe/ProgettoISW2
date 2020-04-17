@@ -2,7 +2,7 @@ package entity;
 
 public class Constants {
 	
-	public static final String COMMIT = "COMMIT"; 
+	public static final String COMMIT_CLASS_NAME = "COMMIT_CLASS_NAME"; 
 	public static final String DATE = "DATE"; 
 	
 	private Constants() {
