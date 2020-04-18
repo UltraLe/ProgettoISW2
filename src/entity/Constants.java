@@ -2,8 +2,6 @@ package entity;
 
 import java.util.logging.Logger;
 
-import control.GitInteractor;
-
 public class Constants {
 	
 	public static final String COMMIT_CLASS_NAME = "COMMIT_CLASS_NAME"; 

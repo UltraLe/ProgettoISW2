@@ -43,10 +43,45 @@ public class GitInteractor {
 		return clearTkn.toString();
 	}
 	
+	private static void limitRequest(int total, int ticketsNum, int retried, HttpURLConnection con, URL url) 
+									throws IOException, InterruptedException {
+		
+		if(total%29 == 0) {
+			//are permitted 30 search queries each 60 seconds
+			//sleeping more than needed to make sure that 
+			//timer has been reset
+			Constants.LOGGER.log(Level.INFO,"Tokens read: {0}",String.valueOf(total));
+			//26 tickets per minute are searched
+			Constants.LOGGER.log(Level.INFO,"Minutes left: {0}",String.valueOf((ticketsNum-(total-retried))/25));
+			Thread.sleep(70000);
+		}
+		
+		con = (HttpURLConnection) url.openConnection();
+		con.setRequestProperty("Accept", "application/vnd.github.cloak-preview");
+		//adding token to avoid rate limitation
+		//this token can be public because it has only read permission
+		con.setRequestProperty("Authorization", "token "+gitTkn);
+		con.setRequestMethod("GET");
+		
+	}
+	
+	private static void readResponse(HttpURLConnection con, StringBuilder response) throws IOException {
+		
+		try(BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
+			
+			//reading response
+			String inputLine;
+			while((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+		}finally{
+			con.disconnect();
+		}
+	}
 	
 	
 	//given a list of (JIRA) tickets, this method will return
-	public static Object gitInfo(List<String> ticketsID, String info) throws IOException, InterruptedException, ParseException {
+	public static Object getGitInfo(List<String> ticketsID, String info) throws IOException, InterruptedException, ParseException {
 		
 		HttpURLConnection con = null;
 		StringBuilder response = new StringBuilder();
@@ -83,34 +118,11 @@ public class GitInteractor {
 					//HTTP GET request
 					URL url = new URL(nextUrl);
 					
-					if(total%29 == 0) {
-						//are permitted 30 search queries each 60 seconds
-						//sleeping more than needed to make sure that 
-						//timer has been reset
-						Constants.LOGGER.log(Level.INFO,"Tokens read: {0}",String.valueOf(total));
-						//26 tickets per minute are searched
-						Constants.LOGGER.log(Level.INFO,"Minutes left: {0}",String.valueOf((ticketsNum-(total-retried))/25));
-						Thread.sleep(70000);
-					}
+					//method that limits the number of requests per seconds
+					limitRequest(total,ticketsNum, retried, con, url);
 					
-					con = (HttpURLConnection) url.openConnection();
-					con.setRequestProperty("Accept", "application/vnd.github.cloak-preview");
-					//adding token to avoid rate limitation
-					//this token can be public because it has only read permission
-					con.setRequestProperty("Authorization", "token "+gitTkn);
-					con.setRequestMethod("GET");
-					
-					try(BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
-					
-						//reading response
-						String inputLine;
-						
-						while((inputLine = in.readLine()) != null) {
-							response.append(inputLine);
-						}
-					}finally{
-						con.disconnect();
-					}
+					total++;
+					readResponse(con, response);
 					
 					jsonResult = new JSONObject(response.toString());
 					
@@ -119,7 +131,6 @@ public class GitInteractor {
 							
 						//if we want to retry finding the ticket
 						//using only the ID
-						total++;
 						retried++;
 						retrying = true;
 						response = new StringBuilder();
@@ -128,7 +139,6 @@ public class GitInteractor {
 					}else if(jsonResult.getInt("total_count") == 0) {
 						retrying = false;
 						classesName.add(new ArrayList<>());
-						total++;
 						response = new StringBuilder();
 						found = false;
 					}else {
@@ -153,7 +163,6 @@ public class GitInteractor {
 					
 					String commitSha = (items.getJSONObject(0)).getString("sha");
 					classesName.add(commitClasses(commitSha, "modified"));
-					total++;
 					response = new StringBuilder();
 					
 				}else {
@@ -169,7 +178,6 @@ public class GitInteractor {
 						commitsMap.put(date, commitsMap.get(date)+1);
 					}
 					
-					total++;
 					response = new StringBuilder();
 				}		
 		}
@@ -203,20 +211,9 @@ public class GitInteractor {
 		con.setRequestProperty("Authorization", "token "+gitTkn);
 		con.setRequestMethod("GET");
 		
-		try(BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
-			
-			//reading response
-			String inputLine;
-			
-			while((inputLine = in.readLine()) != null) {
-				response.append(inputLine);
-			}
-			
-			jsonResult = new JSONObject(response.toString());
-			
-		}finally {
-			con.disconnect();
-		}
+		readResponse(con, response);
+		
+		jsonResult = new JSONObject(response.toString());
 		
 		JSONArray files = jsonResult.getJSONArray("files");
 		
@@ -244,7 +241,7 @@ public class GitInteractor {
 			Handler fileHandler = new FileHandler(Constants.LOG_FILE);
 			Constants.LOGGER.addHandler(fileHandler);
 			List<String> tickets = RetrieveTicketsID.retriveTicket(Constants.JIRA_PROJ_NAME);
-			GitInteractor.gitInfo(tickets, Constants.DATE);
+			GitInteractor.getGitInfo(tickets, Constants.DATE);
 		}catch(Exception e) {
 			Constants.LOGGER.log(Level.SEVERE, e.getMessage());
 		}
