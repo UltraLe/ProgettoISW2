@@ -46,7 +46,7 @@ public class GitInteractor {
 	
 	
 	//given a list of (JIRA) tickets, this method will return
-	public static Object getGitInfo(List<String> ticketsID, String info) throws IOException, InterruptedException, ParseException {
+	public static Object gitInfo(List<String> ticketsID, String info) throws IOException, InterruptedException, ParseException {
 		
 		HttpURLConnection con = null;
 		StringBuilder response = new StringBuilder();
@@ -60,78 +60,87 @@ public class GitInteractor {
 		
 		List<List<String>> classesName = new ArrayList<>();
 		
+		JSONObject jsonResult = null;
+		
 		String ticketID;
 		int total = 1;
 		int retried = 0;
 		boolean retrying = false;
+		boolean found = false;
 		
 		for(int i = 0; i < ticketsID.size(); ++i) {
 			
-			ticketID = ticketsID.get(i);
-			
-			if(retrying) {
-				ticketID = ticketID.substring(Constants.JIRA_PROJ_NAME.length());
-				//ticketID will be like '-1234'
-			}
-			
-			nextUrl = String.format(Constants.SEARCHTKT_LASTCOMMIT_URL, ticketID);
-			
-			//HTTP GET request
-			URL url = new URL(nextUrl);
-			
-			if(total%29 == 0) {
-				//are permitted 30 search queries each 60 seconds
-				//sleeping more than needed to make sure that 
-				//timer has been reset
-				Constants.LOGGER.log(Level.INFO,"Tokens read: {0}",String.valueOf(total));
-				//26 tickets per minute are searched
-				Constants.LOGGER.log(Level.INFO,"Minutes left: {0}",String.valueOf((ticketsNum-(total-retried))/25));
-				Thread.sleep(70000);
-			}
-			
-			con = (HttpURLConnection) url.openConnection();
-			con.setRequestProperty("Accept", "application/vnd.github.cloak-preview");
-			//adding token to avoid rate limitation
-			//this token can be public because it has only read permission
-			con.setRequestProperty("Authorization", "token "+gitTkn);
-			con.setRequestMethod("GET");
-			
-			try(BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
-			
-				//reading response
-				String inputLine;
-				
-				while((inputLine = in.readLine()) != null) {
-					response.append(inputLine);
-				}
-				
-				JSONObject jsonResult = new JSONObject(response.toString());
-				
-				//if i get NO results from the query, skip the current ticket ID
-				if(jsonResult.getInt("total_count") == 0) {
+				do {
+					ticketID = ticketsID.get(i);
 					
-					//if we want to retry finding the ticket
-					//using only the ID
-					if(!Constants.TKT_SEARCH_ACCURATE && !retrying) {
-						System.out.println("Retrying "+ticketID);
+					if(retrying) {
+						ticketID = ticketID.substring(Constants.JIRA_PROJ_NAME.length());
+						//ticketID will be like '-1234'
+					}
+					
+					nextUrl = String.format(Constants.SEARCHTKT_LASTCOMMIT_URL, ticketID);
+					
+					//HTTP GET request
+					URL url = new URL(nextUrl);
+					
+					if(total%29 == 0) {
+						//are permitted 30 search queries each 60 seconds
+						//sleeping more than needed to make sure that 
+						//timer has been reset
+						Constants.LOGGER.log(Level.INFO,"Tokens read: {0}",String.valueOf(total));
+						//26 tickets per minute are searched
+						Constants.LOGGER.log(Level.INFO,"Minutes left: {0}",String.valueOf((ticketsNum-(total-retried))/25));
+						Thread.sleep(70000);
+					}
+					
+					con = (HttpURLConnection) url.openConnection();
+					con.setRequestProperty("Accept", "application/vnd.github.cloak-preview");
+					//adding token to avoid rate limitation
+					//this token can be public because it has only read permission
+					con.setRequestProperty("Authorization", "token "+gitTkn);
+					con.setRequestMethod("GET");
+					
+					try(BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
+					
+						//reading response
+						String inputLine;
+						
+						while((inputLine = in.readLine()) != null) {
+							response.append(inputLine);
+						}
+					}finally{
+						con.disconnect();
+					}
+					
+					jsonResult = new JSONObject(response.toString());
+					
+					//if i get NO results from the query, skip the current ticket ID
+					if((jsonResult.getInt("total_count") == 0) && (!Constants.TKT_SEARCH_ACCURATE && !retrying)) {
+							
+						//if we want to retry finding the ticket
+						//using only the ID
 						total++;
 						retried++;
 						retrying = true;
 						response = new StringBuilder();
-						i--;
-						continue;
+						found = false;
+						
+					}else if(jsonResult.getInt("total_count") == 0) {
+						retrying = false;
+						classesName.add(new ArrayList<>());
+						total++;
+						response = new StringBuilder();
+						found = false;
+					}else {
+						found = true;
 					}
 					
-					//if i am here i have retried one time.
-					retrying = false;
-					
-					classesName.add(new ArrayList<>());
-					total++;
-					response = new StringBuilder();
+				}while(retrying);
+				
+				if(!found) {
 					continue;
 				}
-				
-				System.out.println("Found "+ticketID);
+				retrying = false;
 				
 				//the response
 				JSONArray items = jsonResult.getJSONArray("items");
@@ -144,34 +153,28 @@ public class GitInteractor {
 					
 					String commitSha = (items.getJSONObject(0)).getString("sha");
 					classesName.add(commitClasses(commitSha, "modified"));
+					total++;
+					response = new StringBuilder();
+					
+				}else {
+				
+					//otherwise, get the date from the last commit associated to the ticket id
+					String dateString = (((items.getJSONObject(0)).getJSONObject("commit")).getJSONObject("committer")).getString("date").substring(0, 7);
+					
+					Date date = dateFormat.parse(dateString);
+					
+					if(commitsMap.get(date) == null) {
+						commitsMap.put(date, 1);
+					}else {
+						commitsMap.put(date, commitsMap.get(date)+1);
+					}
 					
 					total++;
 					response = new StringBuilder();
-					continue;
-				}
-				
-				//otherwise, get the date from the last commit associated to the ticket id
-				String dateString = (((items.getJSONObject(0)).getJSONObject("commit")).getJSONObject("committer")).getString("date").substring(0, 7);
-				
-				Date date = dateFormat.parse(dateString);
-				
-				if(commitsMap.get(date) == null) {
-					commitsMap.put(date, 1);
-				}else {
-					commitsMap.put(date, commitsMap.get(date)+1);
-				}
-				
-				total++;
-				response = new StringBuilder();
-		
-			}finally{
-				con.disconnect();
-			}
-		
+				}		
 		}
 		
 		if(info.compareTo(Constants.COMMIT_CLASS_NAME) == 0) {
-			System.out.println("Returning, size: "+classesName.size());
 			return classesName;
 		}
 		
@@ -241,7 +244,7 @@ public class GitInteractor {
 			Handler fileHandler = new FileHandler(Constants.LOG_FILE);
 			Constants.LOGGER.addHandler(fileHandler);
 			List<String> tickets = RetrieveTicketsID.retriveTicket(Constants.JIRA_PROJ_NAME);
-			GitInteractor.getGitInfo(tickets, Constants.DATE);
+			GitInteractor.gitInfo(tickets, Constants.DATE);
 		}catch(Exception e) {
 			Constants.LOGGER.log(Level.SEVERE, e.getMessage());
 		}

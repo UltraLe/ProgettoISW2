@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.Collections;
 import java.util.Comparator;
 import java.time.LocalDate;
@@ -18,6 +19,9 @@ import java.time.LocalDateTime;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import entity.Constants;
+
 import org.json.JSONArray;
 
 
@@ -129,10 +133,10 @@ public class GetReleaseInfo {
 		      return sb.toString();
 	  }
 	   
-	   /*
+	   
 	   public static void main(String[] args) throws JSONException, IOException {
 		   
-		   HashMap<String,List<Object>> map = getIndexOfVersions("DAFFODIL");
+		   HashMap<String,List<Object>> map = (HashMap<String, List<Object>>) getIndexOfVersions(Constants.JIRA_PROJ_NAME);
 		   
 		   for(Map.Entry<String, List<Object>> m : map.entrySet()) {
 			   System.out.println("version name: "+m.getKey()+" version index: "+m.getValue().get(0)+" version date: "+m.getValue().get(1).toString());
@@ -141,8 +145,5 @@ public class GetReleaseInfo {
 		   System.out.println("Last index to analyze: "+GetReleaseInfo.lastIndexOfVersionAalyzable);
 		   
 	   }
-	   */
-	   
-	   
-	   
+   
 }

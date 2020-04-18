@@ -288,7 +288,7 @@ public class Buggy {
 		//edit getGitInfo in order to return something...
 		@SuppressWarnings("unchecked")
 		//TODO does not work... because of cast ?
-		List<List<String>> classesName = (List<List<String>>) GitInteractor.getGitInfo(analyzableTickets, Constants.COMMIT_CLASS_NAME);
+		List<List<String>> classesName = (List<List<String>>) GitInteractor.gitInfo(analyzableTickets, Constants.COMMIT_CLASS_NAME);
 		
 		List<List<Integer>> affectedVersions = new ArrayList<>();
 		

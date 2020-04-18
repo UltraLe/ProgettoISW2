@@ -2,10 +2,10 @@
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
 <record>
-  <date>2020-04-18T12:31:23</date>
-  <millis>1587205883507</millis>
+  <date>2020-04-18T13:37:31</date>
+  <millis>1587209851867</millis>
   <sequence>0</sequence>
-  <logger>control.GitInteractor</logger>
+  <logger>entity.Constants</logger>
   <level>SEVERE</level>
   <class>control.GitInteractor</class>
   <method>main</method>

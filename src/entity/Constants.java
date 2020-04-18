@@ -37,7 +37,7 @@ public class Constants {
 	//to search commits that contains '-0000' in the comment
 	public static final boolean TKT_SEARCH_ACCURATE = false;
 	
-	public static final Logger LOGGER = Logger.getLogger(GitInteractor.class.getName());
+	public static final Logger LOGGER = Logger.getLogger(Constants.class.getName());
 	
 	
 	private Constants() {
