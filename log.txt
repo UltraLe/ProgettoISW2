@@ -2,9 +2,64 @@
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
 <record>
-  <date>2020-04-18T15:29:51</date>
-  <millis>1587216591205</millis>
+  <date>2020-04-18T17:55:59</date>
+  <millis>1587225359156</millis>
   <sequence>0</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.Buggy</class>
+  <method>setup</method>
+  <thread>1</thread>
+  <message>Moving Window method (proportion) starting...</message>
+</record>
+<record>
+  <date>2020-04-18T17:56:46</date>
+  <millis>1587225406401</millis>
+  <sequence>1</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.Buggy</class>
+  <method>setup</method>
+  <thread>1</thread>
+  <message>Moving Window method (proportion) compleated, P value: 0.24736862330505915</message>
+</record>
+<record>
+  <date>2020-04-18T17:56:46</date>
+  <millis>1587225406402</millis>
+  <sequence>2</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.Buggy</class>
+  <method>getBuggyClasses</method>
+  <thread>1</thread>
+  <message>Retrieving all tickets of type BUG</message>
+</record>
+<record>
+  <date>2020-04-18T17:56:46</date>
+  <millis>1587225406619</millis>
+  <sequence>3</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.Buggy</class>
+  <method>getBuggyClasses</method>
+  <thread>1</thread>
+  <message>Filtering 881 BUG tickets to analyze</message>
+</record>
+<record>
+  <date>2020-04-18T17:58:22</date>
+  <millis>1587225502959</millis>
+  <sequence>4</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.Buggy</class>
+  <method>getBuggyClasses</method>
+  <thread>1</thread>
+  <message>Obtained 490 analyzable tickets</message>
+</record>
+<record>
+  <date>2020-04-18T17:58:37</date>
+  <millis>1587225517135</millis>
+  <sequence>5</sequence>
   <logger>entity.Constants</logger>
   <level>INFO</level>
   <class>control.GitInteractor</class>
@@ -13,36 +68,13 @@
   <message>Tokens read: 29</message>
 </record>
 <record>
-  <date>2020-04-18T15:29:51</date>
-  <millis>1587216591210</millis>
-  <sequence>1</sequence>
+  <date>2020-04-18T17:58:37</date>
+  <millis>1587225517137</millis>
+  <sequence>6</sequence>
   <logger>entity.Constants</logger>
   <level>INFO</level>
   <class>control.GitInteractor</class>
   <method>limitRequest</method>
   <thread>1</thread>
-  <message>Minutes left: 34</message>
+  <message>Minutes left: 18</message>
 </record>
-<record>
-  <date>2020-04-18T15:31:10</date>
-  <millis>1587216670593</millis>
-  <sequence>2</sequence>
-  <logger>entity.Constants</logger>
-  <level>INFO</level>
-  <class>control.GitInteractor</class>
-  <method>limitRequest</method>
-  <thread>1</thread>
-  <message>Tokens read: 58</message>
-</record>
-<record>
-  <date>2020-04-18T15:31:10</date>
-  <millis>1587216670600</millis>
-  <sequence>3</sequence>
-  <logger>entity.Constants</logger>
-  <level>INFO</level>
-  <class>control.GitInteractor</class>
-  <method>limitRequest</method>
-  <thread>1</thread>
-  <message>Minutes left: 32</message>
-</record>
-</log>

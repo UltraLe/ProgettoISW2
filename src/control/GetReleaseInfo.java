@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.Collections;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -131,10 +132,11 @@ public class GetReleaseInfo {
 		   HashMap<String,List<Object>> map = (HashMap<String, List<Object>>) getIndexOfVersions(Constants.JIRA_PROJ_NAME);
 		   
 		   for(Map.Entry<String, List<Object>> m : map.entrySet()) {
-			   System.out.println("version name: "+m.getKey()+" version index: "+m.getValue().get(0)+" version date: "+m.getValue().get(1).toString());
+			   Constants.LOGGER.log(Level.INFO,"Version Name: {0}",m.getKey());
+			   Constants.LOGGER.log(Level.INFO,"Version Index: {0}", String.valueOf(m.getValue().get(0)));
+			   Constants.LOGGER.log(Level.INFO,"Version Date: {0}",m.getValue().get(1).toString());
 		   }
-		   
-		   System.out.println("Last index to analyze: "+GetReleaseInfo.lastIndexOfVersionAalyzable);
+		   Constants.LOGGER.log(Level.INFO,"Last Version Analyzable: {0}", String.valueOf(GetReleaseInfo.lastIndexOfVersionAalyzable));
 		   
 	   }
 	   
