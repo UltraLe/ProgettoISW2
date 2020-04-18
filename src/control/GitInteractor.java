@@ -6,7 +6,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -44,7 +43,7 @@ public class GitInteractor {
 		return clearTkn.toString();
 	}
 	
-	private static void limitRequest(int total, int ticketsNum, int retried, HttpURLConnection con, URL url) 
+	private static void limitRequest(int total, int ticketsNum, int retried, HttpURLConnection con) 
 									throws IOException, InterruptedException {
 		if(total%29 == 0) {
 			//are permitted 30 search queries each 60 seconds
@@ -78,7 +77,7 @@ public class GitInteractor {
 	}
 	
 	//function that retrieve ticket information from JIRA in json format (jsonResult)
-	//and retries to perform the search if (see the comment below).
+	//and retries to perform the search if.... see the comment below
 	private static List<Object> ticketInfoJson(String ticketID, boolean retrying, int total, int ticketsNum, int retried,
 										List<List<String>> classesName) throws IOException, InterruptedException {
 		
@@ -103,7 +102,7 @@ public class GitInteractor {
 			URL url = new URL(nextUrl);
 			con = (HttpURLConnection) url.openConnection();
 			//method that limits the number of requests per seconds
-			limitRequest(total, ticketsNum, retried, con, url);
+			limitRequest(total, ticketsNum, retried, con);
 			total++;
 			readResponse(con, response);
 			
