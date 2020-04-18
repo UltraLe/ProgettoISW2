@@ -13,7 +13,6 @@ import java.util.TreeMap;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,9 +22,6 @@ import entity.AnalyzedClass;
 import entity.Constants;
 
 public class Buggy {
-	
-	private static final Logger LOGGER = Logger.getLogger(Buggy.class.getName());
-	public static final String LOG_FILE = "buggyLog.txt";
 	
 	//the returned Has ha Key = release name and
 	//value is a List where:
@@ -43,11 +39,11 @@ public class Buggy {
 		//setting up logger
 		Handler fileHandler;
 		try {
-			fileHandler = new FileHandler(LOG_FILE);
-			LOGGER.addHandler(fileHandler);
+			fileHandler = new FileHandler(Constants.LOG_FILE);
+			Constants.LOGGER.addHandler(fileHandler);
 			this.setup();
 		} catch (SecurityException | IOException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage());
+			Constants.LOGGER.log(Level.SEVERE, e.getMessage());
 		}	
 	}
 	
@@ -63,9 +59,9 @@ public class Buggy {
 			this.indexDate.put((Integer)entry.getValue().get(0), ((LocalDateTime)entry.getValue().get(1)).toLocalDate());
 		}
 		
-		LOGGER.log(Level.INFO, "Moving Window method (proportion) starting...");
+		Constants.LOGGER.log(Level.INFO, "Moving Window method (proportion) starting...");
 		this.proportionMovingWindow();
-		LOGGER.log(Level.INFO, "Moving Window method (proportion) compleated, P value: {0}",String.valueOf(this.estimatedP));
+		Constants.LOGGER.log(Level.INFO, "Moving Window method (proportion) compleated, P value: {0}",String.valueOf(this.estimatedP));
 	} 
 	
 	private int retrieveOpeningVersion(String OVdate) {
@@ -276,29 +272,23 @@ public class Buggy {
 		
 	}
 	
-	private void writeBuggyClasses(List<AnalyzedClass> classes) {
-		
-		
-		
-	}
-	
 	//thin method will find the buggy classes and for each class of the given project
 	//it will be maintained the version in which is is buggy. 
 	//The results will be written on a CSV file.
 	public void getBuggyClasses() throws JSONException, IOException, InterruptedException, ParseException {
 		
-		LOGGER.log(Level.INFO, "Retrieving all tickets of type BUG");
+		Constants.LOGGER.log(Level.INFO, "Retrieving all tickets of type BUG");
 		List<String> allBugTickets = RetrieveTicketsID.retriveTicket(this.projName);
-		LOGGER.log(Level.INFO, "Filtering {0} 'BUG' tickets to analyze", allBugTickets.size());
+		Constants.LOGGER.log(Level.INFO, "Filtering {0} 'BUG' tickets to analyze", allBugTickets.size());
 		List<AnalyzedClass> classes = new ArrayList<>();
 		List<String> analyzableTickets = this.getAnalyzableTickets(allBugTickets);
-		LOGGER.log(Level.INFO, "Obtained {0} analyzable tickets", analyzableTickets.size());
-
+		Constants.LOGGER.log(Level.INFO, "Obtained {0} analyzable tickets", analyzableTickets.size());
+		
 		//retrieve the classes that has been modified by this ticket
 		//edit getGitInfo in order to return something...
 		@SuppressWarnings("unchecked")
-		//TODO trunk the function to  test the output
-		List<List<String>> classesName = (List<List<String>>) RetrieveGitLog.getGitInfo(analyzableTickets, Constants.COMMIT_CLASS_NAME);
+		//TODO does not work... because of cast ?
+		List<List<String>> classesName = (List<List<String>>) GitInteractor.getGitInfo(analyzableTickets, Constants.COMMIT_CLASS_NAME);
 		
 		List<List<Integer>> affectedVersions = new ArrayList<>();
 		
@@ -308,40 +298,35 @@ public class Buggy {
 			affectedVersions.add(AVs);
 		}
 		
-		//TODO check if classes name size = analyzableTickets and they refers to the same tickets
-		System.out.println("AVs size: "+affectedVersions.size()+" classesName size: "+classesName.size());
-		
 		//building classes
 		for(int i = 0; i < classesName.size(); ++i) {
 			
 			//if the commit associated to the ticket id
-			//was not found, just skip it
+			//was not found, or no files was related to it,
+			//just skip it
 			if(classesName.get(i).isEmpty()) {
 				continue;
-			}
-			
+			}			
 			
 			for(int j = 0; j < classesName.get(i).size(); ++j) {
 				//add to analyzed classes
 				AnalyzedClass newClass = new AnalyzedClass(classesName.get(i).get(j));
 				newClass.addBuggy(affectedVersions.get(i));
+				
+				classes.add(newClass);
 			}
 		}
-		//TODO write the function
-		writeBuggyClasses(classes);
 		
-		//TODO create file.
+		CsvFileWriter.writeBuggyClasses(classes);
 	}
 	
 	public static void main(String[] args){
-	
-			Buggy b = new Buggy("DAFFODIL");
+		
+			Buggy b = new Buggy(Constants.JIRA_PROJ_NAME);
 			try {
 				b.getBuggyClasses();
 			} catch (JSONException | IOException | InterruptedException | ParseException e) {
-				
-				e.printStackTrace();
-				LOGGER.log(Level.SEVERE, e.getMessage());
+				Constants.LOGGER.log(Level.SEVERE, e.getMessage());
 			}
 	
 	}

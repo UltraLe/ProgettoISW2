@@ -2,7 +2,6 @@ package control;
 
 import java.util.List;
 import java.io.BufferedReader;
-import java.io.FileWriter;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,15 +10,12 @@ import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,33 +23,11 @@ import org.json.JSONObject;
 
 import entity.Constants;
 
-public class RetrieveGitLog {
-	
-	//Project name used on GitHub
-	public static final String GIT_PROJ_NAME = "incubator-daffodil";
-	
-	//Project name used on JIRA
-	public static final String JIRA_PROJ_NAME = "DAFFODIL";
-	
-	//this token can be public because it has only read permission
-	//but it has to be obscured due to github policies
-	private static final String GIT_TKN = "e 6 e 9 8 0 3 6 a 3 6 c 5 f 6 9 5 0 5 6 b c b 6 6 f 5 5 5 d e 6 6 c 1 0 c f 3 d";
-	
-	public static final String COMMINTS_MONTH_CSV ="commitsPerMonth.csv";
-	public static final String LOG_FILE = "log.txt";
-	
-	//GITHUB REST API to retrieve the commit with given (%s to specify later on) ticket ID
-	//sorted by committer date (from latest to earlier)
-	public static final String SEARCHTKT_LASTCOMMIT_URL = "https://api.github.com/search/commits?q=repo:apache/"+GIT_PROJ_NAME+"+\"%s\"+sort:committer-date";
-	   
-	//GITHUB api url to get information of a ginven commit
-	public static final String COMMITINFO_URL = "https://api.github.com/repos/apache/"+GIT_PROJ_NAME+"/commits/%s";
-
-	private static final Logger LOGGER = Logger.getLogger(RetrieveGitLog.class.getName());
+public class GitInteractor {
 	
 	private static String gitTkn;
 	
-	private RetrieveGitLog() {
+	private GitInteractor() {
 		throw new IllegalStateException("Utility class");
 		}
 	
@@ -69,65 +43,7 @@ public class RetrieveGitLog {
 		return clearTkn.toString();
 	}
 	
-	private static Date addMonth(Date date, int i) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        cal.add(Calendar.MONTH, i);
-        return cal.getTime();
-    }
 	
-	//method that has to take a map of string and integer
-	//and write on a csv file how the integer corresponding to each string
-	private static void writeCSVfile(Map<Date, Integer> commitsMap) throws IOException{
-		
-		//in order to order the map by date an hash tree is used
-		TreeMap<Date, Integer> sortedMap = new TreeMap<>(commitsMap);
-		
-		//add zeros for missing month
-		Date currentDate = sortedMap.firstKey();
-		Map<Date, Integer> tempMap = new HashMap<>();
-		
-		for (Map.Entry<Date, Integer> entry : sortedMap.entrySet()) {
-			
-			//if the current date is missing, then we need to add it
-			while(true) {
-				if(currentDate.compareTo(entry.getKey()) == 0) {
-					break;
-				}else if(currentDate.compareTo(entry.getKey()) < 0){
-					//if i am here the current month is missing, so i have to add it
-					tempMap.put(currentDate, 0);
-				}else {
-					LOGGER.log(Level.SEVERE,"Something went wrong in date comparison");
-				}
-				//add 1 month to first date
-				currentDate = addMonth(currentDate, 1);
-			}
-			
-			//add 1 month to first date
-			currentDate = addMonth(currentDate, 1);
-		}
-		
-		sortedMap.putAll(tempMap);
-		
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
-		
-		try (FileWriter csvWriter = new FileWriter(COMMINTS_MONTH_CSV)){
-			
-			csvWriter.append("Date");
-			csvWriter.append(",");
-			csvWriter.append("Commits");
-			csvWriter.append("\n");
-			
-			for (Map.Entry<Date, Integer> entry : sortedMap.entrySet()) {
-				csvWriter.append(dateFormat.format(entry.getKey()));
-				csvWriter.append(",");
-				csvWriter.append(String.valueOf(entry.getValue()));
-		        csvWriter.append("\n");
-			}
-
-		}
-		
-	}
 	
 	//given a list of (JIRA) tickets, this method will return
 	public static Object getGitInfo(List<String> ticketsID, String info) throws IOException, InterruptedException, ParseException {
@@ -139,15 +55,27 @@ public class RetrieveGitLog {
 		Map<Date, Integer> commitsMap = new HashMap<>();
 		int ticketsNum = ticketsID.size();
 		
-		gitTkn = extractTkn(GIT_TKN);
+		gitTkn = extractTkn(Constants.GIT_TKN);
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
 		
 		List<List<String>> classesName = new ArrayList<>();
 		
+		String ticketID;
 		int total = 1;
-		for(String ticketID : ticketsID) {
+		int retried = 0;
+		boolean retrying = false;
+		
+		for(int i = 0; i < ticketsID.size(); ++i) {
 			
-			nextUrl = String.format(SEARCHTKT_LASTCOMMIT_URL, ticketID);
+			ticketID = ticketsID.get(i);
+			
+			if(retrying) {
+				ticketID = ticketID.substring(Constants.JIRA_PROJ_NAME.length());
+				//ticketID will be like '-1234'
+			}
+			
+			nextUrl = String.format(Constants.SEARCHTKT_LASTCOMMIT_URL, ticketID);
+			
 			//HTTP GET request
 			URL url = new URL(nextUrl);
 			
@@ -155,9 +83,9 @@ public class RetrieveGitLog {
 				//are permitted 30 search queries each 60 seconds
 				//sleeping more than needed to make sure that 
 				//timer has been reset
-				LOGGER.log(Level.INFO,"Tokens read: {0}",String.valueOf(total));
+				Constants.LOGGER.log(Level.INFO,"Tokens read: {0}",String.valueOf(total));
 				//26 tickets per minute are searched
-				LOGGER.log(Level.INFO,"Minutes left: {0}",String.valueOf((ticketsNum-total)/25));
+				Constants.LOGGER.log(Level.INFO,"Minutes left: {0}",String.valueOf((ticketsNum-(total-retried))/25));
 				Thread.sleep(70000);
 			}
 			
@@ -181,10 +109,29 @@ public class RetrieveGitLog {
 				
 				//if i get NO results from the query, skip the current ticket ID
 				if(jsonResult.getInt("total_count") == 0) {
+					
+					//if we want to retry finding the ticket
+					//using only the ID
+					if(!Constants.TKT_SEARCH_ACCURATE && !retrying) {
+						System.out.println("Retrying "+ticketID);
+						total++;
+						retried++;
+						retrying = true;
+						response = new StringBuilder();
+						i--;
+						continue;
+					}
+					
+					//if i am here i have retried one time.
+					retrying = false;
+					
+					classesName.add(new ArrayList<>());
 					total++;
 					response = new StringBuilder();
 					continue;
 				}
+				
+				System.out.println("Found "+ticketID);
 				
 				//the response
 				JSONArray items = jsonResult.getJSONArray("items");
@@ -224,12 +171,13 @@ public class RetrieveGitLog {
 		}
 		
 		if(info.compareTo(Constants.COMMIT_CLASS_NAME) == 0) {
+			System.out.println("Returning, size: "+classesName.size());
 			return classesName;
 		}
 		
 		//otherwise
 		//writing into csv file
-		writeCSVfile(commitsMap);
+		CsvFileWriter.monthCommitsCSV(commitsMap);
 		return null;
 		
 	}
@@ -237,8 +185,9 @@ public class RetrieveGitLog {
 	//get classes of a commit with a given status,
 	//if status = null, take all
 	private static List<String> commitClasses(String commitSha, String status) throws JSONException, IOException{
+		
 		List<String> classes = new ArrayList<>();
-		String stringUrl = String.format(COMMITINFO_URL, commitSha);
+		String stringUrl = String.format(Constants.COMMITINFO_URL, commitSha);
 		HttpURLConnection con = null;
 		URL url = new URL(stringUrl);
 		
@@ -270,11 +219,12 @@ public class RetrieveGitLog {
 		
 		for(int i = 0; i < files.length(); ++i) {
 			
+			//if status is null add the classes
 			if(status == null) {
 				classes.add(files.getJSONObject(i).getString("filename"));
 				continue;
 			}
-			
+			//otherwise add them only if status matches the requested one
 			if(status.compareTo(files.getJSONObject(i).getString("status")) == 0) {
 				classes.add(files.getJSONObject(i).getString("filename"));
 			}
@@ -288,12 +238,12 @@ public class RetrieveGitLog {
 		
 		try {
 			//setting up the logger
-			Handler fileHandler = new FileHandler(LOG_FILE);
-			LOGGER.addHandler(fileHandler);
-			List<String> tickets = RetrieveTicketsID.retriveTicket(JIRA_PROJ_NAME);
-			RetrieveGitLog.getGitInfo(tickets, Constants.DATE);
+			Handler fileHandler = new FileHandler(Constants.LOG_FILE);
+			Constants.LOGGER.addHandler(fileHandler);
+			List<String> tickets = RetrieveTicketsID.retriveTicket(Constants.JIRA_PROJ_NAME);
+			GitInteractor.getGitInfo(tickets, Constants.DATE);
 		}catch(Exception e) {
-			LOGGER.log(Level.SEVERE, e.getMessage());
+			Constants.LOGGER.log(Level.SEVERE, e.getMessage());
 		}
 		
 	}
