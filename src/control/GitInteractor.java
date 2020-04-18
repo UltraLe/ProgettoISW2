@@ -124,6 +124,7 @@ public class GitInteractor {
 				response = new StringBuilder();
 				found = false;
 			}else {
+				retrying = false;
 				found = true;
 			}
 			

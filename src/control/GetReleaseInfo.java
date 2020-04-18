@@ -1,4 +1,5 @@
 package control;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,7 +22,6 @@ import org.json.JSONObject;
 import entity.Constants;
 
 import org.json.JSONArray;
-
 
 public class GetReleaseInfo {
 	

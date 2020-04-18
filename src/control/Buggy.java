@@ -72,14 +72,63 @@ public class Buggy {
         int indexOV = 1;
         for(Map.Entry<Integer, LocalDate> entry : indexDate.entrySet()) {
         	
-        	if(openingVersionDate.compareTo(entry.getValue()) > 0) {
-        		continue;
-        	}else {
+        	if(openingVersionDate.compareTo(entry.getValue()) <= 0) {
         		return entry.getKey();
         	}
         }
         
         return indexOV;
+	}
+	
+	private double partialPcalculator(JSONArray affectedVersions, JSONArray tickets, int i) {
+		
+		int fv;
+		int iv;
+		int ov;
+		
+		List<Integer> indexesAVs = new ArrayList<>();
+		
+    	for(int j = 0; j < affectedVersions.length(); ++j) {
+    		//this is the name of the version
+    		String versName = affectedVersions.getJSONObject(j).getString("name");
+    		
+    		if(releaseIndexDate.get(versName) != null) {
+    			indexesAVs.add((Integer)releaseIndexDate.get(versName).get(0));
+        	}
+    		
+    	}
+    	
+    	//now extracting FV
+    	JSONArray fixVersion = ((tickets.getJSONObject(i)).getJSONObject(Constants.FIELDS)).getJSONArray("fixVersions");
+    	
+    	//if fix version is not specified, or has not been released yet, or
+    	//affected version refers to releases that have not been released yet,
+    	//skip the ticket
+    	
+    	if( fixVersion.length() <= 0 || releaseIndexDate.get(fixVersion.getJSONObject(0).getString("name")) == null ||
+    		indexesAVs.isEmpty()) {
+    		return 0;
+    	}
+    			
+    	Collections.sort(indexesAVs);
+    	//retrieving the latest affected version
+    	iv = indexesAVs.get(0);
+    	
+    	//retrieving fix version
+    	fv = (Integer) releaseIndexDate.get(fixVersion.getJSONObject(0).getString("name")).get(0);
+        
+        //and extracting OV
+    	String ovDate = (((tickets.getJSONObject(i)).getJSONObject(Constants.FIELDS)).getString(Constants.CREATED)).substring(0, 10);
+        ov = retrieveOpeningVersion(ovDate);
+        
+        //it may happen that FV = OV, in this case
+        //we ignore the result
+        if(fv != ov) {
+        	return (double)(fv-iv)/(fv-ov);
+        }
+        
+        return 0;
+      
 	}
 	
 	//this function is called when the class is created and 
@@ -105,58 +154,19 @@ public class Buggy {
 			//counting total tickets to work with
 			total = json.getInt("total");
 			//now for each ticket i have to calculate P = (FV-IV)/(FV-OV)
-			int fv;
-			int iv;
-			int ov;
-			
 			for(int i = 0; i < tickets.length(); ++i) {
-				
+			
 				//if the ticket does not have AV, skip proportion
 				JSONArray affectedVersions = ((tickets.getJSONObject(i)).getJSONObject(Constants.FIELDS)).getJSONArray("versions"); 
 
 				if(affectedVersions.length() > 0) {
 					
-					List<Integer> indexesAVs = new ArrayList<>();
+					double calculatedPartial = partialPcalculator(affectedVersions, tickets, i);
 					
-		        	for(int j = 0; j < affectedVersions.length(); ++j) {
-		        		//this is the name of the version
-		        		String versName = affectedVersions.getJSONObject(j).getString("name");
-		        		
-		        		if(releaseIndexDate.get(versName) != null) {
-		        			indexesAVs.add((Integer)releaseIndexDate.get(versName).get(0));
-			        	}
-		        		
-		        	}
-		        	
-		        	//now extracting FV
-		        	JSONArray fixVersion = ((tickets.getJSONObject(i)).getJSONObject(Constants.FIELDS)).getJSONArray("fixVersions");
-		        	
-		        	//if fix version is not specified, or has not been released yet, or
-		        	//affected version refers to releases that have not been released yet,
-		        	//skip the ticket
-		        	
-		        	if( fixVersion.length() <= 0 || releaseIndexDate.get(fixVersion.getJSONObject(0).getString("name")) == null ||
-		        		indexesAVs.isEmpty()) {
-		        		continue;
-		        	}
-		        			
-		        	Collections.sort(indexesAVs);
-		        	//retrieving the latest affected version
-		        	iv = indexesAVs.get(0);
-		        	
-		        	//retrieving fix version
-		        	fv = (Integer) releaseIndexDate.get(fixVersion.getJSONObject(0).getString("name")).get(0);
-		            
-		            //and extracting OV
-		        	String ovDate = (((tickets.getJSONObject(i)).getJSONObject(Constants.FIELDS)).getString(Constants.CREATED)).substring(0, 10);
-		            ov = retrieveOpeningVersion(ovDate);
-		            
-		            //it may happen that FV = OV, in this case
-		            //we ignore the result
-		            if(fv != ov) {
-		            	partialP = partialP + (fv-iv)/(fv-ov);
-			            ticketWithAV++;
-		            }	
+					if(calculatedPartial != 0) {
+						partialP += calculatedPartial;
+						ticketWithAV++;
+					}
 				}
 				
 			}
@@ -324,6 +334,7 @@ public class Buggy {
 				b.getBuggyClasses();
 			} catch (JSONException | IOException | InterruptedException | ParseException e) {
 				Constants.LOGGER.log(Level.SEVERE, e.getMessage());
+				Thread.currentThread().interrupt();
 			}
 	
 	}
