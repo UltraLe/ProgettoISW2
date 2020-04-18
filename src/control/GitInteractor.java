@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -45,7 +46,6 @@ public class GitInteractor {
 	
 	private static void limitRequest(int total, int ticketsNum, int retried, HttpURLConnection con, URL url) 
 									throws IOException, InterruptedException {
-		
 		if(total%29 == 0) {
 			//are permitted 30 search queries each 60 seconds
 			//sleeping more than needed to make sure that 
@@ -56,7 +56,6 @@ public class GitInteractor {
 			Thread.sleep(70000);
 		}
 		
-		con = (HttpURLConnection) url.openConnection();
 		con.setRequestProperty("Accept", "application/vnd.github.cloak-preview");
 		//adding token to avoid rate limitation
 		//this token can be public because it has only read permission
@@ -68,7 +67,6 @@ public class GitInteractor {
 	private static void readResponse(HttpURLConnection con, StringBuilder response) throws IOException {
 		
 		try(BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
-			
 			//reading response
 			String inputLine;
 			while((inputLine = in.readLine()) != null) {
@@ -79,13 +77,69 @@ public class GitInteractor {
 		}
 	}
 	
+	//function that retrieve ticket information from JIRA in json format (jsonResult)
+	//and retries to perform the search if (see the comment below).
+	private static List<Object> ticketInfoJson(String ticketID, boolean retrying, int total, int ticketsNum, int retried,
+										List<List<String>> classesName) throws IOException, InterruptedException {
+		
+		String nextUrl;
+		HttpURLConnection con = null;
+		StringBuilder response = new StringBuilder();
+		boolean found = false;
+		JSONObject jsonResult;
+		
+		List<Object> objToReturn = new ArrayList<>();
+		
+		do {
+		
+			if(retrying) {
+				ticketID = ticketID.substring(Constants.JIRA_PROJ_NAME.length());
+				//ticketID will be like '-1234'
+			}
+			
+			nextUrl = String.format(Constants.SEARCHTKT_LASTCOMMIT_URL, ticketID);
+			
+			//HTTP GET request
+			URL url = new URL(nextUrl);
+			con = (HttpURLConnection) url.openConnection();
+			//method that limits the number of requests per seconds
+			limitRequest(total, ticketsNum, retried, con, url);
+			total++;
+			readResponse(con, response);
+			
+			jsonResult = new JSONObject(response.toString());
+			
+			//if i get NO results from the query, skip the current ticket ID
+			if((jsonResult.getInt("total_count") == 0) && (!Constants.TKT_SEARCH_ACCURATE && !retrying)) {
+
+				//if we want to retry finding the ticket
+				//using only the ID
+				retried++;
+				retrying = true;
+				response = new StringBuilder();
+				found = false;
+				
+			}else if(jsonResult.getInt("total_count") == 0) {
+				retrying = false;
+				classesName.add(new ArrayList<>());
+				response = new StringBuilder();
+				found = false;
+			}else {
+				found = true;
+			}
+			
+		}while(retrying);
+		
+		objToReturn.add(found);
+		objToReturn.add(total);
+		objToReturn.add(jsonResult);
+		
+		return objToReturn;
+	}
+	
 	
 	//given a list of (JIRA) tickets, this method will return
 	public static Object getGitInfo(List<String> ticketsID, String info) throws IOException, InterruptedException, ParseException {
-		
-		HttpURLConnection con = null;
-		StringBuilder response = new StringBuilder();
-		String nextUrl;
 		
 		Map<Date, Integer> commitsMap = new HashMap<>();
 		int ticketsNum = ticketsID.size();
@@ -95,6 +149,7 @@ public class GitInteractor {
 		
 		List<List<String>> classesName = new ArrayList<>();
 		
+		List<Object> tktInfoResult;
 		JSONObject jsonResult = null;
 		
 		String ticketID;
@@ -105,54 +160,17 @@ public class GitInteractor {
 		
 		for(int i = 0; i < ticketsID.size(); ++i) {
 			
-				do {
-					ticketID = ticketsID.get(i);
-					
-					if(retrying) {
-						ticketID = ticketID.substring(Constants.JIRA_PROJ_NAME.length());
-						//ticketID will be like '-1234'
-					}
-					
-					nextUrl = String.format(Constants.SEARCHTKT_LASTCOMMIT_URL, ticketID);
-					
-					//HTTP GET request
-					URL url = new URL(nextUrl);
-					
-					//method that limits the number of requests per seconds
-					limitRequest(total,ticketsNum, retried, con, url);
-					
-					total++;
-					readResponse(con, response);
-					
-					jsonResult = new JSONObject(response.toString());
-					
-					//if i get NO results from the query, skip the current ticket ID
-					if((jsonResult.getInt("total_count") == 0) && (!Constants.TKT_SEARCH_ACCURATE && !retrying)) {
-							
-						//if we want to retry finding the ticket
-						//using only the ID
-						retried++;
-						retrying = true;
-						response = new StringBuilder();
-						found = false;
-						
-					}else if(jsonResult.getInt("total_count") == 0) {
-						retrying = false;
-						classesName.add(new ArrayList<>());
-						response = new StringBuilder();
-						found = false;
-					}else {
-						found = true;
-					}
-					
-				}while(retrying);
+				ticketID = ticketsID.get(i);
+				tktInfoResult = ticketInfoJson(ticketID, retrying, total, ticketsNum, retried, classesName);
+				found = (boolean) tktInfoResult.get(0);
+				total = (int) tktInfoResult.get(1);
+				jsonResult = (JSONObject) tktInfoResult.get(2);
 				
 				if(!found) {
 					continue;
 				}
-				retrying = false;
-				
 				//the response
+				@SuppressWarnings("null")
 				JSONArray items = jsonResult.getJSONArray("items");
 				
 				//Here the method can retrieve the last commit date
@@ -163,7 +181,6 @@ public class GitInteractor {
 					
 					String commitSha = (items.getJSONObject(0)).getString("sha");
 					classesName.add(commitClasses(commitSha, "modified"));
-					response = new StringBuilder();
 					
 				}else {
 				
@@ -177,8 +194,6 @@ public class GitInteractor {
 					}else {
 						commitsMap.put(date, commitsMap.get(date)+1);
 					}
-					
-					response = new StringBuilder();
 				}		
 		}
 		

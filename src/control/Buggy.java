@@ -64,10 +64,10 @@ public class Buggy {
 		Constants.LOGGER.log(Level.INFO, "Moving Window method (proportion) compleated, P value: {0}",String.valueOf(this.estimatedP));
 	} 
 	
-	private int retrieveOpeningVersion(String OVdate) {
+	private int retrieveOpeningVersion(String ovDate) {
 		
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate openingVersionDate = LocalDate.parse(OVdate, formatter);
+        LocalDate openingVersionDate = LocalDate.parse(ovDate, formatter);
         
         int indexOV = 1;
         for(Map.Entry<Integer, LocalDate> entry : indexDate.entrySet()) {
@@ -97,20 +97,22 @@ public class Buggy {
 		
 		do {
 			//given the project, i have to extract all the bug fixed
-			String url = "https://issues.apache.org/jira/rest/api/2/search?jql=project=%22"+this.projName
+			String url = Constants.GIT_SEARCH_URL+this.projName
 					+"%22AND%22issueType%22=%22Bug%22AND(%22status%22=%22Resolved%22OR%22status%22=%22Closed%22)AND%22resolution%22=%22Fixed%22&startAt="+
 					startAt+"&maxResults="+maxResults;
 			JSONObject json = GetReleaseInfo.readJsonFromUrl(url);
-			JSONArray tickets = json.getJSONArray("issues");
+			JSONArray tickets = json.getJSONArray(Constants.ISSUES);
 			
 			//counting total tickets to work with
 			total = json.getInt("total");
 			//now for each ticket i have to calculate P = (FV-IV)/(FV-OV)
-			int FV, IV, OV;
+			int fv;
+			int iv;
+			int ov;
 			
 			for(int i = 0; i < tickets.length(); ++i) {
 				//if the ticket does not have AV, skip,
-				JSONArray affectedVersions = ((tickets.getJSONObject(i)).getJSONObject("fields")).getJSONArray("versions"); 
+				JSONArray affectedVersions = ((tickets.getJSONObject(i)).getJSONObject(Constants.FIELDS)).getJSONArray("versions"); 
 
 				if(affectedVersions.length() > 0) {
 					
@@ -120,8 +122,6 @@ public class Buggy {
 		        		String versName = affectedVersions.getJSONObject(j).getString("name");
 		        		if(releaseIndexDate.get(versName) != null) {
 		        			indexesAVs.add((Integer)releaseIndexDate.get(versName).get(0));
-			        	}else {
-			        		continue;
 			        	}
 		        		
 		        	}
@@ -129,18 +129,18 @@ public class Buggy {
 		        	//it may happen that the fix version has not been released yet
 		        	if(!indexesAVs.isEmpty()) {
 		        		Collections.sort(indexesAVs);
-			        	IV = indexesAVs.get(0);
+			        	iv = indexesAVs.get(0);
 		        	}else {
 		        		continue;
 		        	}
 		        	
 		        	//now extracting FV
-		        	JSONArray fixVersion = ((((tickets.getJSONObject(i)).getJSONObject("fields")).getJSONArray("fixVersions")));
+		        	JSONArray fixVersion = ((tickets.getJSONObject(i)).getJSONObject(Constants.FIELDS)).getJSONArray("fixVersions");
 		        	//we may not have specified av
 		        	if(fixVersion.length() > 0) {
 		        		//the version may not have been released yet
 		        		if(releaseIndexDate.get(fixVersion.getJSONObject(0).getString("name")) != null) {
-		        			FV = (Integer) releaseIndexDate.get(fixVersion.getJSONObject(0).getString("name")).get(0);
+		        			fv = (Integer) releaseIndexDate.get(fixVersion.getJSONObject(0).getString("name")).get(0);
 		        		}else {
 		        			continue;
 		        		}
@@ -149,14 +149,14 @@ public class Buggy {
 		        	}
 		            
 		            //and extracting OV
-		        	String OVdate = (((tickets.getJSONObject(i)).getJSONObject("fields")).getString("created")).substring(0, 10);
-		            OV = retrieveOpeningVersion(OVdate);
+		        	String OVdate = (((tickets.getJSONObject(i)).getJSONObject(Constants.FIELDS)).getString(Constants.CREATED)).substring(0, 10);
+		            ov = retrieveOpeningVersion(OVdate);
 		            //it may happen that FV = OV, in this case
 		            //we ignore the result
-		            if(FV == OV) {
+		            if(fv == ov) {
 		            	continue;
 		            }
-		            partialP = partialP + (FV-IV)/(FV-OV);
+		            partialP = partialP + (fv-iv)/(fv-ov);
 		            ticketWithAV++;
 		        	
 				}
@@ -178,14 +178,14 @@ public class Buggy {
 	//of the project.
 	private List<Integer> getAffectedVersion(String ticket) throws JSONException, IOException {
 		
-		String url = "https://issues.apache.org/jira/rest/api/2/search?jql=project=%22"+this.projName+
+		String url = Constants.GIT_SEARCH_URL+this.projName+
 						"%22AND%22issueType%22=%22Bug%22AND%22id%22=%22"+ticket+"%22";
         JSONObject json = GetReleaseInfo.readJsonFromUrl(url);
-        List<Integer> indexesAVs = new ArrayList<Integer>();  
+        List<Integer> indexesAVs = new ArrayList<>();  
         
         //date be like yyyy-mm-dd
-        String OVdate = ((((json.getJSONArray("issues")).getJSONObject(0)).getJSONObject("fields")).getString("created")).substring(0, 10);
-        int indexOV = retrieveOpeningVersion(OVdate);
+        String ovDate = ((((json.getJSONArray(Constants.ISSUES)).getJSONObject(0)).getJSONObject(Constants.FIELDS)).getString(Constants.CREATED)).substring(0, 10);
+        int indexOV = retrieveOpeningVersion(ovDate);
         
         if(indexOV > this.maxReleaseIndex) {
         	//returning an empty list
@@ -193,7 +193,7 @@ public class Buggy {
         	return indexesAVs;
         }
         
-        JSONArray affectedVersions = (((json.getJSONArray("issues")).getJSONObject(0)).getJSONObject("fields")).getJSONArray("versions");  
+        JSONArray affectedVersions = (((json.getJSONArray(Constants.ISSUES)).getJSONObject(0)).getJSONObject(Constants.FIELDS)).getJSONArray("versions");  
     
         if(affectedVersions.length() > 0) {
         	for(int i = 0; i < affectedVersions.length(); ++i) {
@@ -214,7 +214,7 @@ public class Buggy {
         //calculate predicted IV=FV-(FV-OV)*P, and return AV = [IV, FV)
         String fixVersion;
         //now extracting FV
-    	JSONArray fixVersionJson = (((((json.getJSONArray("issues")).getJSONObject(0)).getJSONObject("fields")).getJSONArray("fixVersions")));
+    	JSONArray fixVersionJson = (((json.getJSONArray(Constants.ISSUES)).getJSONObject(0)).getJSONObject(Constants.FIELDS)).getJSONArray("fixVersions");
     	//we may not have specified fv
     	if(fixVersionJson.length() > 0) {
     		//the version may not have been released yet
@@ -249,17 +249,17 @@ public class Buggy {
     //to the maximum release index that can be analyze
 	private List<String> getAnalyzableTickets(List<String> tickets) throws JSONException, IOException{
 
-		List<String> analyzableTickets = new ArrayList<String>();
+		List<String> analyzableTickets = new ArrayList<>();
 		
 		for(String ticket: tickets) {
 			
-			String url = "https://issues.apache.org/jira/rest/api/2/search?jql=project=%22"+this.projName+
+			String url = Constants.GIT_SEARCH_URL+this.projName+
 					"%22AND%22issueType%22=%22Bug%22AND%22id%22=%22"+ticket+"%22";
 			JSONObject json = GetReleaseInfo.readJsonFromUrl(url);
 	
 			//date be like yyyy-mm-dd
-			String OVdate = ((((json.getJSONArray("issues")).getJSONObject(0)).getJSONObject("fields")).getString("created")).substring(0, 10);
-			int indexOV = retrieveOpeningVersion(OVdate);
+			String ovDate = ((((json.getJSONArray(Constants.ISSUES)).getJSONObject(0)).getJSONObject(Constants.FIELDS)).getString(Constants.CREATED)).substring(0, 10);
+			int indexOV = retrieveOpeningVersion(ovDate);
 	
 			if(indexOV > this.maxReleaseIndex) {
 				continue;
@@ -287,15 +287,14 @@ public class Buggy {
 		//retrieve the classes that has been modified by this ticket
 		//edit getGitInfo in order to return something...
 		@SuppressWarnings("unchecked")
-		//TODO does not work... because of cast ?
 		List<List<String>> classesName = (List<List<String>>) GitInteractor.getGitInfo(analyzableTickets, Constants.COMMIT_CLASS_NAME);
 		
 		List<List<Integer>> affectedVersions = new ArrayList<>();
 		
 		//retrieving the affected version of all tickets
 		for(String tkt : analyzableTickets) {
-			List<Integer> AVs = this.getAffectedVersion(tkt);
-			affectedVersions.add(AVs);
+			List<Integer> avs = this.getAffectedVersion(tkt);
+			affectedVersions.add(avs);
 		}
 		
 		//building classes

@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.Collections;
 import java.util.Comparator;
 import java.time.LocalDate;
@@ -68,15 +67,9 @@ public class GetReleaseInfo {
 		            }
 		         }
 		         // order releases by date
-		         Collections.sort(releases, new Comparator<LocalDateTime>(){
-		            //@Override
-		            public int compare(LocalDateTime o1, LocalDateTime o2) {
-		                return o1.compareTo(o2);
-		            }
-		         });
+		         Collections.sort(releases, (x, y) -> x.compareTo(y));
 		         
 		         //i need to calculate the 'half project life'
-		        
 		         LocalDateTime first = releases.get(0);
 		         LocalDateTime last = releases.get(releases.size()-1);
 		        
@@ -145,5 +138,6 @@ public class GetReleaseInfo {
 		   System.out.println("Last index to analyze: "+GetReleaseInfo.lastIndexOfVersionAalyzable);
 		   
 	   }
+	   
    
 }
