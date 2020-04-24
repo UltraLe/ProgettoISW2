@@ -109,7 +109,8 @@ public class Buggy {
     		indexesAVs.isEmpty()) {
     		return 0;
     	}
-    			
+    	
+    	//sorting the affected versions
     	Collections.sort(indexesAVs);
     	//retrieving the latest affected version
     	iv = indexesAVs.get(0);
@@ -123,7 +124,10 @@ public class Buggy {
         
         //it may happen that FV = OV, in this case
         //we ignore the result
-        if(fv != ov) {
+        //it may also happen that the affected version
+        //comes later that the opening version... in this 
+        //case ignore the ticket.
+        if(fv != ov && iv < ov) {
         	return (double)(fv-iv)/(fv-ov);
         }
         
@@ -208,7 +212,8 @@ public class Buggy {
         		//this is the name of the version
         		String versName = affectedVersions.getJSONObject(i).getString("name");
         		//if the affected version has not been released yet
-        		if(releaseIndexDate.get(versName) != null) {
+        		//or if the affected version comes before the opening version, ignore it
+        		if(releaseIndexDate.get(versName) != null && (int)releaseIndexDate.get(versName).get(0) < indexOV) {
         			indexesAVs.add((Integer)releaseIndexDate.get(versName).get(0));
         		}else {
         			return indexesAVs;
@@ -243,7 +248,7 @@ public class Buggy {
         }
         int indexFV = (Integer) releaseIndexDate.get(fixVersion).get(0);
         
-        int predictedIV = (int)(indexFV-(indexFV-indexOV)*estimatedP);
+        int predictedIV = (int)(indexFV-(double)(indexFV-indexOV)*estimatedP);
         //AV = [predictedIV, FV)
         for(int i = predictedIV; i < indexFV; ++i) {
         	indexesAVs.add(i);
@@ -269,7 +274,7 @@ public class Buggy {
 			String ovDate = ((((json.getJSONArray(Constants.ISSUES)).getJSONObject(0)).getJSONObject(Constants.FIELDS)).getString(Constants.CREATED)).substring(0, 10);
 			int indexOV = retrieveOpeningVersion(ovDate);
 	
-			if(indexOV > this.maxReleaseIndex) {
+			if(indexOV >= this.maxReleaseIndex) {
 				continue;
 			}
 			
@@ -287,6 +292,7 @@ public class Buggy {
 		
 		Constants.LOGGER.log(Level.INFO, "Retrieving all tickets of type BUG");
 		List<String> allBugTickets = RetrieveTicketsID.retriveTicket(this.projName);
+		
 		Constants.LOGGER.log(Level.INFO, "Filtering {0} 'BUG' tickets to analyze", allBugTickets.size());
 		List<AnalyzedClass> classes = new ArrayList<>();
 		List<String> analyzableTickets = this.getAnalyzableTickets(allBugTickets);
@@ -324,7 +330,7 @@ public class Buggy {
 			}
 		}
 		
-		CsvFileWriter.writeBuggyClasses(classes);
+		CsvFileWriter.writeBuggyClasses(classes, Constants.JIRA_PROJ_NAME);
 	}
 	
 	public static void main(String[] args){

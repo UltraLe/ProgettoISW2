@@ -6,7 +6,9 @@ public class Constants {
 	
 	public static final String COMMIT_CLASS_NAME = "COMMIT_CLASS_NAME"; 
 	public static final String DATE = "DATE"; 
-	public static final String BUGGY_FILENAME = "buggyClasses.csv";
+	public static final String BUGGY_FILENAME = "buggyClasses";
+	
+	public static final String CSV_EXT = ".csv";
 	
 	public static final String GIT_SEARCH_URL = "https://issues.apache.org/jira/rest/api/2/search?jql=project=%22";
 	
@@ -20,7 +22,7 @@ public class Constants {
 	//but it has to be obscured due to github policies
 	public static final String GIT_TKN = "e 6 e 9 8 0 3 6 a 3 6 c 5 f 6 9 5 0 5 6 b c b 6 6 f 5 5 5 d e 6 6 c 1 0 c f 3 d";
 		
-	public static final String COMMINTS_MONTH_CSV ="commitsPerMonth.csv";
+	public static final String COMMINTS_MONTH ="commitsPerMonth";
 	public static final String LOG_FILE = "log.txt";
 		
 	//GITHUB REST API to retrieve the commit with given (%s to specify later on) ticket ID

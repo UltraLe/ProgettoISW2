@@ -43,7 +43,7 @@ public class GitInteractor {
 		return clearTkn.toString();
 	}
 	
-	private static void limitRequest(int total, int ticketsNum, int retried, HttpURLConnection con) 
+	private static void limitRequest(int total, int ticketsNum, HttpURLConnection con) 
 									throws IOException, InterruptedException {
 		if(total%29 == 0) {
 			//are permitted 30 search queries each 60 seconds
@@ -51,7 +51,7 @@ public class GitInteractor {
 			//timer has been reset
 			Constants.LOGGER.log(Level.INFO,"Tokens read: {0}",String.valueOf(total));
 			//26 tickets per minute are searched
-			Constants.LOGGER.log(Level.INFO,"Minutes left: {0}",String.valueOf((ticketsNum-(total-retried))/25));
+			Constants.LOGGER.log(Level.INFO,"Minutes left: {0}",String.valueOf((ticketsNum-total)/25));
 			Thread.sleep(70000);
 		}
 		
@@ -102,15 +102,17 @@ public class GitInteractor {
 			URL url = new URL(nextUrl);
 			con = (HttpURLConnection) url.openConnection();
 			//method that limits the number of requests per seconds
-			limitRequest(total, ticketsNum, retried, con);
+			limitRequest(total, ticketsNum, con);
+			//TODO fix total minutes left
 			total++;
+			//TODO check if response is different
 			readResponse(con, response);
 			
 			jsonResult = new JSONObject(response.toString());
 			
 			//if i get NO results from the query, skip the current ticket ID
 			if((jsonResult.getInt("total_count") == 0) && (!Constants.TKT_SEARCH_ACCURATE && !retrying)) {
-
+				
 				//if we want to retry finding the ticket
 				//using only the ID
 				retried++;
@@ -126,7 +128,7 @@ public class GitInteractor {
 			}else {
 				retrying = false;
 				found = true;
-			}
+			}		
 			
 		}while(retrying);
 		
@@ -203,7 +205,7 @@ public class GitInteractor {
 		
 		//otherwise
 		//writing into csv file
-		CsvFileWriter.monthCommitsCSV(commitsMap);
+		CsvFileWriter.monthCommitsCSV(commitsMap, Constants.JIRA_PROJ_NAME);
 		return null;
 		
 	}

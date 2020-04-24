@@ -29,7 +29,7 @@ public class CsvFileWriter {
 	
 	//method that has to take a map of string and integer
 	//and write on a csv file how the integer corresponding to each string
-	public static void monthCommitsCSV(Map<Date, Integer> commitsMap) throws IOException{
+	public static void monthCommitsCSV(Map<Date, Integer> commitsMap, String projName) throws IOException{
 		
 		//in order to order the map by date an hash tree is used
 		TreeMap<Date, Integer> sortedMap = new TreeMap<>(commitsMap);
@@ -62,7 +62,7 @@ public class CsvFileWriter {
 		
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
 		
-		try (FileWriter csvWriter = new FileWriter(Constants.COMMINTS_MONTH_CSV)){
+		try (FileWriter csvWriter = new FileWriter(Constants.COMMINTS_MONTH+projName+Constants.CSV_EXT)){
 			
 			csvWriter.append("Date");
 			csvWriter.append(",");
@@ -79,9 +79,9 @@ public class CsvFileWriter {
 		}
 	}
 	
-	public static void writeBuggyClasses(List<AnalyzedClass> classes) throws IOException {
+	public static void writeBuggyClasses(List<AnalyzedClass> classes, String projName) throws IOException {
 		
-		try (FileWriter csvWriter = new FileWriter(Constants.BUGGY_FILENAME)){
+		try (FileWriter csvWriter = new FileWriter(Constants.BUGGY_FILENAME+projName+Constants.CSV_EXT)){
 					
 			csvWriter.append("Class");
 			csvWriter.append(",");
