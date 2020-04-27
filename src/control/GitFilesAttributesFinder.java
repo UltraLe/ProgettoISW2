@@ -3,6 +3,8 @@ package control;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -56,15 +58,28 @@ public class GitFilesAttributesFinder {
 		
 		List<LocalDate> sinceUntil = new ArrayList<>();
 		
-		//TODO magic
+		//if the release number is 1, since is the birth date of the project
+		//but i do not need to extract it, i can just set an ''old'' date
+		if(releaseIndx == 1) {
+			sinceUntil.add(LocalDate.of(1971, Month.JANUARY, 1));
+		}else {
+			//otherwise the release 'i' has started when the release 'i-1'
+			sinceUntil.add(indexDate.get(releaseIndx-1));
+		}
+		
+		sinceUntil.add(indexDate.get(releaseIndx));
 		
 		return sinceUntil;
 		
 	}
 	
-	private void getFileAttributePerRelease(int release) {
+	private void getFileAttributesPerRelease(int release) {
 		
 		List<LocalDate> siceUntil = getReleaseDateInterval(release);
+		
+		//github api wants date in ISO format
+		String since = siceUntil.get(0).format(DateTimeFormatter.ISO_INSTANT);
+		String until = siceUntil.get(1).format(DateTimeFormatter.ISO_INSTANT);
 		
 		//super magic
 		
@@ -74,7 +89,9 @@ public class GitFilesAttributesFinder {
 	public void start() {
 		
 		//for each analyzable release, call getFileAttributePerRelease
-		
+		for(int i = 1 ; i < this.maxReleaseIndex; ++i) {
+			getFileAttributesPerRelease(i);
+		}
 		
 	}
 	

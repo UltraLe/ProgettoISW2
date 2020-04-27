@@ -51,7 +51,12 @@ public class GitInteractor {
 			//timer has been reset
 			Constants.LOGGER.log(Level.INFO,"Tokens read: {0}",String.valueOf(total));
 			//26 tickets per minute are searched
-			Constants.LOGGER.log(Level.INFO,"Minutes left: {0}",String.valueOf((ticketsNum-total)/25));
+			if(Constants.TKT_SEARCH_FAST) {
+				Constants.LOGGER.log(Level.INFO,"Minutes left: {0}",String.valueOf((ticketsNum-total)/25));
+			}
+			//if fast ticket search is not enabled, minutes left
+			//are not predictable
+			
 			Thread.sleep(70000);
 		}
 		

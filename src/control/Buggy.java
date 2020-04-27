@@ -251,7 +251,9 @@ public class Buggy {
         }
         int indexFV = (Integer) releaseIndexDate.get(fixVersion).get(0);
         
-        int predictedIV = (int)(indexFV-(double)(indexFV-indexOV)*estimatedP);
+        int predictedIV = (int) Math.round((indexFV-(double)(indexFV-indexOV)*estimatedP));
+        //predictedIV may be like 0.3, but indexes starts from 1
+        predictedIV = Math.max(1, predictedIV);
         //AV = [predictedIV, FV)
         for(int i = predictedIV; i < indexFV; ++i) {
         	indexesAVs.add(i);
@@ -301,8 +303,7 @@ public class Buggy {
 		List<String> analyzableTickets = this.getAnalyzableTickets(allBugTickets);
 		Constants.LOGGER.log(Level.INFO, "Obtained {0} analyzable tickets", analyzableTickets.size());
 		
-		//retrieve the classes that has been modified by this ticket
-		//edit getGitInfo in order to return something...
+		//retrieve the classes that has been modified by this lists of tickets (analyzableTickets)
 		@SuppressWarnings("unchecked")
 		List<List<String>> classesName = (List<List<String>>) GitInteractor.getGitInfo(analyzableTickets, Constants.COMMIT_CLASS_NAME);
 		

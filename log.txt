@@ -2,8 +2,8 @@
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
 <record>
-  <date>2020-04-27T11:35:54</date>
-  <millis>1587980154811</millis>
+  <date>2020-04-27T13:22:47</date>
+  <millis>1587986567406</millis>
   <sequence>0</sequence>
   <logger>entity.Constants</logger>
   <level>INFO</level>
@@ -13,19 +13,19 @@
   <message>Moving Window method (proportion) starting...</message>
 </record>
 <record>
-  <date>2020-04-27T12:13:42</date>
-  <millis>1587982422305</millis>
+  <date>2020-04-27T13:23:35</date>
+  <millis>1587986615362</millis>
   <sequence>1</sequence>
   <logger>entity.Constants</logger>
-  <level>SEVERE</level>
+  <level>INFO</level>
   <class>control.Buggy</class>
-  <method>&lt;init&gt;</method>
+  <method>setup</method>
   <thread>1</thread>
-  <message>issues.apache.org</message>
+  <message>Moving Window method (proportion) compleated, P value: 1.1022294808811666</message>
 </record>
 <record>
-  <date>2020-04-27T12:13:42</date>
-  <millis>1587982422308</millis>
+  <date>2020-04-27T13:23:35</date>
+  <millis>1587986615364</millis>
   <sequence>2</sequence>
   <logger>entity.Constants</logger>
   <level>INFO</level>
@@ -35,14 +35,663 @@
   <message>Retrieving all tickets of type BUG</message>
 </record>
 <record>
-  <date>2020-04-27T12:13:42</date>
-  <millis>1587982422313</millis>
+  <date>2020-04-27T13:23:35</date>
+  <millis>1587986615564</millis>
   <sequence>3</sequence>
   <logger>entity.Constants</logger>
-  <level>SEVERE</level>
+  <level>INFO</level>
   <class>control.Buggy</class>
-  <method>main</method>
+  <method>getBuggyClasses</method>
   <thread>1</thread>
-  <message>issues.apache.org</message>
+  <message>Filtering 883 BUG tickets to analyze</message>
+</record>
+<record>
+  <date>2020-04-27T13:25:16</date>
+  <millis>1587986716064</millis>
+  <sequence>4</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.Buggy</class>
+  <method>getBuggyClasses</method>
+  <thread>1</thread>
+  <message>Obtained 428 analyzable tickets</message>
+</record>
+<record>
+  <date>2020-04-27T13:25:28</date>
+  <millis>1587986728191</millis>
+  <sequence>5</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Tokens read: 29</message>
+</record>
+<record>
+  <date>2020-04-27T13:25:28</date>
+  <millis>1587986728192</millis>
+  <sequence>6</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Minutes left: 15</message>
+</record>
+<record>
+  <date>2020-04-27T13:26:49</date>
+  <millis>1587986809754</millis>
+  <sequence>7</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Tokens read: 58</message>
+</record>
+<record>
+  <date>2020-04-27T13:26:49</date>
+  <millis>1587986809755</millis>
+  <sequence>8</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Minutes left: 14</message>
+</record>
+<record>
+  <date>2020-04-27T13:28:21</date>
+  <millis>1587986901598</millis>
+  <sequence>9</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Tokens read: 87</message>
+</record>
+<record>
+  <date>2020-04-27T13:28:21</date>
+  <millis>1587986901600</millis>
+  <sequence>10</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Minutes left: 13</message>
+</record>
+<record>
+  <date>2020-04-27T13:29:43</date>
+  <millis>1587986983856</millis>
+  <sequence>11</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Tokens read: 116</message>
+</record>
+<record>
+  <date>2020-04-27T13:29:43</date>
+  <millis>1587986983857</millis>
+  <sequence>12</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Minutes left: 12</message>
+</record>
+<record>
+  <date>2020-04-27T13:31:09</date>
+  <millis>1587987069373</millis>
+  <sequence>13</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Tokens read: 145</message>
+</record>
+<record>
+  <date>2020-04-27T13:31:09</date>
+  <millis>1587987069374</millis>
+  <sequence>14</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Minutes left: 11</message>
+</record>
+<record>
+  <date>2020-04-27T13:32:37</date>
+  <millis>1587987157138</millis>
+  <sequence>15</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Tokens read: 174</message>
+</record>
+<record>
+  <date>2020-04-27T13:32:37</date>
+  <millis>1587987157139</millis>
+  <sequence>16</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Minutes left: 10</message>
+</record>
+<record>
+  <date>2020-04-27T13:33:58</date>
+  <millis>1587987238957</millis>
+  <sequence>17</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Tokens read: 203</message>
+</record>
+<record>
+  <date>2020-04-27T13:33:58</date>
+  <millis>1587987238959</millis>
+  <sequence>18</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Minutes left: 9</message>
+</record>
+<record>
+  <date>2020-04-27T13:35:26</date>
+  <millis>1587987326081</millis>
+  <sequence>19</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Tokens read: 232</message>
+</record>
+<record>
+  <date>2020-04-27T13:35:26</date>
+  <millis>1587987326082</millis>
+  <sequence>20</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Minutes left: 7</message>
+</record>
+<record>
+  <date>2020-04-27T13:36:51</date>
+  <millis>1587987411543</millis>
+  <sequence>21</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Tokens read: 261</message>
+</record>
+<record>
+  <date>2020-04-27T13:36:51</date>
+  <millis>1587987411544</millis>
+  <sequence>22</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Minutes left: 6</message>
+</record>
+<record>
+  <date>2020-04-27T13:38:18</date>
+  <millis>1587987498294</millis>
+  <sequence>23</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Tokens read: 290</message>
+</record>
+<record>
+  <date>2020-04-27T13:38:18</date>
+  <millis>1587987498296</millis>
+  <sequence>24</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Minutes left: 5</message>
+</record>
+<record>
+  <date>2020-04-27T13:39:40</date>
+  <millis>1587987580762</millis>
+  <sequence>25</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Tokens read: 319</message>
+</record>
+<record>
+  <date>2020-04-27T13:39:40</date>
+  <millis>1587987580763</millis>
+  <sequence>26</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Minutes left: 4</message>
+</record>
+<record>
+  <date>2020-04-27T13:41:07</date>
+  <millis>1587987667651</millis>
+  <sequence>27</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Tokens read: 348</message>
+</record>
+<record>
+  <date>2020-04-27T13:41:07</date>
+  <millis>1587987667652</millis>
+  <sequence>28</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Minutes left: 3</message>
+</record>
+<record>
+  <date>2020-04-27T13:42:30</date>
+  <millis>1587987750144</millis>
+  <sequence>29</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Tokens read: 377</message>
+</record>
+<record>
+  <date>2020-04-27T13:42:30</date>
+  <millis>1587987750145</millis>
+  <sequence>30</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Minutes left: 2</message>
+</record>
+<record>
+  <date>2020-04-27T13:43:53</date>
+  <millis>1587987833089</millis>
+  <sequence>31</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Tokens read: 406</message>
+</record>
+<record>
+  <date>2020-04-27T13:43:53</date>
+  <millis>1587987833090</millis>
+  <sequence>32</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Minutes left: 0</message>
+</record>
+<record>
+  <date>2020-04-27T13:45:21</date>
+  <millis>1587987921811</millis>
+  <sequence>33</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Tokens read: 435</message>
+</record>
+<record>
+  <date>2020-04-27T13:45:21</date>
+  <millis>1587987921812</millis>
+  <sequence>34</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Minutes left: 0</message>
+</record>
+<record>
+  <date>2020-04-27T13:46:45</date>
+  <millis>1587988005149</millis>
+  <sequence>35</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Tokens read: 464</message>
+</record>
+<record>
+  <date>2020-04-27T13:46:45</date>
+  <millis>1587988005150</millis>
+  <sequence>36</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Minutes left: -1</message>
+</record>
+<record>
+  <date>2020-04-27T13:48:11</date>
+  <millis>1587988091357</millis>
+  <sequence>37</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Tokens read: 493</message>
+</record>
+<record>
+  <date>2020-04-27T13:48:11</date>
+  <millis>1587988091358</millis>
+  <sequence>38</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Minutes left: -2</message>
+</record>
+<record>
+  <date>2020-04-27T13:49:34</date>
+  <millis>1587988174957</millis>
+  <sequence>39</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Tokens read: 522</message>
+</record>
+<record>
+  <date>2020-04-27T13:49:34</date>
+  <millis>1587988174958</millis>
+  <sequence>40</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Minutes left: -3</message>
+</record>
+<record>
+  <date>2020-04-27T13:50:58</date>
+  <millis>1587988258491</millis>
+  <sequence>41</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Tokens read: 551</message>
+</record>
+<record>
+  <date>2020-04-27T13:50:58</date>
+  <millis>1587988258492</millis>
+  <sequence>42</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Minutes left: -4</message>
+</record>
+<record>
+  <date>2020-04-27T13:52:22</date>
+  <millis>1587988342840</millis>
+  <sequence>43</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Tokens read: 580</message>
+</record>
+<record>
+  <date>2020-04-27T13:52:22</date>
+  <millis>1587988342841</millis>
+  <sequence>44</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Minutes left: -6</message>
+</record>
+<record>
+  <date>2020-04-27T13:53:44</date>
+  <millis>1587988424562</millis>
+  <sequence>45</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Tokens read: 609</message>
+</record>
+<record>
+  <date>2020-04-27T13:53:44</date>
+  <millis>1587988424563</millis>
+  <sequence>46</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Minutes left: -7</message>
+</record>
+<record>
+  <date>2020-04-27T13:55:10</date>
+  <millis>1587988510967</millis>
+  <sequence>47</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Tokens read: 638</message>
+</record>
+<record>
+  <date>2020-04-27T13:55:10</date>
+  <millis>1587988510967</millis>
+  <sequence>48</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Minutes left: -8</message>
+</record>
+<record>
+  <date>2020-04-27T13:56:35</date>
+  <millis>1587988595066</millis>
+  <sequence>49</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Tokens read: 667</message>
+</record>
+<record>
+  <date>2020-04-27T13:56:35</date>
+  <millis>1587988595067</millis>
+  <sequence>50</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Minutes left: -9</message>
+</record>
+<record>
+  <date>2020-04-27T13:57:56</date>
+  <millis>1587988676857</millis>
+  <sequence>51</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Tokens read: 696</message>
+</record>
+<record>
+  <date>2020-04-27T13:57:56</date>
+  <millis>1587988676858</millis>
+  <sequence>52</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Minutes left: -10</message>
+</record>
+<record>
+  <date>2020-04-27T13:59:25</date>
+  <millis>1587988765486</millis>
+  <sequence>53</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Tokens read: 725</message>
+</record>
+<record>
+  <date>2020-04-27T13:59:25</date>
+  <millis>1587988765487</millis>
+  <sequence>54</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Minutes left: -11</message>
+</record>
+<record>
+  <date>2020-04-27T14:00:54</date>
+  <millis>1587988854410</millis>
+  <sequence>55</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Tokens read: 754</message>
+</record>
+<record>
+  <date>2020-04-27T14:00:54</date>
+  <millis>1587988854411</millis>
+  <sequence>56</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Minutes left: -13</message>
+</record>
+<record>
+  <date>2020-04-27T14:02:20</date>
+  <millis>1587988940573</millis>
+  <sequence>57</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Tokens read: 783</message>
+</record>
+<record>
+  <date>2020-04-27T14:02:20</date>
+  <millis>1587988940573</millis>
+  <sequence>58</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Minutes left: -14</message>
+</record>
+<record>
+  <date>2020-04-27T14:03:45</date>
+  <millis>1587989025150</millis>
+  <sequence>59</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Tokens read: 812</message>
+</record>
+<record>
+  <date>2020-04-27T14:03:45</date>
+  <millis>1587989025150</millis>
+  <sequence>60</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Minutes left: -15</message>
+</record>
+<record>
+  <date>2020-04-27T14:05:18</date>
+  <millis>1587989118390</millis>
+  <sequence>61</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Tokens read: 841</message>
+</record>
+<record>
+  <date>2020-04-27T14:05:18</date>
+  <millis>1587989118391</millis>
+  <sequence>62</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitInteractor</class>
+  <method>limitRequest</method>
+  <thread>1</thread>
+  <message>Minutes left: -16</message>
 </record>
 </log>
