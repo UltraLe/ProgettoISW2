@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
 
-import entity.AnalyzedClass;
+import entity.AnalyzedFile;
 import entity.Constants;
 
 public class CsvFileWriter {
@@ -62,7 +62,9 @@ public class CsvFileWriter {
 		
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
 		
-		try (FileWriter csvWriter = new FileWriter(Constants.COMMINTS_MONTH+projName+Constants.CSV_EXT)){
+		String filename = whichFilename(Constants.COMMINTS_MONTH,projName,Constants.CSV_EXT);
+		
+		try (FileWriter csvWriter = new FileWriter(filename)){
 			
 			csvWriter.append("Date");
 			csvWriter.append(",");
@@ -79,16 +81,32 @@ public class CsvFileWriter {
 		}
 	}
 	
-	public static void writeBuggyClasses(List<AnalyzedClass> classes, String projName) throws IOException {
+	private static String whichFilename(String name, String ext, String projName) {
 		
-		try (FileWriter csvWriter = new FileWriter(Constants.BUGGY_FILENAME+projName+Constants.CSV_EXT)){
+		String filename;
+		
+		if(Constants.TKT_SEARCH_FAST) {
+			filename = name+projName+Constants.FAST+ext;
+		}else {
+			filename = name+projName+ext;
+		}
+		
+		return filename;
+	}
+	
+	public static void writeBuggyClasses(List<AnalyzedFile> classes, String projName) throws IOException {
+		
+		String filename = whichFilename(Constants.BUGGY_FILENAME,projName,Constants.CSV_EXT);
+	
+		
+		try (FileWriter csvWriter = new FileWriter(filename)){
 					
 			csvWriter.append("Class");
 			csvWriter.append(",");
 			csvWriter.append("Buggy In Version");
 			csvWriter.append("\n");
 					
-			for (AnalyzedClass entry : classes) {
+			for (AnalyzedFile entry : classes) {
 				for(Integer av : entry.getBuggy()) {
 					
 					csvWriter.append(entry.getName());

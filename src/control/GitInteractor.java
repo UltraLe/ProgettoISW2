@@ -111,7 +111,7 @@ public class GitInteractor {
 			jsonResult = new JSONObject(response.toString());
 			
 			//if i get NO results from the query, skip the current ticket ID
-			if((jsonResult.getInt("total_count") == 0) && (!Constants.TKT_SEARCH_ACCURATE && !retrying)) {
+			if((jsonResult.getInt("total_count") == 0) && (!Constants.TKT_SEARCH_FAST && !retrying)) {
 				
 				//if we want to retry finding the ticket
 				//using only the ID

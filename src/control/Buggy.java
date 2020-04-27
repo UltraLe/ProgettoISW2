@@ -18,7 +18,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import entity.AnalyzedClass;
+import entity.AnalyzedFile;
 import entity.Constants;
 
 public class Buggy {
@@ -28,7 +28,7 @@ public class Buggy {
 	//List[0] = release index
 	//List[1] = release date
 	private Map<String, List<Object>> releaseIndexDate;
-	private Map<Integer, LocalDate> indexDate;
+	private TreeMap<Integer, LocalDate> indexDate;
 	private int maxReleaseIndex;
 	private String projName;
 	
@@ -69,7 +69,8 @@ public class Buggy {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate openingVersionDate = LocalDate.parse(ovDate, formatter);
         
-        int indexOV = 1;
+        int lastIndxVers = indexDate.lastEntry().getKey();
+        
         for(Map.Entry<Integer, LocalDate> entry : indexDate.entrySet()) {
         	
         	if(openingVersionDate.compareTo(entry.getValue()) <= 0) {
@@ -77,7 +78,7 @@ public class Buggy {
         	}
         }
         
-        return indexOV;
+        return lastIndxVers;
 	}
 	
 	private double partialPcalculator(JSONArray affectedVersions, JSONArray tickets, int i) {
@@ -88,6 +89,7 @@ public class Buggy {
 		
 		List<Integer> indexesAVs = new ArrayList<>();
 		
+		//here i retrieve all the affected versions referred by a ticket
     	for(int j = 0; j < affectedVersions.length(); ++j) {
     		//this is the name of the version
     		String versName = affectedVersions.getJSONObject(j).getString("name");
@@ -97,6 +99,11 @@ public class Buggy {
         	}
     		
     	}
+    	
+    	//sorting the affected versions
+    	Collections.sort(indexesAVs);
+    	//retrieving the latest affected version
+    	iv = indexesAVs.get(0);
     	
     	//now extracting FV
     	JSONArray fixVersion = ((tickets.getJSONObject(i)).getJSONObject(Constants.FIELDS)).getJSONArray("fixVersions");
@@ -110,11 +117,6 @@ public class Buggy {
     		return 0;
     	}
     	
-    	//sorting the affected versions
-    	Collections.sort(indexesAVs);
-    	//retrieving the latest affected version
-    	iv = indexesAVs.get(0);
-    	
     	//retrieving fix version
     	fv = (Integer) releaseIndexDate.get(fixVersion.getJSONObject(0).getString("name")).get(0);
         
@@ -123,15 +125,15 @@ public class Buggy {
         ov = retrieveOpeningVersion(ovDate);
         
         //it may happen that FV = OV, in this case
-        //we ignore the result
+        //the ticket will be ignored.
         //it may also happen that the affected version
         //comes later that the opening version... in this 
         //case ignore the ticket.
-        if(fv != ov && iv < ov) {
+        if(iv < ov && fv != ov) {
         	return (double)(fv-iv)/(fv-ov);
+        }else {
+        	return -1;
         }
-        
-        return 0;
       
 	}
 	
@@ -145,7 +147,7 @@ public class Buggy {
 		int count = 0;
 		int ticketWithAV = 0;
 		double partialP = 0;
-		double percentage = 0.1;
+		double percentage = 0.8;
 		
 		do {
 			//given the project, i have to extract all the bug fixed
@@ -167,7 +169,8 @@ public class Buggy {
 					
 					double calculatedPartial = partialPcalculator(affectedVersions, tickets, i);
 					
-					if(calculatedPartial != 0) {
+					if(calculatedPartial != -1) {
+						
 						partialP += calculatedPartial;
 						ticketWithAV++;
 					}
@@ -179,10 +182,10 @@ public class Buggy {
 			
 			//reading next 1000 tickets, if any
 			startAt += maxResults;
-			maxResults += maxResults;
+
 		}while(ticketWithAV < total*percentage && count < total);
 		
-		this.estimatedP = partialP/total;
+		this.estimatedP = partialP/ticketWithAV;
 	}
 	
 	//This method return the AV of a ticket if provided or by using
@@ -294,7 +297,7 @@ public class Buggy {
 		List<String> allBugTickets = RetrieveTicketsID.retriveTicket(this.projName);
 		
 		Constants.LOGGER.log(Level.INFO, "Filtering {0} 'BUG' tickets to analyze", allBugTickets.size());
-		List<AnalyzedClass> classes = new ArrayList<>();
+		List<AnalyzedFile> classes = new ArrayList<>();
 		List<String> analyzableTickets = this.getAnalyzableTickets(allBugTickets);
 		Constants.LOGGER.log(Level.INFO, "Obtained {0} analyzable tickets", analyzableTickets.size());
 		
@@ -323,7 +326,7 @@ public class Buggy {
 			
 			for(int j = 0; j < classesName.get(i).size(); ++j) {
 				//add to analyzed classes
-				AnalyzedClass newClass = new AnalyzedClass(classesName.get(i).get(j));
+				AnalyzedFile newClass = new AnalyzedFile(classesName.get(i).get(j));
 				newClass.addBuggy(affectedVersions.get(i));
 				
 				classes.add(newClass);

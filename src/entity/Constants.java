@@ -40,7 +40,8 @@ public class Constants {
 	//(such us [PRJNAME-1234]) BUT all are like %-1234,
 	//In order to get as much commits as possible it is useful
 	//to search commits that contains '-0000' in the comment
-	public static final boolean TKT_SEARCH_ACCURATE = false;
+	public static final boolean TKT_SEARCH_FAST = false;
+	public static final String FAST = "FAST";
 	
 	public static final Logger LOGGER = Logger.getLogger(Constants.class.getName());
 	
