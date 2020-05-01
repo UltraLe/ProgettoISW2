@@ -28,6 +28,77 @@ public class CsvFileWriter {
         return cal.getTime();
     }
 	
+	public static void writeFilesAttributes(TreeMap<Integer, List<AnalyzedFile>> allReleasesFiles, String projName) throws IOException {
+		
+		String filename = whichFilename(Constants.FINAL_TABLE,projName,Constants.CSV_EXT);
+		
+		try (FileWriter csvWriter = new FileWriter(filename)){
+			
+			csvWriter.append("Release Index");
+			csvWriter.append(",");
+			csvWriter.append("File");
+			csvWriter.append(",");
+			csvWriter.append("LOC");
+			csvWriter.append(",");
+			csvWriter.append("LOC Thouched");
+			csvWriter.append(",");
+			csvWriter.append("LOC Added");
+			csvWriter.append(",");
+			csvWriter.append("MAX LOC Added");
+			csvWriter.append(",");
+			csvWriter.append("Num Revisions");
+			csvWriter.append(",");
+			csvWriter.append("Num Authors");
+			csvWriter.append(",");
+			csvWriter.append("Churn");
+			csvWriter.append(",");
+			csvWriter.append("MAX Churn");
+			csvWriter.append(",");
+			csvWriter.append("ChgSet Size");
+			csvWriter.append(",");
+			csvWriter.append("Max ChgSetSize");
+			csvWriter.append("\n");
+			
+			//missing, buggy, age, weighted age
+			
+			for (Map.Entry<Integer, List<AnalyzedFile>> entry : allReleasesFiles.entrySet()) {
+				
+				for(int i = 0; i < entry.getValue().size(); ++i) {
+					
+					AnalyzedFile af = entry.getValue().get(i);
+					
+					csvWriter.append(String.valueOf(entry.getKey()));
+					csvWriter.append(",");
+					csvWriter.append(af.getName());
+					csvWriter.append(",");
+					csvWriter.append(String.valueOf(af.getSizeLoc()));
+					csvWriter.append(",");
+					csvWriter.append(String.valueOf(af.getLocTouched()));
+					csvWriter.append(",");
+					csvWriter.append(String.valueOf(af.getLocAdded()));
+					csvWriter.append(",");
+					csvWriter.append(String.valueOf(af.getMaxLocAdded()));
+					csvWriter.append(",");
+					csvWriter.append(String.valueOf(af.getNumRevisions()));
+					csvWriter.append(",");
+					csvWriter.append(String.valueOf(af.numAuthors()));
+					csvWriter.append(",");
+					csvWriter.append(String.valueOf(af.getChurn()));
+					csvWriter.append(",");
+					csvWriter.append(String.valueOf(af.getMaxChurn()));
+					csvWriter.append(",");
+					csvWriter.append(String.valueOf(af.getChgSetSize()));
+					csvWriter.append(",");
+					csvWriter.append(String.valueOf(af.getMaxChgSetSize()));
+			        csvWriter.append("\n");
+				}
+			}
+
+		}
+		//TODO merge with BUGGY csv file
+		
+	}
+	
 	//method that has to take a map of string and integer
 	//and write on a csv file how the integer corresponding to each string
 	public static void monthCommitsCSV(Map<Date, Integer> commitsMap, String projName) throws IOException{

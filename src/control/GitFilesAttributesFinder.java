@@ -63,6 +63,7 @@ public class GitFilesAttributesFinder {
 		
 	}
 	
+	
 	private List<LocalDate> getReleaseDateInterval(int releaseIndx){
 		
 		List<LocalDate> sinceUntil = new ArrayList<>();
@@ -119,12 +120,14 @@ public class GitFilesAttributesFinder {
 			//a new class has to be created IF and ONLY IF
 			//the file is found for the first time...
 			AnalyzedFile currentFile = findFileInRelease(fileName, release, filesOfCommit);
+			//incrementing its number of revisions
+			currentFile.incrementNumRevisions();
 			
 			//now calculating file's attributes
 			
 			//extraction commit date
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-			String dateString = commit.getJSONObject("commit").getJSONObject("committer").getString("date").substring(0, 10);
+			String dateString = commit.getJSONObject(Constants.COMMIT).getJSONObject(Constants.COMMITTER).getString(Constants.GIT_DATE).substring(0, 10);
 	        LocalDate commitDate = LocalDate.parse( dateString, formatter);
 			
 	        //updating LOC if needed (if a commit of the same file is found, and it
@@ -142,8 +145,24 @@ public class GitFilesAttributesFinder {
 				}
 			}
 			
+			//LOC touched
+			int additions = file.getInt("additions");
+			int deletions = file.getInt("deletions");
+			int changes = file.getInt("changes");
+			currentFile.incrementLocTouched(additions+deletions+changes);
 			
+			//LOC added
+			currentFile.incrementLocAdded(additions);
 			
+			//adding authors of the file
+			String author = commit.getJSONObject(Constants.COMMIT).getJSONObject(Constants.COMMITTER).getString("name");
+			currentFile.addAuthor(author);
+			
+			//churn
+			currentFile.updateChurn(additions-deletions);
+			
+			//chgset size
+			currentFile.incrementChgSetSize(files.length());
 			
 			//last but not least, add the AnalyzedClass onto the Hash Map
 			//if the element war already in here, it has to be overwritten
@@ -199,7 +218,7 @@ public class GitFilesAttributesFinder {
 		allReleasesFiles.put(release, listFilesOfARelease);
 	}
 	
-	public void start() {
+	public void start() throws IOException {
 		
 		GitInteractor.extractTkn();
 		//for each analyzable release, call getFileAttributePerRelease
@@ -215,6 +234,9 @@ public class GitFilesAttributesFinder {
 			Constants.LOGGER.log(Level.INFO, "Collected Files Attributes of release(indx) {0}", i);
 		}
 		
+		//TODO age calculator algorithm 
+		
+		CsvFileWriter.writeFilesAttributes(allReleasesFiles, Constants.JIRA_PROJ_NAME);
 	}
 	
 	
@@ -222,7 +244,11 @@ public class GitFilesAttributesFinder {
 		
 		GitFilesAttributesFinder g = new GitFilesAttributesFinder(Constants.JIRA_PROJ_NAME);
 		
-		g.start();
+		try {
+			g.start();
+		} catch (IOException e) {
+			Constants.LOGGER.log(Level.SEVERE, e.getMessage());
+		}
 	}
 	
 	

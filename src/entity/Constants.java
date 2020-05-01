@@ -24,6 +24,8 @@ public class Constants {
 		
 	public static final String COMMINTS_MONTH ="commitsPerMonth";
 	public static final String LOG_FILE = "log.txt";
+	
+	public static final String FINAL_TABLE ="finalTable";
 		
 	//GITHUB REST API to retrieve the commit with given (%s to specify later on) ticket ID
 	//sorted by committer date (from latest to earlier)
@@ -35,6 +37,9 @@ public class Constants {
 	public static final String ISSUES = "issues";
 	public static final String FIELDS = "fields";
 	public static final String CREATED = "created";
+	public static final String COMMIT = "commit";
+	public static final String COMMITTER = "committer";
+	public static final String GIT_DATE = "date";
 	
 	//Sometimes the tickets are referred in git not in the usual way
 	//(such us [PRJNAME-1234]) BUT all are like %-1234,

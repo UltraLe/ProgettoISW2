@@ -17,6 +17,7 @@ public class AnalyzedFile {
 	//file is found.
 	private int sizeLOC = 0;
 	private LocalDate lastCommitDate = null;
+	private LocalDate firstCommitDate = null;
 	
 	//sum over revisions of LOC added+deleted+modified
 	private int locTouched = 0;
@@ -33,7 +34,7 @@ public class AnalyzedFile {
 	//worked on this file during a release
 	private List<String> authors;
 	
-	//sum over revision of added - deleted of the file
+	//sum over revision of added - deleted lines of the file
 	private int churn = 0;
 	private int maxChurn = 0;
 	
@@ -62,7 +63,14 @@ public class AnalyzedFile {
 	public boolean shouldUpdateSize(LocalDate commitDate) {
 		if(this.lastCommitDate == null) {
 			this.lastCommitDate = commitDate;
+			this.firstCommitDate = commitDate;	
 			return true;
+		}
+		
+		//every time that a commit is found, last and first
+		//commit date for the file is updated
+		if(commitDate.compareTo(this.firstCommitDate) < 0) {
+			this.firstCommitDate = commitDate;
 		}
 		
 		if(commitDate.compareTo(this.lastCommitDate) > 0) {
@@ -82,15 +90,11 @@ public class AnalyzedFile {
 	
 	//methods for locTouched
 	
-	public void setLocTouched(int locTouched) {
-		this.locTouched = locTouched;
-	}
-	
 	public void incrementLocTouched(int increment) {
-		this.releaseIndex += increment;
+		this.locTouched += increment;
 	}
 	
-	public int getLocTouched(int locTouched) {
+	public int getLocTouched() {
 		return this.locTouched;
 	}
 	
@@ -101,11 +105,15 @@ public class AnalyzedFile {
 		this.updateMaxLocAdded(increment);
 	}
 	
-	public int getLocAdded(int increment) {
+	public int getLocAdded() {
 		return this.locAdded;
 	}
 	
-	private double getAvarageLocAdded() {
+	public int getMaxLocAdded() {
+		return this.maxLocAdded;
+	}
+	
+	public double getAvarageLocAdded() {
 		return (double)this.locAdded/this.numRevisions;
 	}
 	
@@ -121,7 +129,7 @@ public class AnalyzedFile {
 		this.numRevisions++;
 	}
 	
-	public int getNumRevisions(int numRevisions) {
+	public int getNumRevisions() {
 		return this.numRevisions;
 	}
 	
@@ -141,7 +149,7 @@ public class AnalyzedFile {
 	
 	public void updateChurn(int churn) {
 		this.churn += churn;
-		this.updateMacXhurn(churn);
+		this.updateMaxChurn(churn);
 	}
 	
 	public int getChurn() {
@@ -156,7 +164,7 @@ public class AnalyzedFile {
 		return this.maxChurn;
 	}
 	
-	private void updateMacXhurn(int ch) {
+	private void updateMaxChurn(int ch) {
 		if(ch > this.maxChurn) {
 			this.maxChurn = ch;
 		}
@@ -189,8 +197,12 @@ public class AnalyzedFile {
 	
 	//methods for age & waighted age
 	
-	public void getAgeWeeks() {
-		//TODO
+	public void setAgeWeeks(int age) {
+		this.age = age;
+	}
+	
+	public int getAgeWeeks() {
+		return this.age;
 	}
 	
 	public int getWeightedAge() {
