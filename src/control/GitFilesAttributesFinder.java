@@ -6,12 +6,17 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import entity.AnalyzedFile;
 import entity.Constants;
@@ -27,6 +32,10 @@ public class GitFilesAttributesFinder {
 	
 	//max release index to work with
 	private int maxReleaseIndex;
+	
+	//the files of the release i am currently working with
+	private HashMap<String, AnalyzedFile> filesOfARelease;
+	
 	
 	private String projName;
 	
@@ -73,26 +82,147 @@ public class GitFilesAttributesFinder {
 		
 	}
 	
-	private void getFileAttributesPerRelease(int release) {
+	//method that return a the analyzed file if it has been found 
+	private AnalyzedFile findFileInRelease(String filename, int release, HashMap<String, AnalyzedFile> filesOfCommit) {
+		
+		AnalyzedFile af;
+		
+		//i have to look in filesOfARelease and filesOfCommit
+		if(!filesOfCommit.isEmpty() && filesOfCommit.containsKey(filename)) {
+				return filesOfCommit.get(filename);
+		}
+		
+		if(!filesOfARelease.isEmpty() && filesOfARelease.containsKey(filename)) {
+			return filesOfARelease.get(filename);
+		}
+		
+		//otherwise the file is new
+		af = new AnalyzedFile(filename);
+		af.setReleaseIndex(release);
+		
+		return af;
+	}
+	
+	
+	private Map<String, AnalyzedFile> getFileAttributePerCommit(JSONObject commit, int release) {
+		
+		HashMap<String, AnalyzedFile> filesOfCommit = new HashMap<>();
+		
+		JSONArray files = commit.getJSONArray("files");
+		
+		for(int i = 0; i < files.length(); ++i) {
+			
+			JSONObject file = files.getJSONObject(i);
+			
+			String fileName = file.getString("filename");
+			
+			//a new class has to be created IF and ONLY IF
+			//the file is found for the first time...
+			AnalyzedFile currentFile = findFileInRelease(fileName, release, filesOfCommit);
+			
+			//now calculating file's attributes
+			
+			//extraction commit date
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			String dateString = commit.getJSONObject("commit").getJSONObject("committer").getString("date").substring(0, 10);
+	        LocalDate commitDate = LocalDate.parse( dateString, formatter);
+			
+	        //updating LOC if needed (if a commit of the same file is found, and it
+	        //has been done later than the previous found (if any))
+			if(currentFile.shouldUpdateSize(commitDate)) {
+				try {
+					int loc = GitInteractor.getFileLOC(file.getString("raw_url"));
+					
+					System.out.println("LOC: "+loc+" file: "+fileName);
+					
+					currentFile.updateSize(loc);
+					
+				} catch (JSONException | IOException e) {
+					Constants.LOGGER.log(Level.SEVERE, e.getMessage());
+				}
+			}
+			
+			
+			
+			
+			//last but not least, add the AnalyzedClass onto the Hash Map
+			//if the element war already in here, it has to be overwritten
+			filesOfCommit.put(fileName, currentFile);
+		}
+		
+		return filesOfCommit;
+		
+	}
+	
+	private void getFileAttributesPerRelease(int release) throws IOException {
 		
 		List<LocalDate> siceUntil = getReleaseDateInterval(release);
+		String iso8601 = "T12:00:00Z";
+		//github api wants date in ISO 8601 format
+		String since = siceUntil.get(0).toString().concat(iso8601);
+		String until = siceUntil.get(1).toString().concat(iso8601);
 		
-		//github api wants date in ISO format
-		String since = siceUntil.get(0).format(DateTimeFormatter.ISO_INSTANT);
-		String until = siceUntil.get(1).format(DateTimeFormatter.ISO_INSTANT);
+		filesOfARelease = new HashMap<>();
+		
+		int page = 1;
+		int commitsNum;
+		do {
+			//calling the method that will return the commits in a given time interval
+			//at a given page
+			JSONArray commits = GitInteractor.getCommitsInTimeInterval(since, until, page);
+			commitsNum = commits.length();
+			
+			//here the main body, for each commit we need to extract the files associated
+			//to it and calculate the attributes...
+			for(int i = 0; i < commits.length(); ++i) {
+				
+				//retrieving all the commit informations needed (from its sha)
+				//(where there will be all the files)
+				JSONObject commit = GitInteractor.getGitCommit(commits.getJSONObject(i).getString("sha"));
+				filesOfARelease.putAll(getFileAttributePerCommit(commit, release));
+			}
+			
+			//the requested url will return 29 commits per page, if
+			//less than 29 commits are returned there will not be
+			//a next page to look for
+			page++;
+		//}while(commitsNum >= 29);
+		}while(false);
+		//TODO remove after testing
 		
 		//super magic
+		List<AnalyzedFile> listFilesOfARelease = new ArrayList<>();
+		for(Map.Entry<String, AnalyzedFile> entry : filesOfARelease.entrySet()) {
+			listFilesOfARelease.add(entry.getValue());
+		}
 		
-		
+		allReleasesFiles.put(release, listFilesOfARelease);
 	}
 	
 	public void start() {
 		
+		GitInteractor.extractTkn();
 		//for each analyzable release, call getFileAttributePerRelease
+		this.maxReleaseIndex = 2;
 		for(int i = 1 ; i < this.maxReleaseIndex; ++i) {
-			getFileAttributesPerRelease(i);
+			
+			try {
+				getFileAttributesPerRelease(i);
+			} catch (IOException e) {
+				Constants.LOGGER.log(Level.SEVERE, e.getMessage());
+			}
+			
+			Constants.LOGGER.log(Level.INFO, "Collected Files Attributes of release(indx) {0}", i);
 		}
 		
+	}
+	
+	
+	public static void main(String[] args) {
+		
+		GitFilesAttributesFinder g = new GitFilesAttributesFinder(Constants.JIRA_PROJ_NAME);
+		
+		g.start();
 	}
 	
 	

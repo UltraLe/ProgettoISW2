@@ -304,6 +304,8 @@ public class Buggy {
 		Constants.LOGGER.log(Level.INFO, "Obtained {0} analyzable tickets", analyzableTickets.size());
 		
 		//retrieve the classes that has been modified by this lists of tickets (analyzableTickets)
+		//initializing token
+		GitInteractor.extractTkn();
 		@SuppressWarnings("unchecked")
 		List<List<String>> classesName = (List<List<String>>) GitInteractor.getGitInfo(analyzableTickets, Constants.COMMIT_CLASS_NAME);
 		

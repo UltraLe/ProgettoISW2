@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -25,22 +26,22 @@ import entity.Constants;
 
 public class GitInteractor {
 	
-	private static String gitTkn;
+	private static String gitTkn = null;
 	
 	private GitInteractor() {
 		throw new IllegalStateException("Utility class");
-		}
+	}
 	
-	private static String extractTkn(String tkn) {
+	public static void extractTkn() {
 		
 		StringBuilder clearTkn = new StringBuilder();
-		String[] t = tkn.split(" ");
+		String[] t = Constants.GIT_TKN.split(" ");
 		
 		for (String pieceTkn : t) {
 			clearTkn.append(pieceTkn);
 		}
 		
-		return clearTkn.toString();
+		gitTkn = clearTkn.toString();
 	}
 	
 	private static void limitRequest(int total, int ticketsNum, HttpURLConnection con) 
@@ -151,7 +152,6 @@ public class GitInteractor {
 		Map<Date, Integer> commitsMap = new HashMap<>();
 		int ticketsNum = ticketsID.size();
 		
-		gitTkn = extractTkn(Constants.GIT_TKN);
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
 		
 		List<List<String>> classesName = new ArrayList<>();
@@ -215,17 +215,69 @@ public class GitInteractor {
 		
 	}
 	
-	//get classes of a commit with a given status,
-	//if status = null, take all
-	private static List<String> commitClasses(String commitSha, String status) throws JSONException, IOException{
+	
+	//method that given 2 dates and a page, returns a JSONArray which contains
+	//all the commits in that time interval
+	public static JSONArray getCommitsInTimeInterval(String since, String until, int page) throws IOException {
 		
-		List<String> classes = new ArrayList<>();
-		String stringUrl = String.format(Constants.COMMITINFO_URL, commitSha);
+		String parameterFormat = "?since=%s&until=%s&page=%d";
+		String parameter = String.format(parameterFormat, since, until, page);
+		String stringUrl = Constants.COMMITINFO_URL.substring(0, Constants.COMMITINFO_URL.length()-3).concat(parameter);
+		
 		HttpURLConnection con = null;
 		URL url = new URL(stringUrl);
 		
 		StringBuilder response = new StringBuilder();
-		JSONObject jsonResult;
+
+		//use authenticated requests
+		con = (HttpURLConnection) url.openConnection();
+		//adding token to avoid rate limitation
+		//this token can be public because it has only read permission
+		con.setRequestProperty("Authorization", "token "+gitTkn);
+		con.setRequestMethod("GET");
+		
+		readResponse(con, response);
+
+		return new JSONArray(response.toString());
+		
+	}
+	
+	//retrieve LOC of a given file raw url
+	public static int getFileLOC(String rawUrl) throws IOException {
+		
+		int loc = 0;
+		
+		HttpURLConnection con = null;
+		URL url = new URL(rawUrl);
+
+		//use authenticated requests
+		con = (HttpURLConnection) url.openConnection();
+		//adding token to avoid rate limitation
+		//this token can be public because it has only read permission
+		con.setRequestProperty("Authorization", "token "+gitTkn);
+		con.setRequestMethod("GET");
+		
+		try(BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
+			while((in.readLine()) != null) {
+				loc++;
+			}
+		}finally{
+			con.disconnect();
+		}
+		
+		return loc;
+	}
+	
+	
+	//get commit haveing a given sha
+	public static JSONObject getGitCommit(String sha) throws IOException {
+		
+		
+		String stringUrl = String.format(Constants.COMMITINFO_URL, sha);
+		HttpURLConnection con = null;
+		URL url = new URL(stringUrl);
+		
+		StringBuilder response = new StringBuilder();
 		//use authenticated requests
 		con = (HttpURLConnection) url.openConnection();
 		//adding token to avoid rate limitation
@@ -235,10 +287,18 @@ public class GitInteractor {
 		
 		readResponse(con, response);
 		
-		jsonResult = new JSONObject(response.toString());
+		return  new JSONObject(response.toString());
+	}
+	
+	
+	//get classes of a commit with a given status,
+	//if status = null, take all
+	private static List<String> commitClasses(String commitSha, String status) throws JSONException, IOException{
 		
+		JSONObject jsonResult = getGitCommit(commitSha);
 		JSONArray files = jsonResult.getJSONArray("files");
 		
+		List<String> classes = new ArrayList<>();
 		for(int i = 0; i < files.length(); ++i) {
 			
 			//if status is null add the classes
@@ -263,6 +323,7 @@ public class GitInteractor {
 			Handler fileHandler = new FileHandler(Constants.LOG_FILE);
 			Constants.LOGGER.addHandler(fileHandler);
 			List<String> tickets = RetrieveTicketsID.retriveTicket(Constants.JIRA_PROJ_NAME);
+			GitInteractor.extractTkn();
 			GitInteractor.getGitInfo(tickets, Constants.DATE);
 		}catch(Exception e) {
 			Constants.LOGGER.log(Level.SEVERE, e.getMessage());
