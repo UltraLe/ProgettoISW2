@@ -1,4 +1,213 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
+<record>
+  <date>2020-05-02T15:13:36</date>
+  <millis>1588425216999</millis>
+  <sequence>0</sequence>
+  <logger>entity.Constants</logger>
+  <level>SEVERE</level>
+  <class>control.GitFilesAttributesFinder</class>
+  <method>getFileAttributePerCommit</method>
+  <thread>1</thread>
+  <message>Remote host closed connection during handshake</message>
+</record>
+<record>
+  <date>2020-05-02T15:14:22</date>
+  <millis>1588425262988</millis>
+  <sequence>1</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitFilesAttributesFinder</class>
+  <method>start</method>
+  <thread>1</thread>
+  <message>Collected Files Attributes of release(indx) 1</message>
+</record>
+<record>
+  <date>2020-05-02T15:18:54</date>
+  <millis>1588425534207</millis>
+  <sequence>2</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitFilesAttributesFinder</class>
+  <method>start</method>
+  <thread>1</thread>
+  <message>Collected Files Attributes of release(indx) 2</message>
+</record>
+<record>
+  <date>2020-05-02T15:22:05</date>
+  <millis>1588425725676</millis>
+  <sequence>3</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitFilesAttributesFinder</class>
+  <method>start</method>
+  <thread>1</thread>
+  <message>Collected Files Attributes of release(indx) 3</message>
+</record>
+<record>
+  <date>2020-05-02T15:24:02</date>
+  <millis>1588425842089</millis>
+  <sequence>4</sequence>
+  <logger>entity.Constants</logger>
+  <level>SEVERE</level>
+  <class>control.GitFilesAttributesFinder</class>
+  <method>getFileAttributePerCommit</method>
+  <thread>1</thread>
+  <message>https://github.com/apache/incubator-daffodil/raw/697d0eada673ef3df6c984d709eacbbb1d66b0e2/daffodil/sub-projects/core/doc/.~lock.dfdl.doc#</message>
+</record>
+<record>
+  <date>2020-05-02T15:27:17</date>
+  <millis>1588426037964</millis>
+  <sequence>5</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitFilesAttributesFinder</class>
+  <method>start</method>
+  <thread>1</thread>
+  <message>Collected Files Attributes of release(indx) 4</message>
+</record>
+<record>
+  <date>2020-05-02T15:39:40</date>
+  <millis>1588426780432</millis>
+  <sequence>6</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitFilesAttributesFinder</class>
+  <method>start</method>
+  <thread>1</thread>
+  <message>Collected Files Attributes of release(indx) 5</message>
+</record>
+<record>
+  <date>2020-05-02T15:45:51</date>
+  <millis>1588427151897</millis>
+  <sequence>7</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitFilesAttributesFinder</class>
+  <method>start</method>
+  <thread>1</thread>
+  <message>Collected Files Attributes of release(indx) 6</message>
+</record>
+<record>
+  <date>2020-05-02T15:52:44</date>
+  <millis>1588427564985</millis>
+  <sequence>8</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitFilesAttributesFinder</class>
+  <method>start</method>
+  <thread>1</thread>
+  <message>Collected Files Attributes of release(indx) 7</message>
+</record>
+<record>
+  <date>2020-05-02T16:04:38</date>
+  <millis>1588428278839</millis>
+  <sequence>9</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitFilesAttributesFinder</class>
+  <method>start</method>
+  <thread>1</thread>
+  <message>Collected Files Attributes of release(indx) 8</message>
+</record>
+<record>
+  <date>2020-05-02T16:10:00</date>
+  <millis>1588428600876</millis>
+  <sequence>10</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitFilesAttributesFinder</class>
+  <method>start</method>
+  <thread>1</thread>
+  <message>Collected Files Attributes of release(indx) 9</message>
+</record>
+<record>
+  <date>2020-05-02T16:13:28</date>
+  <millis>1588428808546</millis>
+  <sequence>11</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitFilesAttributesFinder</class>
+  <method>start</method>
+  <thread>1</thread>
+  <message>Collected Files Attributes of release(indx) 10</message>
+</record>
+<record>
+  <date>2020-05-02T16:28:58</date>
+  <millis>1588429738614</millis>
+  <sequence>12</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitFilesAttributesFinder</class>
+  <method>start</method>
+  <thread>1</thread>
+  <message>Collected Files Attributes of release(indx) 11</message>
+</record>
+<record>
+  <date>2020-05-02T16:40:18</date>
+  <millis>1588430418510</millis>
+  <sequence>13</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitFilesAttributesFinder</class>
+  <method>start</method>
+  <thread>1</thread>
+  <message>Collected Files Attributes of release(indx) 12</message>
+</record>
+<record>
+  <date>2020-05-02T16:43:50</date>
+  <millis>1588430630938</millis>
+  <sequence>14</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitFilesAttributesFinder</class>
+  <method>start</method>
+  <thread>1</thread>
+  <message>Collected Files Attributes of release(indx) 13</message>
+</record>
+<record>
+  <date>2020-05-02T16:48:07</date>
+  <millis>1588430887517</millis>
+  <sequence>15</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitFilesAttributesFinder</class>
+  <method>start</method>
+  <thread>1</thread>
+  <message>Collected Files Attributes of release(indx) 14</message>
+</record>
+<record>
+  <date>2020-05-02T16:52:42</date>
+  <millis>1588431162628</millis>
+  <sequence>16</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitFilesAttributesFinder</class>
+  <method>start</method>
+  <thread>1</thread>
+  <message>Collected Files Attributes of release(indx) 15</message>
+</record>
+<record>
+  <date>2020-05-02T17:01:45</date>
+  <millis>1588431705834</millis>
+  <sequence>17</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitFilesAttributesFinder</class>
+  <method>start</method>
+  <thread>1</thread>
+  <message>Collected Files Attributes of release(indx) 16</message>
+</record>
+<record>
+  <date>2020-05-02T17:10:36</date>
+  <millis>1588432236823</millis>
+  <sequence>18</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.GitFilesAttributesFinder</class>
+  <method>start</method>
+  <thread>1</thread>
+  <message>Collected Files Attributes of release(indx) 17</message>
+</record>
 </log>
