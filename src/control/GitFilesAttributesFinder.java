@@ -1,11 +1,14 @@
 package control;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,9 +28,9 @@ public class GitFilesAttributesFinder {
 
 	//the key of this map will be the index of a release,
 	//the value, a list of all the files contained in that release
-	private TreeMap<Integer, List<AnalyzedFile>> allReleasesFiles = new TreeMap<>();
+	private TreeMap<Integer, HashMap<String, AnalyzedFile>> allReleasesFiles = new TreeMap<>();
 	
-	//key =releaseIndex, value = releasedate
+	//key =releaseIndex, value = release date
 	private TreeMap<Integer, LocalDate> indexDate;
 	
 	//max release index to work with
@@ -173,6 +176,74 @@ public class GitFilesAttributesFinder {
 		
 	}
 	
+	//method that merges the results of "buggyFilePROJ_NAME.CSV
+	//and the attributer collected, in order to build the final CSV file
+	private void buggyFileReader() {
+		
+		StringBuilder builder = new StringBuilder();
+		
+		String filename = CsvFileWriter.whichFilename(Constants.BUGGY_FILENAME, Constants.JIRA_PROJ_NAME, Constants.CSV_EXT);
+
+		//the file has to be present
+		try (FileReader reader = new FileReader(filename);
+	             BufferedReader br = new BufferedReader(reader)) {
+				
+	            String line;
+	            //removing the first line
+	            line = br.readLine();
+	            while ((line = br.readLine()) != null) {
+	                builder.append(line);
+	                builder.append(",");
+	            }
+	            
+		} catch (IOException e) {
+			Constants.LOGGER.log(Level.SEVERE, "Counld not find/open the buggyFile");
+		}
+		
+		//data be like filename,release,filename,release..
+		String[] buggyData = builder.toString().split(",");
+		//nameBuggy is an hashMan with vale = fileName and Key = list of affected versions
+		HashMap<String, List<Integer>> nameBuggy = new HashMap<>();
+		
+		for(int i = 0; i < buggyData.length; i+=2) {
+			List<Integer>  tmp;
+			
+			if(!nameBuggy.containsKey(buggyData[i])) {
+				tmp = new ArrayList<>();
+			}else {
+				tmp = nameBuggy.get(buggyData[i]);
+			}
+			
+			tmp.add(Integer.valueOf(buggyData[i+1]));
+			nameBuggy.put(buggyData[i], tmp);
+		}
+		
+		//now merging informations
+		for(Map.Entry<Integer, HashMap<String, AnalyzedFile>> entry : allReleasesFiles.entrySet()) {
+			int currentVersion = entry.getKey();
+			//now we need to analyze the files of a version with ALL the files in
+			//nameByggy, and IF nameBuggy contains a filename which is equal to 
+			//the 'current' release, mark that file as buggy.
+			for(Map.Entry<String, List<Integer>> affected : nameBuggy.entrySet()) {
+				
+				String currentFilename = affected.getKey();
+				//if an affected file is present in the 'current' release
+				if(entry.getValue().containsKey(currentFilename)) {
+					//check that the affected files has the affected versions 
+					//equals to the current release
+					if(affected.getValue().contains(currentVersion)) {
+						entry.getValue().get(currentFilename).setBugged();
+						int numBugs = Collections.frequency(affected.getValue(), currentVersion);
+						entry.getValue().get(currentFilename).setNumBugs(numBugs);
+					}
+				}
+				
+			}
+			
+		}
+		
+	}
+	
 	private void getFileAttributesPerRelease(int release) throws IOException {
 		
 		List<LocalDate> siceUntil = getReleaseDateInterval(release);
@@ -205,17 +276,10 @@ public class GitFilesAttributesFinder {
 			//less than 29 commits are returned there will not be
 			//a next page to look for
 			page++;
-		//}while(commitsNum >= 29);
-		}while(false);
-		//TODO remove after testing
+		}while(commitsNum >= 29);
 		
-		//super magic
-		List<AnalyzedFile> listFilesOfARelease = new ArrayList<>();
-		for(Map.Entry<String, AnalyzedFile> entry : filesOfARelease.entrySet()) {
-			listFilesOfARelease.add(entry.getValue());
-		}
-		
-		allReleasesFiles.put(release, listFilesOfARelease);
+		//putting the hash map of the release just collected	
+		allReleasesFiles.put(release, filesOfARelease);
 	}
 	
 	public void start() throws IOException {
@@ -234,8 +298,9 @@ public class GitFilesAttributesFinder {
 			Constants.LOGGER.log(Level.INFO, "Collected Files Attributes of release(indx) {0}", i);
 		}
 		
-		//TODO age calculator algorithm 
-		
+		//TODO 2 age calculator algorithm (if there's time)
+		//merging information with buggyFile
+		this.buggyFileReader();
 		CsvFileWriter.writeFilesAttributes(allReleasesFiles, Constants.JIRA_PROJ_NAME);
 	}
 	
@@ -249,6 +314,7 @@ public class GitFilesAttributesFinder {
 		} catch (IOException e) {
 			Constants.LOGGER.log(Level.SEVERE, e.getMessage());
 		}
+		
 	}
 	
 	

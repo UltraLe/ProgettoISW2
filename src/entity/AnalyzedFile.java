@@ -46,6 +46,9 @@ public class AnalyzedFile {
 	private int chgSetSize = 0;
 	private int maxChgSetSize = 0;
 	
+	//buggyness
+	private String amIbuggy = "No";
+	private int numBugs = 0;
 	
 	//The following attributes refers to the metrics that
 	//i want to analyze in a project. They are hash map
@@ -224,6 +227,22 @@ public class AnalyzedFile {
 	}
 	
 	//methods for buggyness
+	
+	public int getnumBugs() {
+		return this.numBugs;
+	}
+	
+	public void setNumBugs(int num) {
+		this.numBugs = num;
+	}
+	
+	public void setBugged() {
+		this.amIbuggy = "Yes";
+	}
+	
+	public String getBugginess() {
+		return this.amIbuggy;
+	}
 	
 	public List<Integer> getBuggy(){
 		return this.buggy;

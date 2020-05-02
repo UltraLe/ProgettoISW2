@@ -2,8 +2,8 @@
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
 <record>
-  <date>2020-05-01T16:11:41</date>
-  <millis>1588342301482</millis>
+  <date>2020-05-02T11:35:07</date>
+  <millis>1588412107018</millis>
   <sequence>0</sequence>
   <logger>entity.Constants</logger>
   <level>INFO</level>

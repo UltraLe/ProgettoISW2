@@ -3,7 +3,6 @@ package control;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,7 +27,7 @@ public class CsvFileWriter {
         return cal.getTime();
     }
 	
-	public static void writeFilesAttributes(TreeMap<Integer, List<AnalyzedFile>> allReleasesFiles, String projName) throws IOException {
+	public static void writeFilesAttributes(TreeMap<Integer, HashMap<String, AnalyzedFile>> allReleasesFiles, String projName) throws IOException {
 		
 		String filename = whichFilename(Constants.FINAL_TABLE,projName,Constants.CSV_EXT);
 		
@@ -57,45 +56,54 @@ public class CsvFileWriter {
 			csvWriter.append("ChgSet Size");
 			csvWriter.append(",");
 			csvWriter.append("Max ChgSetSize");
+			csvWriter.append(",");
+			csvWriter.append("Buggy");
+			csvWriter.append(",");
+			csvWriter.append("Num Bugs");
 			csvWriter.append("\n");
 			
-			//missing, buggy, age, weighted age
+			//missing, buggy, age, weighted age, add num bugs per file
 			
-			for (Map.Entry<Integer, List<AnalyzedFile>> entry : allReleasesFiles.entrySet()) {
+			for (Map.Entry<Integer, HashMap<String, AnalyzedFile>> entry : allReleasesFiles.entrySet()) {
 				
-				for(int i = 0; i < entry.getValue().size(); ++i) {
+				for(Map.Entry<String, AnalyzedFile> innerEntry : entry.getValue().entrySet()) {
+
+						AnalyzedFile af = innerEntry.getValue();
+						
+						csvWriter.append(String.valueOf(entry.getKey()));
+						csvWriter.append(",");
+						csvWriter.append(af.getName());
+						csvWriter.append(",");
+						csvWriter.append(String.valueOf(af.getSizeLoc()));
+						csvWriter.append(",");
+						csvWriter.append(String.valueOf(af.getLocTouched()));
+						csvWriter.append(",");
+						csvWriter.append(String.valueOf(af.getLocAdded()));
+						csvWriter.append(",");
+						csvWriter.append(String.valueOf(af.getMaxLocAdded()));
+						csvWriter.append(",");
+						csvWriter.append(String.valueOf(af.getNumRevisions()));
+						csvWriter.append(",");
+						csvWriter.append(String.valueOf(af.numAuthors()));
+						csvWriter.append(",");
+						csvWriter.append(String.valueOf(af.getChurn()));
+						csvWriter.append(",");
+						csvWriter.append(String.valueOf(af.getMaxChurn()));
+						csvWriter.append(",");
+						csvWriter.append(String.valueOf(af.getChgSetSize()));
+						csvWriter.append(",");
+						csvWriter.append(String.valueOf(af.getMaxChgSetSize()));
+						csvWriter.append(",");
+						csvWriter.append(af.getBugginess());
+						csvWriter.append(",");
+						csvWriter.append(String.valueOf(af.getnumBugs()));
+				        csvWriter.append("\n");
 					
-					AnalyzedFile af = entry.getValue().get(i);
-					
-					csvWriter.append(String.valueOf(entry.getKey()));
-					csvWriter.append(",");
-					csvWriter.append(af.getName());
-					csvWriter.append(",");
-					csvWriter.append(String.valueOf(af.getSizeLoc()));
-					csvWriter.append(",");
-					csvWriter.append(String.valueOf(af.getLocTouched()));
-					csvWriter.append(",");
-					csvWriter.append(String.valueOf(af.getLocAdded()));
-					csvWriter.append(",");
-					csvWriter.append(String.valueOf(af.getMaxLocAdded()));
-					csvWriter.append(",");
-					csvWriter.append(String.valueOf(af.getNumRevisions()));
-					csvWriter.append(",");
-					csvWriter.append(String.valueOf(af.numAuthors()));
-					csvWriter.append(",");
-					csvWriter.append(String.valueOf(af.getChurn()));
-					csvWriter.append(",");
-					csvWriter.append(String.valueOf(af.getMaxChurn()));
-					csvWriter.append(",");
-					csvWriter.append(String.valueOf(af.getChgSetSize()));
-					csvWriter.append(",");
-					csvWriter.append(String.valueOf(af.getMaxChgSetSize()));
-			        csvWriter.append("\n");
 				}
 			}
 
 		}
-		//TODO merge with BUGGY csv file
+		//TODO 1 merge with BUGGY csv file and add #bugs
 		
 	}
 	
@@ -153,7 +161,7 @@ public class CsvFileWriter {
 		}
 	}
 	
-	private static String whichFilename(String name, String projName, String ext) {
+	public static String whichFilename(String name, String projName, String ext) {
 		
 		String filename;
 		
