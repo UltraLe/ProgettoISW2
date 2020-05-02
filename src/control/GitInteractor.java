@@ -6,7 +6,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -64,7 +63,7 @@ public class GitInteractor {
 		con.setRequestProperty("Accept", "application/vnd.github.cloak-preview");
 		//adding token to avoid rate limitation
 		//this token can be public because it has only read permission
-		con.setRequestProperty("Authorization", "token "+gitTkn);
+		con.setRequestProperty(Constants.AUTORIZATION, Constants.TOKEN+gitTkn);
 		con.setRequestMethod("GET");
 		
 	}
@@ -109,9 +108,7 @@ public class GitInteractor {
 			con = (HttpURLConnection) url.openConnection();
 			//method that limits the number of requests per seconds
 			limitRequest(total, ticketsNum, con);
-			//TODO fix total minutes left
 			total++;
-			//TODO check if response is different
 			readResponse(con, response);
 			
 			jsonResult = new JSONObject(response.toString());
@@ -233,7 +230,7 @@ public class GitInteractor {
 		con = (HttpURLConnection) url.openConnection();
 		//adding token to avoid rate limitation
 		//this token can be public because it has only read permission
-		con.setRequestProperty("Authorization", "token "+gitTkn);
+		con.setRequestProperty(Constants.AUTORIZATION, Constants.TOKEN+gitTkn);
 		con.setRequestMethod("GET");
 		
 		readResponse(con, response);
@@ -254,12 +251,14 @@ public class GitInteractor {
 		con = (HttpURLConnection) url.openConnection();
 		//adding token to avoid rate limitation
 		//this token can be public because it has only read permission
-		con.setRequestProperty("Authorization", "token "+gitTkn);
+		con.setRequestProperty(Constants.AUTORIZATION, Constants.TOKEN+gitTkn);
 		con.setRequestMethod("GET");
-		
+		String line;
 		try(BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
-			while((in.readLine()) != null) {
+			while((line = in.readLine()) != null) {
+				if(line.length() > 2) {
 				loc++;
+				}
 			}
 		}finally{
 			con.disconnect();
@@ -282,7 +281,7 @@ public class GitInteractor {
 		con = (HttpURLConnection) url.openConnection();
 		//adding token to avoid rate limitation
 		//this token can be public because it has only read permission
-		con.setRequestProperty("Authorization", "token "+gitTkn);
+		con.setRequestProperty(Constants.AUTORIZATION, Constants.TOKEN+gitTkn);
 		con.setRequestMethod("GET");
 		
 		readResponse(con, response);

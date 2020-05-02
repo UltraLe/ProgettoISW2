@@ -76,11 +76,8 @@ public class AnalyzedFile {
 			this.firstCommitDate = commitDate;
 		}
 		
-		if(commitDate.compareTo(this.lastCommitDate) > 0) {
-			return true;
-		}
+		return commitDate.compareTo(this.lastCommitDate) > 0;
 		
-		return false;
 	}
 	
 	public void updateSize(int newSize) {
@@ -218,7 +215,7 @@ public class AnalyzedFile {
 		this.releaseIndex = releaseIndex;
 	}
 	
-	public int getReleaseIndex(int releaseIndex) {
+	public int getReleaseIndex() {
 		return this.releaseIndex;
 	}
 

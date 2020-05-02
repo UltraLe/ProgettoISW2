@@ -40,6 +40,8 @@ public class Constants {
 	public static final String COMMIT = "commit";
 	public static final String COMMITTER = "committer";
 	public static final String GIT_DATE = "date";
+	public static final String AUTORIZATION = "Authorization";
+	public static final String TOKEN = "token ";
 	
 	//Sometimes the tickets are referred in git not in the usual way
 	//(such us [PRJNAME-1234]) BUT all are like %-1234,

@@ -1,6 +1,7 @@
 package control;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -178,7 +179,7 @@ public class GitFilesAttributesFinder {
 	
 	//method that merges the results of "buggyFilePROJ_NAME.CSV
 	//and the attributer collected, in order to build the final CSV file
-	private void buggyFileReader() {
+	private void buggyFileReader() throws FileNotFoundException, IOException {
 		
 		StringBuilder builder = new StringBuilder();
 		
@@ -196,8 +197,6 @@ public class GitFilesAttributesFinder {
 	                builder.append(",");
 	            }
 	            
-		} catch (IOException e) {
-			Constants.LOGGER.log(Level.SEVERE, "Counld not find/open the buggyFile");
 		}
 		
 		//data be like filename,release,filename,release..
@@ -228,14 +227,15 @@ public class GitFilesAttributesFinder {
 				
 				String currentFilename = affected.getKey();
 				//if an affected file is present in the 'current' release
-				if(entry.getValue().containsKey(currentFilename)) {
+				//and if the affected files has the affected versions 
+				//equals to the current release
+				if(entry.getValue().containsKey(currentFilename) && affected.getValue().contains(currentVersion)) {
 					//check that the affected files has the affected versions 
 					//equals to the current release
-					if(affected.getValue().contains(currentVersion)) {
-						entry.getValue().get(currentFilename).setBugged();
-						int numBugs = Collections.frequency(affected.getValue(), currentVersion);
-						entry.getValue().get(currentFilename).setNumBugs(numBugs);
-					}
+					entry.getValue().get(currentFilename).setBugged();
+					int numBugs = Collections.frequency(affected.getValue(), currentVersion);
+					entry.getValue().get(currentFilename).setNumBugs(numBugs);
+					
 				}
 				
 			}

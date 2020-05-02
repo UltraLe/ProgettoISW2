@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.logging.Level;
 
@@ -27,7 +28,7 @@ public class CsvFileWriter {
         return cal.getTime();
     }
 	
-	public static void writeFilesAttributes(TreeMap<Integer, HashMap<String, AnalyzedFile>> allReleasesFiles, String projName) throws IOException {
+	public static void writeFilesAttributes(SortedMap<Integer, HashMap<String, AnalyzedFile>> allReleasesFiles, String projName) throws IOException {
 		
 		String filename = whichFilename(Constants.FINAL_TABLE,projName,Constants.CSV_EXT);
 		
@@ -103,7 +104,6 @@ public class CsvFileWriter {
 			}
 
 		}
-		//TODO 1 merge with BUGGY csv file and add #bugs
 		
 	}
 	
