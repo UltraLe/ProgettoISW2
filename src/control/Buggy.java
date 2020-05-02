@@ -339,7 +339,7 @@ public class Buggy {
 		CsvFileWriter.writeBuggyClasses(classes, Constants.JIRA_PROJ_NAME);
 	}
 	
-	public static void main(String[] args){
+	public static void getBuggyFiles(){
 		
 			Buggy b = new Buggy(Constants.JIRA_PROJ_NAME);
 			try {

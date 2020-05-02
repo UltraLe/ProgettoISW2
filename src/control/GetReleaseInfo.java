@@ -26,10 +26,10 @@ import org.json.JSONArray;
 
 public class GetReleaseInfo {
 	
-	public static Map<LocalDateTime, String> releaseNames;
-	public static Map<LocalDateTime, String> releaseID;
-	public static List<LocalDateTime> releases;
-	public static int lastIndexOfVersionAalyzable = 0;
+	private static Map<LocalDateTime, String> releaseNames;
+	private static Map<LocalDateTime, String> releaseID;
+	private static List<LocalDateTime> releases;
+	protected static int lastIndexOfVersionAalyzable = 0;
 	
 	private GetReleaseInfo() {
 		throw new IllegalStateException("Utility class");

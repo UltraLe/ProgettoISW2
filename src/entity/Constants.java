@@ -1,6 +1,12 @@
 package entity;
 
+import java.io.IOException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import control.Buggy;
+import control.GitFilesAttributesFinder;
+import control.GitInteractor;
 
 public class Constants {
 	
@@ -13,10 +19,14 @@ public class Constants {
 	public static final String GIT_SEARCH_URL = "https://issues.apache.org/jira/rest/api/2/search?jql=project=%22";
 	
 	//Project name used on GitHub
-	public static final String GIT_PROJ_NAME = "incubator-daffodil";
+	//bookkeeper
+	//syncope
+	public static String GIT_PROJ_NAME = "incubator-daffodil";
 		
 	//Project name used on JIRA
-	public static final String JIRA_PROJ_NAME = "DAFFODIL";
+	//BOOKKEEPER
+	//SYNCOPE
+	public static String JIRA_PROJ_NAME = "DAFFODIL";
 		
 	//this token can be public because it has only read permission
 	//but it has to be obscured due to github policies

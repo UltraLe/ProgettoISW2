@@ -315,7 +315,7 @@ public class GitInteractor {
 		return classes;
 	}
 	   
-	public static void main(String[] args) throws IOException{
+	public static void getLastCommits() throws IOException{
 		
 		try {
 			//setting up the logger

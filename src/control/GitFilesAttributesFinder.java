@@ -1,7 +1,6 @@
 package control;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -179,7 +178,7 @@ public class GitFilesAttributesFinder {
 	
 	//method that merges the results of "buggyFilePROJ_NAME.CSV
 	//and the attributer collected, in order to build the final CSV file
-	private void buggyFileReader() throws FileNotFoundException, IOException {
+	private void buggyFileReader() throws IOException {
 		
 		StringBuilder builder = new StringBuilder();
 		
@@ -286,7 +285,6 @@ public class GitFilesAttributesFinder {
 		
 		GitInteractor.extractTkn();
 		//for each analyzable release, call getFileAttributePerRelease
-		this.maxReleaseIndex = 2;
 		for(int i = 1 ; i < this.maxReleaseIndex; ++i) {
 			
 			try {
@@ -305,7 +303,7 @@ public class GitFilesAttributesFinder {
 	}
 	
 	
-	public static void main(String[] args) {
+	public static void getFinalTable() {
 		
 		GitFilesAttributesFinder g = new GitFilesAttributesFinder(Constants.JIRA_PROJ_NAME);
 		
@@ -315,6 +313,10 @@ public class GitFilesAttributesFinder {
 			Constants.LOGGER.log(Level.SEVERE, e.getMessage());
 		}
 		
+	}
+	
+	public static void main(String[]args) {
+		getFinalTable();
 	}
 	
 	
