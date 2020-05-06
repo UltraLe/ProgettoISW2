@@ -184,7 +184,11 @@ public class Buggy {
 
 		}while(ticketWithAV < total*percentage && count < total);
 		
-		this.estimatedP = partialP/ticketWithAV;
+		if(ticketWithAV > 0) {
+			this.estimatedP = partialP/ticketWithAV;
+		}else {
+			this.estimatedP = 0;
+		}
 	}
 	
 	//This method return the AV of a ticket if provided or by using
@@ -335,7 +339,7 @@ public class Buggy {
 			}
 		}
 		
-		CsvFileWriter.writeBuggyClasses(classes, Constants.JIRA_PROJ_NAME);
+		CsvFileWriter.writeBuggyClasses(classes, Constants.jiraProjName);
 	}
 	
 	public static void getBuggyFiles(){
@@ -352,7 +356,7 @@ public class Buggy {
 		//iv < ov && ov < fv -> P = 1.954
 		//iv <=ov && ov < fv -> P = 1.778
 		
-		Buggy b = new Buggy(Constants.JIRA_PROJ_NAME);
+		Buggy b = new Buggy(Constants.jiraProjName);
 		
 		try {
 			b.getBuggyClasses();

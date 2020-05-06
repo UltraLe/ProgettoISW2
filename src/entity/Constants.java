@@ -15,12 +15,12 @@ public class Constants {
 	//Project name used on GitHub
 	//bookkeeper
 	//syncope
-	public static String GIT_PROJ_NAME = "incubator-daffodil";
+	public static String gitProjName;
 		
 	//Project name used on JIRA
 	//BOOKKEEPER
 	//SYNCOPE
-	public static String JIRA_PROJ_NAME = "DAFFODIL";
+	public static String jiraProjName;
 		
 	//this token can be public because it has only read permission
 	//but it has to be obscured due to github policies
@@ -33,10 +33,8 @@ public class Constants {
 		
 	//GITHUB REST API to retrieve the commit with given (%s to specify later on) ticket ID
 	//sorted by committer date (from latest to earlier)
-	//public static String SEARCHTKT_LASTCOMMIT_URL = "https://api.github.com/search/commits?q=repo:apache/"+GIT_PROJ_NAME+"+\"%s\"+sort:committer-date";
 		   
 	//GITHUB api url to get information of a ginven commit
-	//public static String COMMITINFO_URL = "https://api.github.com/repos/apache/"+GIT_PROJ_NAME+"/commits/%s";
 	
 	public static final String ISSUES = "issues";
 	public static final String FIELDS = "fields";
@@ -62,12 +60,12 @@ public class Constants {
 	}
 	
 	public static String getSearchTktLastCommitUrl() {
-		return "https://api.github.com/search/commits?q=repo:apache/"+GIT_PROJ_NAME+"+\"%s\"+sort:committer-date";
+		return "https://api.github.com/search/commits?q=repo:apache/"+gitProjName+"+\"%s\"+sort:committer-date";
 		
 	}
 	
 	public static String getCommitInfoUrl() {
-		return "https://api.github.com/repos/apache/"+GIT_PROJ_NAME+"/commits/%s";
+		return "https://api.github.com/repos/apache/"+gitProjName+"/commits/%s";
 	}
 
 }
