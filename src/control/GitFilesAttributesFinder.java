@@ -182,7 +182,7 @@ public class GitFilesAttributesFinder {
 		
 		StringBuilder builder = new StringBuilder();
 		
-		String filename = CsvFileWriter.whichFilename(Constants.BUGGY_FILENAME, Constants.jiraProjName, Constants.CSV_EXT);
+		String filename = CsvFileWriter.whichFilename(Constants.BUGGY_FILENAME, Constants.getJiraProjName(), Constants.CSV_EXT);
 
 		//the file has to be present
 		try (FileReader reader = new FileReader(filename);
@@ -299,13 +299,13 @@ public class GitFilesAttributesFinder {
 		//TODO 2 age calculator algorithm (if there's time)
 		//merging information with buggyFile
 		this.buggyFileReader();
-		CsvFileWriter.writeFilesAttributes(allReleasesFiles, Constants.jiraProjName);
+		CsvFileWriter.writeFilesAttributes(allReleasesFiles, Constants.getJiraProjName());
 	}
 	
 	
 	public static void getFinalTable() {
 		
-		GitFilesAttributesFinder g = new GitFilesAttributesFinder(Constants.jiraProjName);
+		GitFilesAttributesFinder g = new GitFilesAttributesFinder(Constants.getJiraProjName());
 		
 		try {
 			g.start();

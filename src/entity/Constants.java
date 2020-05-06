@@ -15,12 +15,12 @@ public class Constants {
 	//Project name used on GitHub
 	//bookkeeper
 	//syncope
-	public static String gitProjName;
+	private static String gitProjName;
 		
 	//Project name used on JIRA
 	//BOOKKEEPER
 	//SYNCOPE
-	public static String jiraProjName;
+	private static String jiraProjName;
 		
 	//this token can be public because it has only read permission
 	//but it has to be obscured due to github policies
@@ -66,6 +66,22 @@ public class Constants {
 	
 	public static String getCommitInfoUrl() {
 		return "https://api.github.com/repos/apache/"+gitProjName+"/commits/%s";
+	}
+	
+	public static String getJiraProjName() {
+		return jiraProjName;
+	}
+	
+	public static String getGitProjName() {
+		return gitProjName;
+	}
+	
+	public static void setJiraProjName(String j) {
+		jiraProjName = j;
+	}
+	
+	public static void setGitProjName(String g) {
+		gitProjName = g;
 	}
 
 }

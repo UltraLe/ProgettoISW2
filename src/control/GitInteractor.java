@@ -97,7 +97,7 @@ public class GitInteractor {
 		do {
 		
 			if(retrying) {
-				ticketID = ticketID.substring(Constants.jiraProjName.length());
+				ticketID = ticketID.substring(Constants.getJiraProjName().length());
 				//ticketID will be like '-1234'
 			}
 			
@@ -207,7 +207,7 @@ public class GitInteractor {
 		
 		//otherwise
 		//writing into csv file
-		CsvFileWriter.monthCommitsCSV(commitsMap, Constants.jiraProjName);
+		CsvFileWriter.monthCommitsCSV(commitsMap, Constants.getJiraProjName());
 		return null;
 		
 	}
@@ -321,7 +321,7 @@ public class GitInteractor {
 			//setting up the logger
 			Handler fileHandler = new FileHandler(Constants.LOG_FILE);
 			Constants.LOGGER.addHandler(fileHandler);
-			List<String> tickets = RetrieveTicketsID.retriveTicket(Constants.jiraProjName);
+			List<String> tickets = RetrieveTicketsID.retriveTicket(Constants.getJiraProjName());
 			GitInteractor.extractTkn();
 			GitInteractor.getGitInfo(tickets, Constants.DATE);
 		}catch(Exception e) {

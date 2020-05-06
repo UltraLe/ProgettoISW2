@@ -339,24 +339,12 @@ public class Buggy {
 			}
 		}
 		
-		CsvFileWriter.writeBuggyClasses(classes, Constants.jiraProjName);
+		CsvFileWriter.writeBuggyClasses(classes, Constants.getJiraProjName());
 	}
 	
 	public static void getBuggyFiles(){
-	
-		//DAFFODIL";
-		//iv < ov && ov < fv -> P = 1.509
-		//iv <=ov && ov < fv -> P = 1.178
 		
-		//BOOKKEEPER";
-		//iv < ov && ov < fv -> P = 2.264
-		//iv <=ov && ov < fv -> P = 2.097
-		
-		//SYNCOPE";
-		//iv < ov && ov < fv -> P = 1.954
-		//iv <=ov && ov < fv -> P = 1.778
-		
-		Buggy b = new Buggy(Constants.jiraProjName);
+		Buggy b = new Buggy(Constants.getJiraProjName());
 		
 		try {
 			b.getBuggyClasses();

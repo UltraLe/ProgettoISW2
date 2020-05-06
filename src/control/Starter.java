@@ -12,20 +12,20 @@ public class Starter {
 		
 		
 		//project DAFFODIL
-		Constants.jiraProjName = "DAFFODIL";
-		Constants.gitProjName = "incubator-daffodil";
+		Constants.setJiraProjName("DAFFODIL");
+		Constants.setGitProjName("incubator-daffodil");
 		GitInteractor.getLastCommits();
 		
 		//project BOOKKEEPER
-		Constants.jiraProjName = "BOOKKEEPER";
-		Constants.gitProjName = "bookkeeper";
+		Constants.setJiraProjName("BOOKKEEPER");
+		Constants.setGitProjName("bookkeeper");
 		Buggy.getBuggyFiles();
 		GitFilesAttributesFinder.getFinalTable();
 		
 		
 		//project SYNCOPE
-		Constants.jiraProjName = "SYNCOPE";
-		Constants.gitProjName = "syncope";
+		Constants.setJiraProjName("SYNCOPE");
+		Constants.setGitProjName("syncope");
 		Buggy.getBuggyFiles();
 		GitFilesAttributesFinder.getFinalTable();
 	}

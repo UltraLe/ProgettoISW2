@@ -129,7 +129,7 @@ public class GetReleaseInfo {
 	   
 	   public static void main(String[] args) throws JSONException, IOException {
 		   
-		   HashMap<String,List<Object>> map = (HashMap<String, List<Object>>) getIndexOfVersions(Constants.jiraProjName);
+		   HashMap<String,List<Object>> map = (HashMap<String, List<Object>>) getIndexOfVersions(Constants.getJiraProjName());
 		   
 		   for(Map.Entry<String, List<Object>> m : map.entrySet()) {
 			   Constants.LOGGER.log(Level.INFO,"Version Name: {0}",m.getKey());
