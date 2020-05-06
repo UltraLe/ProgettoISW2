@@ -33,10 +33,10 @@ public class Constants {
 		
 	//GITHUB REST API to retrieve the commit with given (%s to specify later on) ticket ID
 	//sorted by committer date (from latest to earlier)
-	public static final String SEARCHTKT_LASTCOMMIT_URL = "https://api.github.com/search/commits?q=repo:apache/"+GIT_PROJ_NAME+"+\"%s\"+sort:committer-date";
+	//public static String SEARCHTKT_LASTCOMMIT_URL = "https://api.github.com/search/commits?q=repo:apache/"+GIT_PROJ_NAME+"+\"%s\"+sort:committer-date";
 		   
 	//GITHUB api url to get information of a ginven commit
-	public static final String COMMITINFO_URL = "https://api.github.com/repos/apache/"+GIT_PROJ_NAME+"/commits/%s";
+	//public static String COMMITINFO_URL = "https://api.github.com/repos/apache/"+GIT_PROJ_NAME+"/commits/%s";
 	
 	public static final String ISSUES = "issues";
 	public static final String FIELDS = "fields";
@@ -59,6 +59,15 @@ public class Constants {
 	
 	private Constants() {
 		throw new IllegalStateException("Utility class");
+	}
+	
+	public static String getSearchTktLastCommitUrl() {
+		return "https://api.github.com/search/commits?q=repo:apache/"+GIT_PROJ_NAME+"+\"%s\"+sort:committer-date";
+		
+	}
+	
+	public static String getCommitInfoUrl() {
+		return "https://api.github.com/repos/apache/"+GIT_PROJ_NAME+"/commits/%s";
 	}
 
 }

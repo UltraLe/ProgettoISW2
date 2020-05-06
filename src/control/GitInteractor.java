@@ -101,7 +101,7 @@ public class GitInteractor {
 				//ticketID will be like '-1234'
 			}
 			
-			nextUrl = String.format(Constants.SEARCHTKT_LASTCOMMIT_URL, ticketID);
+			nextUrl = String.format(Constants.getSearchTktLastCommitUrl(), ticketID);
 			
 			//HTTP GET request
 			URL url = new URL(nextUrl);
@@ -219,7 +219,7 @@ public class GitInteractor {
 		
 		String parameterFormat = "?since=%s&until=%s&page=%d";
 		String parameter = String.format(parameterFormat, since, until, page);
-		String stringUrl = Constants.COMMITINFO_URL.substring(0, Constants.COMMITINFO_URL.length()-3).concat(parameter);
+		String stringUrl = Constants.getCommitInfoUrl().substring(0, Constants.getCommitInfoUrl().length()-3).concat(parameter);
 		
 		HttpURLConnection con = null;
 		URL url = new URL(stringUrl);
@@ -272,7 +272,7 @@ public class GitInteractor {
 	public static JSONObject getGitCommit(String sha) throws IOException {
 		
 		
-		String stringUrl = String.format(Constants.COMMITINFO_URL, sha);
+		String stringUrl = String.format(Constants.getCommitInfoUrl(), sha);
 		HttpURLConnection con = null;
 		URL url = new URL(stringUrl);
 		
@@ -315,7 +315,7 @@ public class GitInteractor {
 		return classes;
 	}
 	   
-	public static void getLastCommits() throws IOException{
+	public static void getLastCommits(){
 		
 		try {
 			//setting up the logger

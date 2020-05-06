@@ -1,8 +1,5 @@
 package control;
 
-import java.io.IOException;
-import java.util.logging.Level;
-
 import entity.Constants;
 
 public class Starter {
@@ -13,14 +10,11 @@ public class Starter {
 	
 	public static void main(String[] args) {
 		
+		
 		//project DAFFODIL
 		Constants.JIRA_PROJ_NAME = "DAFFODIL";
 		Constants.GIT_PROJ_NAME = "incubator-daffodil";
-		try {
-			GitInteractor.getLastCommits();
-		} catch (IOException e) {
-			Constants.LOGGER.log(Level.SEVERE, e.getMessage());
-		}
+		GitInteractor.getLastCommits();
 		
 		//project BOOKKEEPER
 		Constants.JIRA_PROJ_NAME = "BOOKKEEPER";
@@ -30,7 +24,7 @@ public class Starter {
 		
 		
 		//project SYNCOPE
-		Constants.JIRA_PROJ_NAME = "BOOKKEEPER";
+		Constants.JIRA_PROJ_NAME = "SYNCOPE";
 		Constants.GIT_PROJ_NAME = "syncope";
 		Buggy.getBuggyFiles();
 		GitFilesAttributesFinder.getFinalTable();

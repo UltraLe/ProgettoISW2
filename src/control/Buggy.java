@@ -100,11 +100,6 @@ public class Buggy {
     		
     	}
     	
-    	//sorting the affected versions
-    	Collections.sort(indexesAVs);
-    	//retrieving the latest affected version
-    	iv = indexesAVs.get(0);
-    	
     	//now extracting FV
     	JSONArray fixVersion = ((tickets.getJSONObject(i)).getJSONObject(Constants.FIELDS)).getJSONArray("fixVersions");
     	
@@ -114,8 +109,13 @@ public class Buggy {
     	
     	if( fixVersion.length() <= 0 || releaseIndexDate.get(fixVersion.getJSONObject(0).getString("name")) == null ||
     		indexesAVs.isEmpty()) {
-    		return 0;
+    		return -1;
     	}
+    	
+    	//sorting the affected versions
+    	Collections.sort(indexesAVs);
+    	//retrieving the latest affected version
+    	iv = indexesAVs.get(0);
     	
     	//retrieving fix version
     	fv = (Integer) releaseIndexDate.get(fixVersion.getJSONObject(0).getString("name")).get(0);
@@ -129,7 +129,7 @@ public class Buggy {
         //it may also happen that the affected version
         //comes later that the opening version... in this 
         //case ignore the ticket.
-        if(iv < ov && fv != ov) {
+        if(iv <= ov && ov < fv) {
         	return (double)(fv-iv)/(fv-ov);
         }else {
         	return -1;
@@ -170,7 +170,6 @@ public class Buggy {
 					double calculatedPartial = partialPcalculator(affectedVersions, tickets, i);
 					
 					if(calculatedPartial != -1) {
-						
 						partialP += calculatedPartial;
 						ticketWithAV++;
 					}
@@ -340,14 +339,27 @@ public class Buggy {
 	}
 	
 	public static void getBuggyFiles(){
+	
+		//DAFFODIL";
+		//iv < ov && ov < fv -> P = 1.509
+		//iv <=ov && ov < fv -> P = 1.178
 		
-			Buggy b = new Buggy(Constants.JIRA_PROJ_NAME);
-			try {
-				b.getBuggyClasses();
-			} catch (JSONException | IOException | InterruptedException | ParseException e) {
-				Constants.LOGGER.log(Level.SEVERE, e.getMessage());
-				Thread.currentThread().interrupt();
-			}
+		//BOOKKEEPER";
+		//iv < ov && ov < fv -> P = 2.264
+		//iv <=ov && ov < fv -> P = 2.097
+		
+		//SYNCOPE";
+		//iv < ov && ov < fv -> P = 1.954
+		//iv <=ov && ov < fv -> P = 1.778
+		
+		Buggy b = new Buggy(Constants.JIRA_PROJ_NAME);
+		
+		try {
+			b.getBuggyClasses();
+		} catch (JSONException | IOException | InterruptedException | ParseException e) {
+			Constants.LOGGER.log(Level.SEVERE, e.getMessage());
+			Thread.currentThread().interrupt();
+		}
 	
 	}
 	
