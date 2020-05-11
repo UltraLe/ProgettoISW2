@@ -296,7 +296,6 @@ public class GitFilesAttributesFinder {
 			Constants.LOGGER.log(Level.INFO, "Collected Files Attributes of release(indx) {0}", i);
 		}
 		
-		//TODO 2 age calculator algorithm (if there's time)
 		//merging information with buggyFile
 		this.buggyFileReader();
 		CsvFileWriter.writeFilesAttributes(allReleasesFiles, Constants.getJiraProjName());

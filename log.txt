@@ -2,69 +2,58 @@
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
 <record>
-  <date>2020-05-06T07:14:05</date>
-  <millis>1588742045086</millis>
+  <date>2020-05-07T09:16:02</date>
+  <millis>1588835762446</millis>
   <sequence>0</sequence>
   <logger>entity.Constants</logger>
-  <level>INFO</level>
+  <level>SEVERE</level>
   <class>control.Buggy</class>
-  <method>setup</method>
+  <method>&lt;init&gt;</method>
   <thread>1</thread>
-  <message>Moving Window method (proportion) starting...</message>
+  <message>Server returned HTTP response code: 503 for URL: https://issues.apache.org/jira/rest/api/2/project/SYNCOPE</message>
 </record>
 <record>
-  <date>2020-05-06T07:15:29</date>
-  <millis>1588742129827</millis>
+  <date>2020-05-07T09:16:02</date>
+  <millis>1588835762491</millis>
   <sequence>1</sequence>
   <logger>entity.Constants</logger>
   <level>INFO</level>
   <class>control.Buggy</class>
-  <method>setup</method>
+  <method>getBuggyClasses</method>
   <thread>1</thread>
-  <message>Moving Window method (proportion) compleated, P value: 1.1789103989103988</message>
+  <message>Retrieving all tickets of type BUG</message>
 </record>
 <record>
-  <date>2020-05-06T07:15:30</date>
-  <millis>1588742130416</millis>
+  <date>2020-05-07T09:16:02</date>
+  <millis>1588835762619</millis>
   <sequence>2</sequence>
   <logger>entity.Constants</logger>
-  <level>INFO</level>
+  <level>SEVERE</level>
   <class>control.Buggy</class>
-  <method>setup</method>
+  <method>getBuggyFiles</method>
   <thread>1</thread>
-  <message>Moving Window method (proportion) starting...</message>
+  <message>Server returned HTTP response code: 503 for URL: https://issues.apache.org/jira/rest/api/2/search?jql=project=%22SYNCOPE%22AND%22issueType%22=%22Bug%22AND(%22status%22=%22closed%22OR%22status%22=%22resolved%22)AND%22resolution%22=%22fixed%22&amp;fields=key,resolutiondate,versions,created&amp;startAt=0&amp;maxResults=1000</message>
 </record>
 <record>
-  <date>2020-05-06T07:16:17</date>
-  <millis>1588742177753</millis>
+  <date>2020-05-07T09:16:02</date>
+  <millis>1588835762736</millis>
   <sequence>3</sequence>
   <logger>entity.Constants</logger>
-  <level>INFO</level>
-  <class>control.Buggy</class>
-  <method>setup</method>
+  <level>SEVERE</level>
+  <class>control.GitFilesAttributesFinder</class>
+  <method>&lt;init&gt;</method>
   <thread>1</thread>
-  <message>Moving Window method (proportion) compleated, P value: 2.0974842767295594</message>
+  <message>Server returned HTTP response code: 503 for URL: https://issues.apache.org/jira/rest/api/2/project/SYNCOPE</message>
 </record>
 <record>
-  <date>2020-05-06T07:16:18</date>
-  <millis>1588742178027</millis>
+  <date>2020-05-07T09:16:02</date>
+  <millis>1588835762738</millis>
   <sequence>4</sequence>
   <logger>entity.Constants</logger>
-  <level>INFO</level>
-  <class>control.Buggy</class>
-  <method>setup</method>
+  <level>SEVERE</level>
+  <class>control.GitFilesAttributesFinder</class>
+  <method>getFinalTable</method>
   <thread>1</thread>
-  <message>Moving Window method (proportion) starting...</message>
-</record>
-<record>
-  <date>2020-05-06T07:17:38</date>
-  <millis>1588742258571</millis>
-  <sequence>5</sequence>
-  <logger>entity.Constants</logger>
-  <level>INFO</level>
-  <class>control.Buggy</class>
-  <method>setup</method>
-  <thread>1</thread>
-  <message>Moving Window method (proportion) compleated, P value: 1.7784615384615383</message>
+  <message>buggyFilesSYNCOPE.csv (File o directory non esistente)</message>
 </record>
 </log>

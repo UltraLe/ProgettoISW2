@@ -46,6 +46,8 @@ public class CsvFileWriter {
 			csvWriter.append(",");
 			csvWriter.append("MAX LOC Added");
 			csvWriter.append(",");
+			csvWriter.append("AVERAGE LOC Added");
+			csvWriter.append(",");
 			csvWriter.append("Num Revisions");
 			csvWriter.append(",");
 			csvWriter.append("Num Authors");
@@ -54,9 +56,13 @@ public class CsvFileWriter {
 			csvWriter.append(",");
 			csvWriter.append("MAX Churn");
 			csvWriter.append(",");
+			csvWriter.append("AVERAGE Churn");
+			csvWriter.append(",");
 			csvWriter.append("ChgSet Size");
 			csvWriter.append(",");
-			csvWriter.append("Max ChgSetSize");
+			csvWriter.append("MAX ChgSetSize");
+			csvWriter.append(",");
+			csvWriter.append("AVERAGE ChgSetSize");
 			csvWriter.append(",");
 			csvWriter.append("Buggy");
 			csvWriter.append(",");
@@ -83,6 +89,8 @@ public class CsvFileWriter {
 						csvWriter.append(",");
 						csvWriter.append(String.valueOf(af.getMaxLocAdded()));
 						csvWriter.append(",");
+						csvWriter.append(String.valueOf(af.getAvarageLocAdded()));
+						csvWriter.append(",");
 						csvWriter.append(String.valueOf(af.getNumRevisions()));
 						csvWriter.append(",");
 						csvWriter.append(String.valueOf(af.numAuthors()));
@@ -91,9 +99,13 @@ public class CsvFileWriter {
 						csvWriter.append(",");
 						csvWriter.append(String.valueOf(af.getMaxChurn()));
 						csvWriter.append(",");
+						csvWriter.append(String.valueOf(af.getAvgChurn()));
+						csvWriter.append(",");
 						csvWriter.append(String.valueOf(af.getChgSetSize()));
 						csvWriter.append(",");
 						csvWriter.append(String.valueOf(af.getMaxChgSetSize()));
+						csvWriter.append(",");
+						csvWriter.append(String.valueOf(af.getAvgChgSetSize()));
 						csvWriter.append(",");
 						csvWriter.append(af.getBugginess());
 						csvWriter.append(",");
