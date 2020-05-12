@@ -139,8 +139,6 @@ public class GitFilesAttributesFinder {
 				try {
 					int loc = GitInteractor.getFileLOC(file.getString("raw_url"));
 					
-					System.out.println("LOC: "+loc+" file: "+fileName);
-					
 					currentFile.updateSize(loc);
 					
 				} catch (JSONException | IOException e) {
