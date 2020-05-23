@@ -7,6 +7,7 @@ public class Constants {
 	public static final String COMMIT_CLASS_NAME = "COMMIT_CLASS_NAME"; 
 	public static final String DATE = "DATE"; 
 	public static final String BUGGY_FILENAME = "buggyFiles";
+	public static final String WEKA_RESULTS = "wekaResults";
 	
 	public static final String CSV_EXT = ".csv";
 	

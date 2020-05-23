@@ -13,6 +13,7 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 
 import entity.AnalyzedFile;
+import entity.ClassifierAnalysis;
 import entity.Constants;
 
 public class CsvFileWriter {
@@ -208,6 +209,88 @@ public class CsvFileWriter {
 				}
 			}
 		}
+		
+	}
+	
+	public static void writeWekaResults(List<ClassifierAnalysis> classifierAnalysis, String projName) throws IOException {
+		
+		String filename = whichFilename(Constants.WEKA_RESULTS,projName,Constants.CSV_EXT);
+		
+		try (FileWriter csvWriter = new FileWriter(filename)){
+			
+			csvWriter.append("Num Training Releases");
+			csvWriter.append(",");
+			csvWriter.append("% Training");
+			csvWriter.append(",");
+			csvWriter.append("% Defective In Training");
+			csvWriter.append(",");
+			csvWriter.append("% Defective In Testing");
+			csvWriter.append(",");
+			csvWriter.append("Classifier");
+			csvWriter.append(",");
+			csvWriter.append("Balancing");
+			csvWriter.append(",");
+			csvWriter.append("Feature Selection");
+			csvWriter.append(",");
+			csvWriter.append("TP");
+			csvWriter.append(",");
+			csvWriter.append("FP");
+			csvWriter.append(",");
+			csvWriter.append("TN");
+			csvWriter.append(",");
+			csvWriter.append("FN");
+			csvWriter.append(",");
+			csvWriter.append("Precision");
+			csvWriter.append(",");
+			csvWriter.append("Recall");
+			csvWriter.append(",");
+			csvWriter.append("ROC Area");
+			csvWriter.append(",");
+			csvWriter.append("Kappa");
+			csvWriter.append("\n");
+					
+			for (ClassifierAnalysis entry : classifierAnalysis) {
+				csvWriter.append(String.valueOf(entry.getNumTrainingReleases()));
+				csvWriter.append(",");
+				csvWriter.append(String.valueOf(entry.getPercentageTraining()));
+				csvWriter.append(",");
+				csvWriter.append(String.valueOf(entry.getPercDefectiveInTraining()));
+				csvWriter.append(",");
+				csvWriter.append(String.valueOf(entry.getPercDefectiveInTesting()));
+				csvWriter.append(",");
+				csvWriter.append(entry.getClassifierName());
+				csvWriter.append(",");
+				csvWriter.append(entry.getBalancing());
+				csvWriter.append(",");
+				csvWriter.append(entry.getFeatureSelection());
+				csvWriter.append(",");
+				csvWriter.append(String.valueOf(entry.getTruePositive()));
+				csvWriter.append(",");
+				csvWriter.append(String.valueOf(entry.getFalsePositive()));
+				csvWriter.append(",");
+				csvWriter.append(String.valueOf(entry.getTrueNegative()));
+				csvWriter.append(",");
+				csvWriter.append(String.valueOf(entry.getFalseNegative()));
+				csvWriter.append(",");
+				csvWriter.append(String.valueOf(entry.getPrecision()));
+				csvWriter.append(",");
+				csvWriter.append(String.valueOf(entry.getRecall()));
+				csvWriter.append(",");
+				csvWriter.append(String.valueOf(entry.getRocArea()));
+				csvWriter.append(",");
+				csvWriter.append(String.valueOf(entry.getKappa()));
+		        csvWriter.append("\n");
+
+			}
+		}
+		
+	}
+	
+	//TODO maybe later on
+	public static void mergeAllWekaResults(List<ClassifierAnalysis> classifierAnalysis) {
+		
+		String filename = whichFilename(Constants.WEKA_RESULTS,"AllProjects",Constants.CSV_EXT);
+		
 		
 	}
 
