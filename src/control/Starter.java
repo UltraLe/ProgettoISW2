@@ -10,7 +10,7 @@ public class Starter {
 	
 	public static void main(String[] args) {
 		
-		
+		/*
 		//project DAFFODIL
 		Constants.setJiraProjName("DAFFODIL");
 		Constants.setGitProjName("incubator-daffodil");
@@ -30,6 +30,13 @@ public class Starter {
 		Constants.setGitProjName("syncope");
 		Buggy.getBuggyFiles();
 		GitFilesAttributesFinder.getFinalTable();
+		*/
+		//evaluating results
+		DatasetAnalyzer da = new DatasetAnalyzer("finalTableBOOKKEEPER.arff", "BOOKKEEPER");
+		da.startAnalysis();
+		
+		da = new DatasetAnalyzer("finalTableSYNCOPE.arff", "SYNCOPE");
+		da.startAnalysis();
 		
 	}
 

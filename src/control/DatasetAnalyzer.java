@@ -1,5 +1,4 @@
 package control;
-import weka.core.Attribute;
 import weka.core.Instance;
 import weka.core.Instances;
 
@@ -15,15 +14,21 @@ import java.util.logging.Level;
 
 import entity.ClassifierAnalysis;
 import entity.Constants;
+
+import weka.filters.supervised.attribute.AttributeSelection;
+import weka.filters.supervised.instance.Resample;
+import weka.filters.supervised.instance.SpreadSubsample;
+import weka.attributeSelection.CfsSubsetEval;
+import weka.attributeSelection.GreedyStepwise;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
-import weka.classifiers.meta.FilteredClassifier;
 import weka.classifiers.trees.RandomForest;
 import weka.classifiers.bayes.NaiveBayes;
-import weka.filters.supervised.instance.Resample;
+import weka.filters.Filter;
 import weka.core.converters.ConverterUtils.DataSource;
-import weka.classifiers.evaluation.*;
 import weka.classifiers.lazy.IBk;
+import weka.classifiers.meta.FilteredClassifier;
+import weka.filters.supervised.instance.SMOTE;
 
 public class DatasetAnalyzer{
 	
@@ -32,6 +37,10 @@ public class DatasetAnalyzer{
 	
 	private static final String TRAINING_FILENAME = "tempTraining.arff";
 	private static final String TESTING_FILENAME = "tempTesting.arff";
+	private static final String NONE = "None";
+	private static final String OVERSAMPLING = "Oversampling";
+	private static final String UNDERSAMPLING = "Undersampling";
+	private static final String SMOTE = "SMOTE";
 	
 	//This list will contain all the results of each run of
 	//the WalkFarkward validation method
@@ -113,10 +122,6 @@ public class DatasetAnalyzer{
 		return stop;
 	}
 	
-	public void setFeatureSelection() {}
-	
-	public void setSamplingMethod() {}
-	
 	private int countAttrValues(Instances instances, int classIndx, String value) {
 		
 		int nums = 0;
@@ -130,14 +135,115 @@ public class DatasetAnalyzer{
 		return nums;
 	}
 	
-	private void onlyClassifier() throws Exception {
+	private void evaluateModel(Classifier classifier, Instances training, Instances testing,
+												int trainingRelease, String featureSelection, String balancing) throws Exception {
+		
+		Evaluation eval = new Evaluation(testing);
+		eval.evaluateModel(classifier, testing);
+		
+		ClassifierAnalysis ca = new ClassifierAnalysis(this.projName, classifier.getClass().getName());
+		
+		
+		//settin feature selection and balancing methods
+		ca.setFeatureSelection(featureSelection);
+		ca.setBalancing(balancing);
+		
+		//storing results
+		ca.setNumTrainingReleases(trainingRelease);
+		ca.setNumTrainingInstances(training.numInstances());
+		ca.setNumTestingInstances(testing.numInstances());
+		
+		//counting classes defective in training
+		int buggyIndx = training.numAttributes()-1;
+		int numYesTr = countAttrValues(training, buggyIndx, "Yes");
+		int numNoTr = countAttrValues(training, buggyIndx, "No");
+		
+		ca.setNumNotDefectiveTraining(numNoTr);
+		ca.setNumDefectiveTraining(numYesTr);
+		
+		//counting classes defective in testing
+		int numYesTe = countAttrValues(testing, buggyIndx, "Yes");
+		int numNoTe = countAttrValues(testing, buggyIndx, "No");
+		
+		ca.setNumDefectiveTesting(numYesTe);
+		ca.setNumNotDefectiveTesting(numNoTe);
+		
+		//setting up accuracy metrics
+		double precision = eval.precision(1);
+		double kappa = eval.kappa();
+		double roc = eval.areaUnderROC(1);
+		double recall = eval.recall(1);
+		
+		ca.setPrecision(precision);
+		ca.setKappa(kappa);
+		ca.setRocArea(roc);
+		ca.setRecall(recall);
+		
+		//setting TP, FP, TN FN
+		int TP = (int) eval.numTruePositives(1);
+		int FP = (int) eval.numFalsePositives(1);
+		int TN = (int) eval.numTrueNegatives(1);
+		int FN = (int) eval.numFalseNegatives(1);
+		
+		ca.setTruePositive(TP);
+		ca.setFalsePositive(FP);
+		ca.setTrueNegative(TN);
+		ca.setFalseNegative(FN);
+		
+		//if the # of buggy classes in testing or training = 0, 
+		//the evaluation of the classifier would be meaningless
+		//so the ca is not added to the final result
+		if(numYesTr != 0 && numYesTe != 0) {
+			classifierAnalysis.add(ca);
+		}
+		
+	}
+	
+	private FilteredClassifier configureBalancing(Instances training, String balancing, double ovSamVal) throws Exception {
+		
+		FilteredClassifier fc = new FilteredClassifier();
+		
+		if(balancing.equals(OVERSAMPLING)){
+			
+			Resample resample = new Resample();
+			resample.setInputFormat(training);
+			String[] opts = new String[]{ "-B", "1.0","-Z", String.valueOf(2*ovSamVal)};
+			resample.setOptions(opts);
+			fc.setFilter(resample);	
+			
+		}else if(balancing.equals(UNDERSAMPLING)) {
+			
+			SpreadSubsample  spreadSubsample = new SpreadSubsample();
+			String[] opts = new String[]{ "-M", "1.0"};
+			spreadSubsample.setOptions(opts);
+			fc.setFilter(spreadSubsample);
+			
+		}else if(balancing.equals(SMOTE)) {
+			
+			SMOTE smote = new SMOTE();
+			smote.setInputFormat(training);
+			fc.setFilter(smote);
+			
+			
+		}else {
+			Constants.LOGGER.log(Level.SEVERE, "Unsupported type of balancing selected");
+		}
+		
+		return fc;
+		
+	}
+	
+	private void calssifierEvaluation(boolean featureSelection, String balancing) throws Exception {
 		
 		boolean notEnded;
 		int indx;
+		String bal = "None";
+		String fs = "None";
 		//iterate over calssifier, make a list of classifier
 		RandomForest randomForest = new RandomForest();
 		NaiveBayes nativeBayes = new NaiveBayes();
 		IBk ibk = new IBk();
+		FilteredClassifier fc = null;
 		
 		List<Classifier> classifiers = new ArrayList<>();
 		
@@ -152,7 +258,6 @@ public class DatasetAnalyzer{
 			while(notEnded) {
 				notEnded = !walkForward(indx);
 				
-				
 				DataSource source1 = new DataSource(TRAINING_FILENAME);
 				Instances training = source1.getDataSet();
 				DataSource source2 = new DataSource(TESTING_FILENAME);
@@ -166,63 +271,44 @@ public class DatasetAnalyzer{
 				training.setClassIndex(training.numAttributes()-1);
 				testing.setClassIndex(testing.numAttributes()-1);
 				
-				classifier.buildClassifier(training);
-				Evaluation eval = new Evaluation(testing);
-				eval.evaluateModel(classifier, testing);
+				if(featureSelection) {
+					//create AttributeSelection object
+					AttributeSelection filter = new AttributeSelection();
+					//create evaluator and search algorithm objects
+					CfsSubsetEval eval = new CfsSubsetEval();
+					GreedyStepwise search = new GreedyStepwise();
+					//set the algorithm to search backward
+					search.setSearchBackwards(true);
+					//set the filter to use the evaluator and search algorithm
+					filter.setEvaluator(eval);
+					filter.setSearch(search);
+					//specify the dataset
+					filter.setInputFormat(training);
+					//apply
+					training = Filter.useFilter(training, filter);
+					testing = Filter.useFilter(testing, filter);
+					fs = "Yes";
+				}
 				
-				ClassifierAnalysis ca = new ClassifierAnalysis(this.projName, classifier.toString().split("\n")[0]);
+				double doublePercOfMajClass = 0;
+				if(!balancing.equals(NONE)) {
+					bal = "Yes";
+					if(balancing.equals(OVERSAMPLING)) {
+						int buggyIndx = training.numAttributes()-1;
+						int numYesTr = countAttrValues(training, buggyIndx, "Yes");
+						int numNoTr = countAttrValues(training, buggyIndx, "No");
+						doublePercOfMajClass = (double)numNoTr/(numYesTr+numNoTr);
+					}
+					fc = configureBalancing(training, balancing, doublePercOfMajClass);
+				}
 				
-				//feature selection nor balancing were used now
-				//the default value is None
-				
-				//storing results
-				ca.setNumTrainingReleases(indx);
-				ca.setNumTrainingInstances(training.numInstances());
-				ca.setNumTestingInstances(testing.numInstances());
-				
-				//counting classes defective in training
-				int buggyIndx = training.numAttributes()-1;
-				int numYesTr = countAttrValues(training, buggyIndx, "Yes");
-				int numNoTr = countAttrValues(training, buggyIndx, "No");
-				
-				ca.setNumNotDefectiveTraining(numNoTr);
-				ca.setNumDefectiveTraining(numYesTr);
-				
-				//counting classes defective in testing
-				int numYesTe = countAttrValues(testing, buggyIndx, "Yes");
-				int numNoTe = countAttrValues(testing, buggyIndx, "No");
-				
-				ca.setNumDefectiveTesting(numYesTe);
-				ca.setNumNotDefectiveTesting(numNoTe);
-				
-				//setting up accuracy metrics
-				double precision = eval.precision(1);
-				double kappa = eval.kappa();
-				double roc = eval.areaUnderROC(1);
-				double recall = eval.recall(1);
-				
-				ca.setPrecision(precision);
-				ca.setKappa(kappa);
-				ca.setRocArea(roc);
-				ca.setRecall(recall);
-				
-				//setting TP, FP, TN FN
-				int TP = (int) eval.numTruePositives(1);
-				int FP = (int) eval.numFalsePositives(1);
-				int TN = (int) eval.numTrueNegatives(1);
-				int FN = (int) eval.numFalseNegatives(1);
-				
-				ca.setTruePositive(TP);
-				ca.setFalsePositive(FP);
-				ca.setTrueNegative(TN);
-				ca.setFalseNegative(FN);
-				
-				//if the # of buggy classes in testing or training = 0, 
-				//the evaluation of the classifier would be meaningless
-				//so the ca is not added to the final result
-				
-				if(numYesTr != 0 && numYesTe != 0) {
-					classifierAnalysis.add(ca);
+				if(!balancing.equals(NONE)) {
+					fc.setClassifier(classifier);
+					fc.buildClassifier(training);
+					evaluateModel(fc, training, testing, indx, fs, bal);
+				}else {
+					classifier.buildClassifier(training);
+					evaluateModel(classifier, training, testing, indx, fs, bal);
 				}
 				
 				indx++;
@@ -232,29 +318,34 @@ public class DatasetAnalyzer{
 		Constants.LOGGER.log(Level.INFO, "Written results for 'only classifiers'");
 	}
 	
-	private void classifierAndFeaSel() {}
-	
-	private void classifierAndSampling() {}
-	
-	private void classifierFeaSelSampl() {}
-	
-	public void startAnalysis() throws Exception {
+	public void startAnalysis(){
 		
-		this.onlyClassifier();
-		Constants.LOGGER.log(Level.INFO, "Analysis with only calssifier done");
-
-		/*
-		this.classifierAndFeaSel();
-		Constants.LOGGER.log(Level.INFO, "Analysis with calssifier and deature selection done");
-		this.classifierAndSampling();
-		Constants.LOGGER.log(Level.INFO, "Analysis with calssifier and balancing done");
-		this.classifierFeaSelSampl();
-		Constants.LOGGER.log(Level.INFO, "Analysis with classifier, feature selection and balancing done");
-		*/
-		
-		//Storing results
-		CsvFileWriter.writeWekaResults(classifierAnalysis, this.projName);
-		
+		try {
+			this.calssifierEvaluation(false, NONE);
+			Constants.LOGGER.log(Level.INFO, "Analysis with only calssifiers done");
+			
+			this.calssifierEvaluation(true, NONE);
+			Constants.LOGGER.log(Level.INFO, "Analysis with calssifiers and feature selection done");
+			
+			this.calssifierEvaluation(false, OVERSAMPLING);
+			Constants.LOGGER.log(Level.INFO, "Analysis with calssifiers and balancing (oversampling) done");
+			this.calssifierEvaluation(false, UNDERSAMPLING);
+			Constants.LOGGER.log(Level.INFO, "Analysis with calssifiers and balancing (undersampling) done");
+			this.calssifierEvaluation(false, SMOTE);
+			Constants.LOGGER.log(Level.INFO, "Analysis with calssifiers and balancing (smote) done");
+			
+			this.calssifierEvaluation(true, OVERSAMPLING);
+			Constants.LOGGER.log(Level.INFO, "Analysis with calssifiers and balancing (oversampling) done");
+			this.calssifierEvaluation(true, UNDERSAMPLING);
+			Constants.LOGGER.log(Level.INFO, "Analysis with calssifiers and balancing (undersampling) done");
+			this.calssifierEvaluation(true, SMOTE);
+			Constants.LOGGER.log(Level.INFO, "Analysis with calssifiers and balancing (smote) done");
+			
+			//Storing results
+			CsvFileWriter.writeWekaResults(classifierAnalysis, this.projName);
+		} catch (Exception e) {
+			Constants.LOGGER.log(Level.SEVERE, e.getMessage());
+		}
 		
 	}
 	

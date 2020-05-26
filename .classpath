@@ -4,5 +4,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="/home/ezio/Scrivania/ISW2/jars/json-20190722.jar"/>
 	<classpathentry kind="lib" path="/home/ezio/Scrivania/ISW2/jars/weka.jar"/>
+	<classpathentry kind="lib" path="/home/ezio/Scaricati/SMOTE-1.0.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
