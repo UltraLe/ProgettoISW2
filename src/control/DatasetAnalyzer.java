@@ -52,24 +52,25 @@ public class DatasetAnalyzer{
 		}
 	}
 
-	//this method will implement the ealk farward validation method,
+	//this method will implement the walk forward validation method,
 	//by creating 2 temporary files, that refers to testing and training dataset
 	//This method will return true if all the indexes have been analyzed
 	private boolean walkForward(int releaseIndx) throws IOException {
 		
 		int testIndx = releaseIndx+1;
-		boolean allDone = false;
+		boolean stop = false;
 		
 		StringBuilder notData = new StringBuilder();
 		StringBuilder training = new StringBuilder();
 		StringBuilder testing = new StringBuilder();
 		
-		int currIndx;
+		int currIndx = 1;
 		
 		//if temporary files were not deleted, they will be overwritten	
 		try (BufferedReader reader = new BufferedReader(new FileReader(this.datasetName))){
 			String line;
 			while((line = reader.readLine()) != null) {
+				line += "\n";
 				if(line.contains("@")) {
 					notData.append(line);
 				}else if(line.length() < 2) {
@@ -92,7 +93,7 @@ public class DatasetAnalyzer{
 			
 			//if null was read, this is the last phase of walkForward
 			if(line == null) {
-				allDone = true;
+				stop = true;
 			}
 					
 		}
@@ -109,32 +110,47 @@ public class DatasetAnalyzer{
 			writer.append(testing.toString());
 		}
 		
-		System.out.println("walkForward done for release index: "+releaseIndx+", done: "+allDone);
-		
-		return allDone;
+		return stop;
 	}
 	
 	public void setFeatureSelection() {}
 	
 	public void setSamplingMethod() {}
 	
+	private int countAttrValues(Instances instances, int classIndx, String value) {
+		
+		int nums = 0;
+		
+		for(Instance in : instances) {
+			if(value.equals(in.stringValue(classIndx))){
+				nums++;
+			}
+		}
+		
+		return nums;
+	}
+	
 	private void onlyClassifier() throws Exception {
 		
-		boolean notEnded = true;
-		int indx = 1;
+		boolean notEnded;
+		int indx;
 		//iterate over calssifier, make a list of classifier
 		RandomForest randomForest = new RandomForest();
 		NaiveBayes nativeBayes = new NaiveBayes();
 		IBk ibk = new IBk();
 		
 		List<Classifier> classifiers = new ArrayList<>();
+		
 		classifiers.add(randomForest);
 		classifiers.add(nativeBayes);
 		classifiers.add(ibk);
 		
 		for(Classifier classifier : classifiers) {
+			
+			notEnded = true;
+			indx = 1;
 			while(notEnded) {
-				notEnded = walkForward(indx);
+				notEnded = !walkForward(indx);
 				
 				
 				DataSource source1 = new DataSource(TRAINING_FILENAME);
@@ -146,11 +162,18 @@ public class DatasetAnalyzer{
 				testing.deleteAttributeAt(0);
 				training.deleteAttributeAt(0);
 				
+				//setting class to analyze
+				training.setClassIndex(training.numAttributes()-1);
+				testing.setClassIndex(testing.numAttributes()-1);
+				
 				classifier.buildClassifier(training);
 				Evaluation eval = new Evaluation(testing);
 				eval.evaluateModel(classifier, testing);
 				
-				ClassifierAnalysis ca = new ClassifierAnalysis(this.projName, classifier.toString());
+				ClassifierAnalysis ca = new ClassifierAnalysis(this.projName, classifier.toString().split("\n")[0]);
+				
+				//feature selection nor balancing were used now
+				//the default value is None
 				
 				//storing results
 				ca.setNumTrainingReleases(indx);
@@ -159,40 +182,54 @@ public class DatasetAnalyzer{
 				
 				//counting classes defective in training
 				int buggyIndx = training.numAttributes()-1;
-				int numYes = 0;
-				int numNo = 0;
+				int numYesTr = countAttrValues(training, buggyIndx, "Yes");
+				int numNoTr = countAttrValues(training, buggyIndx, "No");
 				
-				for(Instance instance : training) {
-					String value = instance.stringValue(buggyIndx);
-					if(value.equals("Yes")){
-						numYes++;
-					}else {
-						numNo++;
-					}
+				ca.setNumNotDefectiveTraining(numNoTr);
+				ca.setNumDefectiveTraining(numYesTr);
+				
+				//counting classes defective in testing
+				int numYesTe = countAttrValues(testing, buggyIndx, "Yes");
+				int numNoTe = countAttrValues(testing, buggyIndx, "No");
+				
+				ca.setNumDefectiveTesting(numYesTe);
+				ca.setNumNotDefectiveTesting(numNoTe);
+				
+				//setting up accuracy metrics
+				double precision = eval.precision(1);
+				double kappa = eval.kappa();
+				double roc = eval.areaUnderROC(1);
+				double recall = eval.recall(1);
+				
+				ca.setPrecision(precision);
+				ca.setKappa(kappa);
+				ca.setRocArea(roc);
+				ca.setRecall(recall);
+				
+				//setting TP, FP, TN FN
+				int TP = (int) eval.numTruePositives(1);
+				int FP = (int) eval.numFalsePositives(1);
+				int TN = (int) eval.numTrueNegatives(1);
+				int FN = (int) eval.numFalseNegatives(1);
+				
+				ca.setTruePositive(TP);
+				ca.setFalsePositive(FP);
+				ca.setTrueNegative(TN);
+				ca.setFalseNegative(FN);
+				
+				//if the # of buggy classes in testing or training = 0, 
+				//the evaluation of the classifier would be meaningless
+				//so the ca is not added to the final result
+				
+				if(numYesTr != 0 && numYesTe != 0) {
+					classifierAnalysis.add(ca);
 				}
-				
-				ca.setNumNotDefectiveTraining(numNo);
-				ca.setNumDefectiveTraining(numYes);
-				
-				numYes = 0;
-				numNo = 0;
-				for(Instance instance : testing) {
-					String value = instance.stringValue(buggyIndx);
-					if(value.equals("Yes")){
-						numYes++;
-					}else {
-						numNo++;
-					}
-				}
-				
-				ca.setNumDefectiveTesting(numYes);
-				ca.setNumNotDefectiveTesting(numNo);
-				
-				
 				
 				indx++;
 			}
 		}
+		
+		Constants.LOGGER.log(Level.INFO, "Written results for 'only classifiers'");
 	}
 	
 	private void classifierAndFeaSel() {}
@@ -205,86 +242,28 @@ public class DatasetAnalyzer{
 		
 		this.onlyClassifier();
 		Constants.LOGGER.log(Level.INFO, "Analysis with only calssifier done");
+
+		/*
 		this.classifierAndFeaSel();
 		Constants.LOGGER.log(Level.INFO, "Analysis with calssifier and deature selection done");
 		this.classifierAndSampling();
 		Constants.LOGGER.log(Level.INFO, "Analysis with calssifier and balancing done");
 		this.classifierFeaSelSampl();
 		Constants.LOGGER.log(Level.INFO, "Analysis with classifier, feature selection and balancing done");
+		*/
+		
+		//Storing results
+		CsvFileWriter.writeWekaResults(classifierAnalysis, this.projName);
+		
 		
 	}
 	
 	
 	public static void main(String args[]) throws Exception{
 		
-		/*
-		 * do this thing in starter
-		DatasetAnalyzer da = new DatasetAnalyzer("BOOKKEEPER","finalTableBOOKKEEPER.arff");
+		//do this thing in starter
+		DatasetAnalyzer da = new DatasetAnalyzer("finalTableBOOKKEEPER.arff", "BOOKKEEPER");
 		da.startAnalysis();
-		*/
-		
-		//load datasets
-		
-				//ORDINATED HANDOFF (but implement walk forward...)
-		
-				DataSource source1 = new DataSource("/home/ezio/Scrivania/ISW2/datasets/trS.arff");
-				Instances training = source1.getDataSet();
-				DataSource source2 = new DataSource("/home/ezio/Scrivania/ISW2/datasets/teS.arff");
-				Instances testing = source2.getDataSet();
-				
-				int numAttr = testing.numAttributes();
-				System.out.println("Num attr: "+numAttr);
-				//with numBugs it is all 1.
-				//removing numBugs...
-				//and thing goes worst... OK.
-				testing.deleteAttributeAt(numAttr-1);
-				training.deleteAttributeAt(numAttr-1);
-				numAttr = testing.numAttributes();
-				
-				//OK it works
-				for(Instance instance : testing) {
-					String value = instance.stringValue(numAttr-1);
-					System.out.println(value);
-				}
-				
-				testing.deleteAttributeAt(0);
-				training.deleteAttributeAt(0);
-				
-				numAttr = training.numAttributes();
-				
-				training.setClassIndex(numAttr-1);
-				testing.setClassIndex(numAttr-1);
-
-				RandomForest classifier = new RandomForest();
-				//NaiveBayes classifier = new NaiveBayes();
-				//Native bayes sucks
-
-				
-				classifier.buildClassifier(training);
-
-				Evaluation eval = new Evaluation(testing);	
-				
-				
-
-				eval.evaluateModel(classifier, testing);
-				//MUST BE 0, if 1, SHITTY results... why ??
-				System.out.println("AUC = "+eval.areaUnderROC(1));
-				System.out.println("kappa = "+eval.kappa());
-				System.out.println("precision = "+eval.precision(1));
-				System.out.println("recall = "+eval.recall(1));
-				
-				/*
-				 * TODO
-				 * 1. classIndex in eval
-				 * 2. does setClassIndex do what i think ?
-				 * 3. are there other measures in eval ?
-				 * 4. implement walk farward.
-				 * 5. apply to different classifier (which ones ?)
-				 * 6. register results.
-				 * 7. do in such a way to exclude some attributes... -> FEATURE SELECTION.
-				 *   (maybe it is better to wait...)
-				 */
-			
 				
 	}
 }

@@ -76,7 +76,7 @@ public class GitFilesAttributesFinder {
 		if(releaseIndx == 1) {
 			sinceUntil.add(LocalDate.of(1971, Month.JANUARY, 1));
 		}else {
-			//otherwise the release 'i' has started when the release 'i-1'
+			//otherwise the release 'i' has started when the release 'i-1' has been released
 			sinceUntil.add(indexDate.get(releaseIndx-1));
 		}
 		

@@ -17,6 +17,7 @@ public class Starter {
 		GitInteractor.getLastCommits();
 		
 		
+		
 		//project BOOKKEEPER
 		Constants.setJiraProjName("BOOKKEEPER");
 		Constants.setGitProjName("bookkeeper");
@@ -29,6 +30,7 @@ public class Starter {
 		Constants.setGitProjName("syncope");
 		Buggy.getBuggyFiles();
 		GitFilesAttributesFinder.getFinalTable();
+		
 	}
 
 }
