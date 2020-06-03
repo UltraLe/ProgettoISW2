@@ -221,16 +221,20 @@ public class DatasetAnalyzer{
 		
 	}
 	
-	private FilteredClassifier configureBalancing(Instances training, String balancing, double ovSamVal) throws EvaluationException {
+	private FilteredClassifier configureBalancing(Instances training, String balancing, int buggyIndx) throws EvaluationException {
 		
 		FilteredClassifier fc = new FilteredClassifier();
 		
 		if(balancing.equals(OVERSAMPLING)){
 			
+			int numYesTr = countAttrValues(training, buggyIndx, "Yes");
+			int numNoTr = countAttrValues(training, buggyIndx, "No");
+			double doublePercOfMajClass = (double)numNoTr/(numYesTr+numNoTr);
+			
 			Resample resample = new Resample();
 			try {
 				resample.setInputFormat(training);
-				String[] opts = new String[]{ "-B", "1.0","-Z", String.valueOf(2*ovSamVal)};
+				String[] opts = new String[]{ "-B", "1.0","-Z", String.valueOf(2*doublePercOfMajClass)};
 				resample.setOptions(opts);
 			} catch (Exception e) {
 				throw new EvaluationException(e.getMessage());
@@ -323,23 +327,11 @@ public class DatasetAnalyzer{
 					testing = Filter.useFilter(testing, filter);
 					fs = "Yes";
 				}
-				
-				double doublePercOfMajClass = 0;
-				if(!balancing.equals(NONE) && balancing.equals(OVERSAMPLING)) {
-					//if over sampling technique is selected, the percentage of non defective classes
-					//on training set has to be evaluated
-					int buggyIndx = training.numAttributes()-1;
-					int numYesTr = countAttrValues(training, buggyIndx, "Yes");
-					int numNoTr = countAttrValues(training, buggyIndx, "No");
-					doublePercOfMajClass = (double)numNoTr/(numYesTr+numNoTr);
-				}
-				if(!balancing.equals(NONE)) {
-					fc = configureBalancing(training, balancing, doublePercOfMajClass);
-				}
 
 				if(!balancing.equals(NONE)) {
+					int buggyIndx = training.numAttributes()-1;
+					fc = configureBalancing(training, balancing, buggyIndx);
 					fc.setClassifier(classifier);
-					//TODO here syncope grave....
 					fc.buildClassifier(training);
 					evaluateModel(fc, training, testing, indx, fs, balancing, classifier.getClass().getSimpleName());
 				}else {
