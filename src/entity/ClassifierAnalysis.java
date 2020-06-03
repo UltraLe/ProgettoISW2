@@ -47,8 +47,8 @@ public class ClassifierAnalysis {
 		return this.projName;
 	}
 	
-	public int setNumTrainingReleases(int numTrainingRelease) {
-		return this.numTrainingRelease = numTrainingRelease;
+	public void setNumTrainingReleases(int numTrainingRelease) {
+		this.numTrainingRelease = numTrainingRelease;
 	}
 	
 	public int getNumTrainingReleases() {
@@ -76,7 +76,7 @@ public class ClassifierAnalysis {
 	}
 	
 	public double getPercDefectiveInTraining() {
-		return (double)this.numDefectiveTraining/(this.numDefectiveTraining+this.numNotDefectiveTraining);
+		return this.numDefectiveTraining/(this.numDefectiveTraining+this.numNotDefectiveTraining);
 	}
 
 	public void setNumDefectiveTesting(double numDefectiveTesting) {
@@ -88,7 +88,7 @@ public class ClassifierAnalysis {
 	}
 	
 	public double getPercDefectiveInTesting() {
-		return (double)this.numDefectiveTesting/(this.numDefectiveTesting+this.numNotDefectiveTesting);
+		return this.numDefectiveTesting/(this.numDefectiveTesting+this.numNotDefectiveTesting);
 	}
 	
 	public String getClassifierName() {

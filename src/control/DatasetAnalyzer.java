@@ -14,7 +14,7 @@ import java.util.logging.Level;
 
 import entity.ClassifierAnalysis;
 import entity.Constants;
-
+import entity.EvaluationException;
 import weka.filters.supervised.attribute.AttributeSelection;
 import weka.filters.supervised.instance.Resample;
 import weka.filters.supervised.instance.SpreadSubsample;
@@ -66,7 +66,6 @@ public class DatasetAnalyzer{
 	//This method will return true if all the indexes have been analyzed
 	private boolean walkForward(int releaseIndx) throws IOException {
 		
-		//int testIndx = releaseIndx+1;
 		int testIndx = -1;
 		boolean stop = false;
 		
@@ -79,17 +78,20 @@ public class DatasetAnalyzer{
 		
 		//if temporary files were not deleted, they will be overwritten	
 		try (BufferedReader reader = new BufferedReader(new FileReader(this.datasetName))){
-			String line;
+			String line = new String();
+			StringBuilder completeLine = new StringBuilder();
 			while((line = reader.readLine()) != null) {
-				line += "\n";
-				if(line.contains("@")) {
-					notData.append(line);
-				}else if(line.length() < 2) {
+				completeLine.append(line);
+				completeLine.append("\n");
+				
+				if(completeLine.toString().contains("@")) {
+					notData.append(completeLine.toString());
+				}else if(completeLine.toString().length() < 2) {
 					//if newlines are read
-					notData.append(line);
+					notData.append(completeLine.toString());
 				}else {
 					//all the other lines starts with a number (the index release number)
-					currIndx = Integer.valueOf(line.split(",")[0]);
+					currIndx = Integer.valueOf(completeLine.toString().split(",")[0]);
 					
 					//when the index becomes grater than the release (training) index
 					//the testing index has to be assigned
@@ -99,14 +101,15 @@ public class DatasetAnalyzer{
 					}
 					
 					if(currIndx <= releaseIndx) {
-						training.append(line);
+						training.append(completeLine.toString());
 					}else if(currIndx == testIndx) {
-						testing.append(line);
+						testing.append(completeLine.toString());
 					}else {
 						//the index is greater than the test index
 						break;
 					}
 				}
+				completeLine = new StringBuilder();
 			}
 			
 			//if null was read, this is the last phase of walkForward
@@ -146,10 +149,17 @@ public class DatasetAnalyzer{
 	
 	private void evaluateModel(Classifier classifier, Instances training, Instances testing,
 												int trainingRelease, String featureSelection, 
-												String balancing, String classifierName) throws Exception {
+												String balancing, String classifierName) throws EvaluationException {
 		
-		Evaluation eval = new Evaluation(testing);
-		eval.evaluateModel(classifier, testing);
+		Evaluation eval;
+		try {
+			eval = new Evaluation(testing);
+			eval.evaluateModel(classifier, testing);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			throw new EvaluationException(e.getMessage());
+		}
+		
 		
 		ClassifierAnalysis ca = new ClassifierAnalysis(this.projName, classifierName);
 		
@@ -190,15 +200,15 @@ public class DatasetAnalyzer{
 		ca.setRecall(recall);
 		
 		//setting TP, FP, TN FN
-		int TP = (int) eval.numTruePositives(1);
-		int FP = (int) eval.numFalsePositives(1);
-		int TN = (int) eval.numTrueNegatives(1);
-		int FN = (int) eval.numFalseNegatives(1);
+		int tp = (int) eval.numTruePositives(1);
+		int fp = (int) eval.numFalsePositives(1);
+		int tn = (int) eval.numTrueNegatives(1);
+		int fn = (int) eval.numFalseNegatives(1);
 		
-		ca.setTruePositive(TP);
-		ca.setFalsePositive(FP);
-		ca.setTrueNegative(TN);
-		ca.setFalseNegative(FN);
+		ca.setTruePositive(tp);
+		ca.setFalsePositive(fp);
+		ca.setTrueNegative(tn);
+		ca.setFalseNegative(fn);
 		
 		//if the # of buggy classes in testing or training = 0, 
 		//the evaluation of the classifier would be meaningless
@@ -209,36 +219,48 @@ public class DatasetAnalyzer{
 		
 	}
 	
-	private FilteredClassifier configureBalancing(Instances training, String balancing, double ovSamVal) throws Exception {
+	private FilteredClassifier configureBalancing(Instances training, String balancing, double ovSamVal) throws EvaluationException {
 		
 		FilteredClassifier fc = new FilteredClassifier();
 		
 		if(balancing.equals(OVERSAMPLING)){
 			
 			Resample resample = new Resample();
-			resample.setInputFormat(training);
-			String[] opts = new String[]{ "-B", "1.0","-Z", String.valueOf(2*ovSamVal)};
-			resample.setOptions(opts);
+			try {
+				resample.setInputFormat(training);
+				String[] opts = new String[]{ "-B", "1.0","-Z", String.valueOf(2*ovSamVal)};
+				resample.setOptions(opts);
+			} catch (Exception e) {
+				throw new EvaluationException(e.getMessage());
+			}
+			
 			fc.setFilter(resample);	
 			
 		}else if(balancing.equals(UNDERSAMPLING)) {
 			
 			SpreadSubsample  spreadSubsample = new SpreadSubsample();
-			String[] opts = new String[]{ "-M", "1.0"};
-			spreadSubsample.setOptions(opts);
+			try {
+				String[] opts = new String[]{ "-M", "1.0"};
+				spreadSubsample.setOptions(opts);
+			}catch(Exception e) {
+				throw new EvaluationException(e.getMessage());
+			}
 			fc.setFilter(spreadSubsample);
 			
 		}else if(balancing.equals(SMOTE)) {
 			
 			SMOTE smote = new SMOTE();
-			smote.setInputFormat(training);
+			try {
+				smote.setInputFormat(training);
+			} catch (Exception e) {
+				throw new EvaluationException(e.getMessage());
+			}
 			fc.setFilter(smote);
-			
 			
 		}else {
 			Constants.LOGGER.log(Level.SEVERE, "Unsupported type of balancing selected");
 		}
-		
+
 		return fc;
 		
 	}
@@ -297,7 +319,6 @@ public class DatasetAnalyzer{
 					training = Filter.useFilter(training, filter);
 					testing = Filter.useFilter(testing, filter);
 					fs = "Yes";
-					System.out.println("After using filter, numTraining attribute: "+training.numAttributes());
 				}
 				
 				double doublePercOfMajClass = 0;
@@ -312,16 +333,17 @@ public class DatasetAnalyzer{
 					}
 					fc = configureBalancing(training, balancing, doublePercOfMajClass);
 				}
-				
+
 				if(!balancing.equals(NONE)) {
 					fc.setClassifier(classifier);
+					//TODO here syncope grave....
 					fc.buildClassifier(training);
 					evaluateModel(fc, training, testing, indx, fs, balancing, classifier.getClass().getSimpleName());
 				}else {
 					classifier.buildClassifier(training);
 					evaluateModel(classifier, training, testing, indx, fs, balancing, classifier.getClass().getSimpleName());
 				}
-				
+
 				indx++;
 			}
 		}
@@ -332,7 +354,7 @@ public class DatasetAnalyzer{
 	public void startAnalysis(){
 
 		try {
-			
+			/*
 			this.calssifierEvaluation(false, NONE);
 			Constants.LOGGER.log(Level.INFO, "Analysis with only calssifiers done");
 			
@@ -350,6 +372,7 @@ public class DatasetAnalyzer{
 			Constants.LOGGER.log(Level.INFO, "Analysis with calssifiers and balancing (oversampling) done");
 			this.calssifierEvaluation(true, UNDERSAMPLING);
 			Constants.LOGGER.log(Level.INFO, "Analysis with calssifiers and balancing (undersampling) done");
+			*/
 			this.calssifierEvaluation(true, SMOTE);
 			Constants.LOGGER.log(Level.INFO, "Analysis with calssifiers and balancing (smote) done");
 			

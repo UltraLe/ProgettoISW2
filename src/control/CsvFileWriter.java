@@ -285,13 +285,5 @@ public class CsvFileWriter {
 		}
 		
 	}
-	
-	//TODO maybe later on
-	public static void mergeAllWekaResults(List<ClassifierAnalysis> classifierAnalysis) {
-		
-		String filename = whichFilename(Constants.WEKA_RESULTS,"AllProjects",Constants.CSV_EXT);
-		
-		
-	}
 
 }
