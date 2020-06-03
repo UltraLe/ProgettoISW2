@@ -30,12 +30,12 @@ public class Starter {
 		Constants.setGitProjName("syncope");
 		Buggy.getBuggyFiles();
 		GitFilesAttributesFinder.getFinalTable();
-		*/
+		
 		//evaluating results
 		DatasetAnalyzer da = new DatasetAnalyzer("finalTableBOOKKEEPER.arff", "BOOKKEEPER");
 		da.startAnalysis();
-		
-		da = new DatasetAnalyzer("finalTableSYNCOPE.arff", "SYNCOPE");
+		*/
+		DatasetAnalyzer da = new DatasetAnalyzer("finalTableSYNCOPE.arff", "SYNCOPE");
 		da.startAnalysis();
 		
 	}

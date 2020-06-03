@@ -66,7 +66,8 @@ public class DatasetAnalyzer{
 	//This method will return true if all the indexes have been analyzed
 	private boolean walkForward(int releaseIndx) throws IOException {
 		
-		int testIndx = releaseIndx+1;
+		//int testIndx = releaseIndx+1;
+		int testIndx = -1;
 		boolean stop = false;
 		
 		StringBuilder notData = new StringBuilder();
@@ -74,6 +75,7 @@ public class DatasetAnalyzer{
 		StringBuilder testing = new StringBuilder();
 		
 		int currIndx = 1;
+		boolean choosen = false;
 		
 		//if temporary files were not deleted, they will be overwritten	
 		try (BufferedReader reader = new BufferedReader(new FileReader(this.datasetName))){
@@ -88,6 +90,13 @@ public class DatasetAnalyzer{
 				}else {
 					//all the other lines starts with a number (the index release number)
 					currIndx = Integer.valueOf(line.split(",")[0]);
+					
+					//when the index becomes grater than the release (training) index
+					//the testing index has to be assigned
+					if(!choosen && currIndx > releaseIndx) {
+						testIndx = currIndx;
+						choosen = true;
+					}
 					
 					if(currIndx <= releaseIndx) {
 						training.append(line);
@@ -136,12 +145,13 @@ public class DatasetAnalyzer{
 	}
 	
 	private void evaluateModel(Classifier classifier, Instances training, Instances testing,
-												int trainingRelease, String featureSelection, String balancing) throws Exception {
+												int trainingRelease, String featureSelection, 
+												String balancing, String classifierName) throws Exception {
 		
 		Evaluation eval = new Evaluation(testing);
 		eval.evaluateModel(classifier, testing);
 		
-		ClassifierAnalysis ca = new ClassifierAnalysis(this.projName, classifier.getClass().getName());
+		ClassifierAnalysis ca = new ClassifierAnalysis(this.projName, classifierName);
 		
 		
 		//settin feature selection and balancing methods
@@ -236,8 +246,7 @@ public class DatasetAnalyzer{
 	private void calssifierEvaluation(boolean featureSelection, String balancing) throws Exception {
 		
 		boolean notEnded;
-		int indx;
-		String bal = "None";
+		int indx;;
 		String fs = "None";
 		//iterate over calssifier, make a list of classifier
 		RandomForest randomForest = new RandomForest();
@@ -288,11 +297,13 @@ public class DatasetAnalyzer{
 					training = Filter.useFilter(training, filter);
 					testing = Filter.useFilter(testing, filter);
 					fs = "Yes";
+					System.out.println("After using filter, numTraining attribute: "+training.numAttributes());
 				}
 				
 				double doublePercOfMajClass = 0;
 				if(!balancing.equals(NONE)) {
-					bal = "Yes";
+					//if over sampling technique is selected, the percentage of non defective classes
+					//on training set has to be evaluated
 					if(balancing.equals(OVERSAMPLING)) {
 						int buggyIndx = training.numAttributes()-1;
 						int numYesTr = countAttrValues(training, buggyIndx, "Yes");
@@ -305,10 +316,10 @@ public class DatasetAnalyzer{
 				if(!balancing.equals(NONE)) {
 					fc.setClassifier(classifier);
 					fc.buildClassifier(training);
-					evaluateModel(fc, training, testing, indx, fs, bal);
+					evaluateModel(fc, training, testing, indx, fs, balancing, classifier.getClass().getSimpleName());
 				}else {
 					classifier.buildClassifier(training);
-					evaluateModel(classifier, training, testing, indx, fs, bal);
+					evaluateModel(classifier, training, testing, indx, fs, balancing, classifier.getClass().getSimpleName());
 				}
 				
 				indx++;
@@ -319,8 +330,9 @@ public class DatasetAnalyzer{
 	}
 	
 	public void startAnalysis(){
-		
+
 		try {
+			
 			this.calssifierEvaluation(false, NONE);
 			Constants.LOGGER.log(Level.INFO, "Analysis with only calssifiers done");
 			
@@ -353,7 +365,7 @@ public class DatasetAnalyzer{
 	public static void main(String args[]) throws Exception{
 		
 		//do this thing in starter
-		DatasetAnalyzer da = new DatasetAnalyzer("finalTableBOOKKEEPER.arff", "BOOKKEEPER");
+		DatasetAnalyzer da = new DatasetAnalyzer("finalTableSYNCOPE.arff", "SYNCOPE");
 		da.startAnalysis();
 				
 	}
