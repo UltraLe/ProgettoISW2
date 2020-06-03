@@ -30,6 +30,9 @@ import weka.classifiers.lazy.IBk;
 import weka.classifiers.meta.FilteredClassifier;
 import weka.filters.supervised.instance.SMOTE;
 
+// 						!	!	!
+//compile with -Djava.util.Arrays.useLegacyMergeSort=true
+
 public class DatasetAnalyzer{
 	
 	private String datasetName;
@@ -78,7 +81,7 @@ public class DatasetAnalyzer{
 		
 		//if temporary files were not deleted, they will be overwritten	
 		try (BufferedReader reader = new BufferedReader(new FileReader(this.datasetName))){
-			String line = new String();
+			String line;
 			StringBuilder completeLine = new StringBuilder();
 			while((line = reader.readLine()) != null) {
 				completeLine.append(line);
@@ -156,7 +159,6 @@ public class DatasetAnalyzer{
 			eval = new Evaluation(testing);
 			eval.evaluateModel(classifier, testing);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			throw new EvaluationException(e.getMessage());
 		}
 		
@@ -248,7 +250,6 @@ public class DatasetAnalyzer{
 			fc.setFilter(spreadSubsample);
 			
 		}else if(balancing.equals(SMOTE)) {
-			
 			SMOTE smote = new SMOTE();
 			try {
 				smote.setInputFormat(training);
@@ -265,10 +266,10 @@ public class DatasetAnalyzer{
 		
 	}
 	
-	private void calssifierEvaluation(boolean featureSelection, String balancing) throws Exception {
+	private void calssifierEvaluation(boolean featureSelection, String balancing) throws IOException, EvaluationException {
 		
 		boolean notEnded;
-		int indx;;
+		int indx;
 		String fs = "None";
 		//iterate over calssifier, make a list of classifier
 		RandomForest randomForest = new RandomForest();
@@ -283,6 +284,8 @@ public class DatasetAnalyzer{
 		classifiers.add(ibk);
 		
 		for(Classifier classifier : classifiers) {
+			
+			try {
 			
 			notEnded = true;
 			indx = 1;
@@ -322,15 +325,15 @@ public class DatasetAnalyzer{
 				}
 				
 				double doublePercOfMajClass = 0;
-				if(!balancing.equals(NONE)) {
+				if(!balancing.equals(NONE) && balancing.equals(OVERSAMPLING)) {
 					//if over sampling technique is selected, the percentage of non defective classes
 					//on training set has to be evaluated
-					if(balancing.equals(OVERSAMPLING)) {
-						int buggyIndx = training.numAttributes()-1;
-						int numYesTr = countAttrValues(training, buggyIndx, "Yes");
-						int numNoTr = countAttrValues(training, buggyIndx, "No");
-						doublePercOfMajClass = (double)numNoTr/(numYesTr+numNoTr);
-					}
+					int buggyIndx = training.numAttributes()-1;
+					int numYesTr = countAttrValues(training, buggyIndx, "Yes");
+					int numNoTr = countAttrValues(training, buggyIndx, "No");
+					doublePercOfMajClass = (double)numNoTr/(numYesTr+numNoTr);
+				}
+				if(!balancing.equals(NONE)) {
 					fc = configureBalancing(training, balancing, doublePercOfMajClass);
 				}
 
@@ -346,6 +349,10 @@ public class DatasetAnalyzer{
 
 				indx++;
 			}
+			
+			}catch(Exception e) {
+				throw new EvaluationException(e.getMessage());
+			}
 		}
 		
 		Constants.LOGGER.log(Level.INFO, "Written results for 'only classifiers'");
@@ -354,7 +361,7 @@ public class DatasetAnalyzer{
 	public void startAnalysis(){
 
 		try {
-			/*
+			
 			this.calssifierEvaluation(false, NONE);
 			Constants.LOGGER.log(Level.INFO, "Analysis with only calssifiers done");
 			
@@ -372,7 +379,7 @@ public class DatasetAnalyzer{
 			Constants.LOGGER.log(Level.INFO, "Analysis with calssifiers and balancing (oversampling) done");
 			this.calssifierEvaluation(true, UNDERSAMPLING);
 			Constants.LOGGER.log(Level.INFO, "Analysis with calssifiers and balancing (undersampling) done");
-			*/
+			
 			this.calssifierEvaluation(true, SMOTE);
 			Constants.LOGGER.log(Level.INFO, "Analysis with calssifiers and balancing (smote) done");
 			
@@ -385,7 +392,7 @@ public class DatasetAnalyzer{
 	}
 	
 	
-	public static void main(String args[]) throws Exception{
+	public static void main(String[] args) throws Exception{
 		
 		//do this thing in starter
 		DatasetAnalyzer da = new DatasetAnalyzer("finalTableSYNCOPE.arff", "SYNCOPE");
