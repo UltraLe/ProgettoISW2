@@ -10,7 +10,6 @@ public class Starter {
 	
 	public static void main(String[] args) {
 		
-		
 		//project DAFFODIL
 		Constants.setJiraProjName("DAFFODIL");
 		Constants.setGitProjName("incubator-daffodil");

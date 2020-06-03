@@ -229,6 +229,9 @@ public class DatasetAnalyzer{
 			
 			int numYesTr = countAttrValues(training, buggyIndx, "Yes");
 			int numNoTr = countAttrValues(training, buggyIndx, "No");
+			if(numYesTr+numNoTr == 0) {
+				throw new EvaluationException("NumYesTr = NumNoTr = 0");
+			}
 			double doublePercOfMajClass = (double)numNoTr/(numYesTr+numNoTr);
 			
 			Resample resample = new Resample();
@@ -381,14 +384,5 @@ public class DatasetAnalyzer{
 			Constants.LOGGER.log(Level.SEVERE, e.getMessage());
 		}
 		
-	}
-	
-	
-	public static void main(String[] args) throws Exception{
-		
-		//do this thing in starter
-		DatasetAnalyzer da = new DatasetAnalyzer("finalTableSYNCOPE.arff", "SYNCOPE");
-		da.startAnalysis();
-				
 	}
 }
