@@ -225,6 +225,10 @@ public class AnalyzedFile {
 	
 	//methods for buggyness
 	
+	public void setUnknownBuggy() {
+		this.amIbuggy = "?";
+	}
+	
 	public int getnumBugs() {
 		return this.numBugs;
 	}

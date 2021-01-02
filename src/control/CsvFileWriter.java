@@ -122,7 +122,7 @@ public class CsvFileWriter {
 	
 	//method that has to take a map of string and integer
 	//and write on a csv file how the integer corresponding to each string
-	public static void monthCommitsCSV(Map<Date, Integer> commitsMap, String projName) throws IOException{
+	public static void bugsPerMonthCSV(Map<Date, Integer> commitsMap, String projName) throws IOException{
 		
 		//in order to order the map by date an hash tree is used
 		TreeMap<Date, Integer> sortedMap = new TreeMap<>(commitsMap);
@@ -161,7 +161,7 @@ public class CsvFileWriter {
 			
 			csvWriter.append("Date");
 			csvWriter.append(",");
-			csvWriter.append("Commits");
+			csvWriter.append("Num Bugs");
 			csvWriter.append("\n");
 			
 			for (Map.Entry<Date, Integer> entry : sortedMap.entrySet()) {

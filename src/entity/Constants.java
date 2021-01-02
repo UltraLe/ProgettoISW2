@@ -27,9 +27,9 @@ public class Constants {
 	//but it has to be obscured due to github policies
 	public static final String GIT_TKN = "e 6 e 9 8 0 3 6 a 3 6 c 5 f 6 9 5 0 5 6 b c b 6 6 f 5 5 5 d e 6 6 c 1 0 c f 3 d";
 		
-	public static final String COMMINTS_MONTH ="commitsPerMonth";
+	public static final String COMMINTS_MONTH ="bugsPerMonth";
 	public static final String LOG_FILE = "log.txt";
-	
+	public static final String MODELS_DIR ="./models/";
 	public static final String FINAL_TABLE ="finalTable";
 		
 	//GITHUB REST API to retrieve the commit with given (%s to specify later on) ticket ID
@@ -50,7 +50,7 @@ public class Constants {
 	//(such us [PRJNAME-1234]) BUT all are like %-1234,
 	//In order to get as much commits as possible it is useful
 	//to search commits that contains '-0000' in the comment
-	public static final boolean TKT_SEARCH_FAST = false;
+	public static final boolean TKT_SEARCH_FAST = true;
 	public static final String FAST = "FAST";
 	
 	public static final Logger LOGGER = Logger.getLogger(Constants.class.getName());

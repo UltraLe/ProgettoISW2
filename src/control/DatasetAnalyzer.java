@@ -31,7 +31,7 @@ import weka.classifiers.meta.FilteredClassifier;
 import weka.filters.supervised.instance.SMOTE;
 
 // 						!	!	!
-//compile with -Djava.util.Arrays.useLegacyMergeSort=true
+//JVM agruments: -Djava.util.Arrays.useLegacyMergeSort=true
 
 public class DatasetAnalyzer{
 	
@@ -44,6 +44,7 @@ public class DatasetAnalyzer{
 	private static final String OVERSAMPLING = "Oversampling";
 	private static final String UNDERSAMPLING = "Undersampling";
 	private static final String SMOTE = "SMOTE";
+	private static final boolean SAVE_ONLY_LAST_MODEL = true;
 	
 	//This list will contain all the results of each run of
 	//the WalkFarkward validation method
@@ -290,6 +291,9 @@ public class DatasetAnalyzer{
 		classifiers.add(nativeBayes);
 		classifiers.add(ibk);
 		
+		String indexStr;
+		
+		
 		for(Classifier classifier : classifiers) {
 			
 			try {
@@ -298,6 +302,12 @@ public class DatasetAnalyzer{
 			indx = 1;
 			while(notEnded) {
 				notEnded = !walkForward(indx);
+				
+				if(SAVE_ONLY_LAST_MODEL) {
+					indexStr = "-";
+				}else {
+					indexStr = "-"+String.valueOf(indx)+"-";
+				}
 				
 				DataSource source1 = new DataSource(TRAINING_FILENAME);
 				Instances training = source1.getDataSet();
@@ -337,11 +347,19 @@ public class DatasetAnalyzer{
 					fc.setClassifier(classifier);
 					fc.buildClassifier(training);
 					evaluateModel(fc, training, testing, indx, fs, balancing, classifier.getClass().getSimpleName());
+					
+					//saving the model
+					weka.core.SerializationHelper.write(Constants.MODELS_DIR+this.projName+indexStr+classifier.getClass().getSimpleName()+
+											"-FS-"+fs+"-SAM-"+balancing+".model", fc);
 				}else {
 					classifier.buildClassifier(training);
 					evaluateModel(classifier, training, testing, indx, fs, balancing, classifier.getClass().getSimpleName());
+					
+					//saving the model
+					weka.core.SerializationHelper.write(Constants.MODELS_DIR+this.projName+indexStr+classifier.getClass().getSimpleName()+
+														"-FS-"+fs+"-SAM-"+balancing+".model", classifier);
 				}
-
+				
 				indx++;
 			}
 			

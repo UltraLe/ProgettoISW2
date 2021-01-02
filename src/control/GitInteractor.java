@@ -81,7 +81,7 @@ public class GitInteractor {
 		}
 	}
 	
-	//function that retrieve ticket information from JIRA in json format (jsonResult)
+	//function that retrieve GIT commits given (JIRA) ticket information, json format (jsonResult)
 	//and retries to perform the search if.... see the comment below
 	private static List<Object> ticketInfoJson(String ticketID, boolean retrying, int total, int ticketsNum, int retried,
 										List<List<String>> classesName) throws IOException, InterruptedException {
@@ -143,7 +143,10 @@ public class GitInteractor {
 	}
 	
 	
-	//given a list of (JIRA) tickets, this method will return
+	//given a list of (JIRA) tickets, this method will look for commit(s) in Json format,
+	//that matches the information passed as parameter.
+	//Eg. if info is COMMINTS_MONTH, there will be searched all the commits that matches
+	//    the specification as defined in the Deriverable 1 
 	public static Object getGitInfo(List<String> ticketsID, String info) throws IOException, InterruptedException, ParseException {
 		
 		Map<Date, Integer> commitsMap = new HashMap<>();
@@ -178,8 +181,9 @@ public class GitInteractor {
 				JSONArray items = jsonResult.getJSONArray("items");
 				
 				//Here the method can retrieve the last commit date
-				//associated to the ticked id, or the commit ID
-				//that will we used in another method (that does not use search limited
+				//associated to the ticked ID
+				// OR the commit ID
+				//that will we use in another method (that does not use search limited
 				//github rest api) to get all the files edited in that commit.	
 				if(info.compareTo(Constants.COMMIT_CLASS_NAME) == 0) {
 					
@@ -207,7 +211,7 @@ public class GitInteractor {
 		
 		//otherwise
 		//writing into csv file
-		CsvFileWriter.monthCommitsCSV(commitsMap, Constants.getJiraProjName());
+		CsvFileWriter.bugsPerMonthCSV(commitsMap, Constants.getJiraProjName());
 		return null;
 		
 	}
@@ -315,7 +319,7 @@ public class GitInteractor {
 		return classes;
 	}
 	   
-	public static void getLastCommits(){
+	public static void getBugsPerMonth(){
 		
 		try {
 			//setting up the logger

@@ -42,7 +42,7 @@ public class GitFilesAttributesFinder {
 	
 	private String projName;
 	
-	private GitFilesAttributesFinder(String projName) {
+	public GitFilesAttributesFinder(String projName) {
 		this.projName = projName;
 		//setting up logger
 		Handler fileHandler;
@@ -312,10 +312,37 @@ public class GitFilesAttributesFinder {
 		
 	}
 	
-	public static void main(String[]args) {
-		getFinalTable();
-	}
-	
+	public void getLastReleaseMetrics() {
+		
+		//The main goal is use machine learning to predict
+		//whether or not a 'file' is defective...
+		//If a particular file (java class) is defective we can focus testing
+		//on that class.
+		//In order to do that the metrics of the files of the last release
+		//has to be computed.
+		
+		GitInteractor.extractTkn();
+		int releaseIndex = this.indexDate.lastKey();
+		System.out.println("Last index: "+releaseIndex);
+		
+		try {
+			this.getFileAttributesPerRelease(releaseIndex);
+			
+			//the buggines of the files has to be changed to the '?' symbol
+			for(Map.Entry<Integer, HashMap<String, AnalyzedFile>> entry : this.allReleasesFiles.entrySet()) {
+				
+				for(Map.Entry<String, AnalyzedFile> af : entry.getValue().entrySet()) {
+					
+					af.getValue().setUnknownBuggy();
+					
+				}
+			}
+			
+			CsvFileWriter.writeFilesAttributes(this.allReleasesFiles, Constants.getJiraProjName()+"LastRelease");	
+		} catch (IOException e) {
+			Constants.LOGGER.log(Level.SEVERE, e.getMessage());
+		}
+	}	
 	
 	
 }
