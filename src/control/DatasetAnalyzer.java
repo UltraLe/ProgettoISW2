@@ -303,10 +303,10 @@ public class DatasetAnalyzer{
 			while(notEnded) {
 				notEnded = !walkForward(indx);
 				
+				
+				indexStr = "-"+indx+"-";
 				if(SAVE_ONLY_LAST_MODEL) {
 					indexStr = "-";
-				}else {
-					indexStr = "-"+String.valueOf(indx)+"-";
 				}
 				
 				DataSource source1 = new DataSource(TRAINING_FILENAME);

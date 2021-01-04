@@ -10,13 +10,11 @@ public class Starter {
 	
 	public static void main(String[] args) {
 		
-		/*
+		
 		//project DAFFODIL
 		Constants.setJiraProjName("DAFFODIL");
 		Constants.setGitProjName("incubator-daffodil");
 		GitInteractor.getBugsPerMonth();
-		
-		*/
 		
 		//project BOOKKEEPER
 		Constants.setJiraProjName("BOOKKEEPER");
@@ -24,7 +22,7 @@ public class Starter {
 		Buggy.getBuggyFiles();
 		GitFilesAttributesFinder.getFinalTable();
 		
-		/*
+		
 		//project SYNCOPE
 		Constants.setJiraProjName("SYNCOPE");
 		Constants.setGitProjName("syncope");
@@ -49,8 +47,6 @@ public class Starter {
 		Constants.setGitProjName("syncope");
 		g = new GitFilesAttributesFinder(Constants.getJiraProjName());
 		g.getLastReleaseMetrics();
-		
-		*/
 		
 		
 	}

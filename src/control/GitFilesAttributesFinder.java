@@ -323,7 +323,6 @@ public class GitFilesAttributesFinder {
 		
 		GitInteractor.extractTkn();
 		int releaseIndex = this.indexDate.lastKey();
-		System.out.println("Last index: "+releaseIndex);
 		
 		try {
 			this.getFileAttributesPerRelease(releaseIndex);
