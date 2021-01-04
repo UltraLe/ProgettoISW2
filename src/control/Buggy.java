@@ -298,7 +298,7 @@ public class Buggy {
 	//The results will be written on a CSV file.
 	public void getBuggyClasses() throws JSONException, IOException, InterruptedException, ParseException {
 		
-		Constants.LOGGER.log(Level.INFO, "Retrieving all tickets of type BUG");
+		Constants.LOGGER.log(Level.INFO, "Retrieving all tickets of type BUG (closed or resolved)");
 		List<String> allBugTickets = RetrieveTicketsID.retriveTicket(this.projName);
 		
 		Constants.LOGGER.log(Level.INFO, "Filtering {0} 'BUG' tickets to analyze", allBugTickets.size());

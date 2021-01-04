@@ -53,6 +53,16 @@ public class Constants {
 	public static final boolean TKT_SEARCH_FAST = true;
 	public static final String FAST = "FAST";
 	
+	//Projects name
+	public static final String DAFFODIL_PRJ = "DAFFODIL";
+	public static final String DAFFODIL_PRJ_GIT = "incubator-daffodil";
+	
+	public static final String BOOKKEEPER_PRJ = "BOOKKEEPER";
+	public static final String BOOKKEEPER_PRJ_GIT = "bookkeeper";
+	
+	public static final String SYNCOPE_PRJ = "SYNCOPE";
+	public static final String SYNCOPE_PRJ_GIT = "syncope";
+	
 	public static final Logger LOGGER = Logger.getLogger(Constants.class.getName());
 	
 	

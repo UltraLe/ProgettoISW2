@@ -12,39 +12,40 @@ public class Starter {
 		
 		
 		//project DAFFODIL
-		Constants.setJiraProjName("DAFFODIL");
-		Constants.setGitProjName("incubator-daffodil");
+		Constants.setJiraProjName(Constants.DAFFODIL_PRJ);
+		Constants.setGitProjName(Constants.DAFFODIL_PRJ_GIT);
 		GitInteractor.getBugsPerMonth();
 		
+		
 		//project BOOKKEEPER
-		Constants.setJiraProjName("BOOKKEEPER");
-		Constants.setGitProjName("bookkeeper");
+		Constants.setJiraProjName(Constants.BOOKKEEPER_PRJ);
+		Constants.setGitProjName(Constants.BOOKKEEPER_PRJ_GIT);
 		Buggy.getBuggyFiles();
 		GitFilesAttributesFinder.getFinalTable();
 		
 		
 		//project SYNCOPE
-		Constants.setJiraProjName("SYNCOPE");
-		Constants.setGitProjName("syncope");
+		Constants.setJiraProjName(Constants.SYNCOPE_PRJ);
+		Constants.setGitProjName(Constants.SYNCOPE_PRJ_GIT);
 		Buggy.getBuggyFiles();
 		GitFilesAttributesFinder.getFinalTable();
 		
 		//evaluating results
-		DatasetAnalyzer da = new DatasetAnalyzer("finalTableBOOKKEEPER.arff", "BOOKKEEPER");
+		DatasetAnalyzer da = new DatasetAnalyzer("finalTableBOOKKEEPER.arff", Constants.BOOKKEEPER_PRJ);
 		da.startAnalysis();
 		
-		da = new DatasetAnalyzer("finalTableSYNCOPE.arff", "SYNCOPE");
+		da = new DatasetAnalyzer("finalTableSYNCOPE.arff", Constants.SYNCOPE_PRJ);
 		da.startAnalysis();
 		
 		
 		//Used to generate file for De Angelis part of project
-		Constants.setJiraProjName("BOOKKEEPER");
-		Constants.setGitProjName("bookkeeper");
+		Constants.setJiraProjName(Constants.BOOKKEEPER_PRJ);
+		Constants.setGitProjName(Constants.BOOKKEEPER_PRJ_GIT);
 		GitFilesAttributesFinder g = new GitFilesAttributesFinder(Constants.getJiraProjName());
 		g.getLastReleaseMetrics();
 		
-		Constants.setJiraProjName("SYNCOPE");
-		Constants.setGitProjName("syncope");
+		Constants.setJiraProjName(Constants.SYNCOPE_PRJ);
+		Constants.setGitProjName(Constants.SYNCOPE_PRJ_GIT);
 		g = new GitFilesAttributesFinder(Constants.getJiraProjName());
 		g.getLastReleaseMetrics();
 		
