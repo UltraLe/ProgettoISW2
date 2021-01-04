@@ -11,7 +11,7 @@ public class Constants {
 	
 	public static final String CSV_EXT = ".csv";
 	
-	public static final String GIT_SEARCH_URL = "https://issues.apache.org/jira/rest/api/2/search?jql=project=%22";
+	public static final String JIRA_SEARCH_URL = "https://issues.apache.org/jira/rest/api/2/search?jql=project=%22";
 	
 	//Project name used on GitHub
 	//bookkeeper
@@ -52,6 +52,9 @@ public class Constants {
 	//to search commits that contains '-0000' in the comment
 	public static final boolean TKT_SEARCH_FAST = true;
 	public static final String FAST = "FAST";
+	
+	//Extension of the programming lengulanguageage
+	public static final String PROG_LANG_EXT = ".java";
 	
 	//Projects name
 	public static final String DAFFODIL_PRJ = "DAFFODIL";

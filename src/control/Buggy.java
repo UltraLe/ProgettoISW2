@@ -151,7 +151,7 @@ public class Buggy {
 		
 		do {
 			//given the project, i have to extract all the bug fixed
-			String url = Constants.GIT_SEARCH_URL+this.projName
+			String url = Constants.JIRA_SEARCH_URL+this.projName
 					+"%22AND%22issueType%22=%22Bug%22AND(%22status%22=%22Resolved%22OR%22status%22=%22Closed%22)AND%22resolution%22=%22Fixed%22&startAt="+
 					startAt+"&maxResults="+maxResults;
 			JSONObject json = GetReleaseInfo.readJsonFromUrl(url);
@@ -196,7 +196,7 @@ public class Buggy {
 	//of the project.
 	private List<Integer> getAffectedVersion(String ticket) throws JSONException, IOException {
 		
-		String url = Constants.GIT_SEARCH_URL+this.projName+
+		String url = Constants.JIRA_SEARCH_URL+this.projName+
 						"%22AND%22issueType%22=%22Bug%22AND%22id%22=%22"+ticket+"%22";
         JSONObject json = GetReleaseInfo.readJsonFromUrl(url);
         List<Integer> indexesAVs = new ArrayList<>();  
@@ -274,7 +274,7 @@ public class Buggy {
 		
 		for(String ticket: tickets) {
 			
-			String url = Constants.GIT_SEARCH_URL+this.projName+
+			String url = Constants.JIRA_SEARCH_URL+this.projName+
 					"%22AND%22issueType%22=%22Bug%22AND%22id%22=%22"+ticket+"%22";
 			JSONObject json = GetReleaseInfo.readJsonFromUrl(url);
 	

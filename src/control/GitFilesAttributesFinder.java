@@ -86,7 +86,7 @@ public class GitFilesAttributesFinder {
 		
 	}
 	
-	//method that return a the analyzed file if it has been found 
+	//method that returns the analyzed file if it has been found 
 	private AnalyzedFile findFileInRelease(String filename, int release, HashMap<String, AnalyzedFile> filesOfCommit) {
 		
 		AnalyzedFile af;
@@ -119,6 +119,10 @@ public class GitFilesAttributesFinder {
 			JSONObject file = files.getJSONObject(i);
 			
 			String fileName = file.getString("filename");
+			
+			if(!fileName.contains(Constants.PROG_LANG_EXT)) {
+				continue;
+			}
 			
 			//a new class has to be created IF and ONLY IF
 			//the file is found for the first time...

@@ -188,7 +188,7 @@ public class GitInteractor {
 				if(info.compareTo(Constants.COMMIT_CLASS_NAME) == 0) {
 					
 					String commitSha = (items.getJSONObject(0)).getString("sha");
-					classesName.add(commitClasses(commitSha, "modified"));
+					classesName.add(getClassOfCommit(commitSha, "modified"));
 					
 				}else {
 				
@@ -296,7 +296,7 @@ public class GitInteractor {
 	
 	//get classes of a commit with a given status,
 	//if status = null, take all
-	private static List<String> commitClasses(String commitSha, String status) throws JSONException, IOException{
+	private static List<String> getClassOfCommit(String commitSha, String status) throws JSONException, IOException{
 		
 		JSONObject jsonResult = getGitCommit(commitSha);
 		JSONArray files = jsonResult.getJSONArray("files");
@@ -304,14 +304,21 @@ public class GitInteractor {
 		List<String> classes = new ArrayList<>();
 		for(int i = 0; i < files.length(); ++i) {
 			
+			String fileName = files.getJSONObject(i).getString("filename");
+			
+			//If the file is not a source code artifact, skip it
+			if(!fileName.contains(Constants.PROG_LANG_EXT)) {
+				continue;
+			}
+			
 			//if status is null add the classes
 			if(status == null) {
-				classes.add(files.getJSONObject(i).getString("filename"));
+				classes.add(fileName);
 				continue;
 			}
 			//otherwise add them only if status matches the requested one
 			if(status.compareTo(files.getJSONObject(i).getString("status")) == 0) {
-				classes.add(files.getJSONObject(i).getString("filename"));
+				classes.add(fileName);
 			}
 			
 		}
