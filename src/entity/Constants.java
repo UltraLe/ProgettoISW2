@@ -50,7 +50,7 @@ public class Constants {
 	//(such us [PRJNAME-1234]) BUT all are like %-1234,
 	//In order to get as much commits as possible it is useful
 	//to search commits that contains '-0000' in the comment
-	public static final boolean TKT_SEARCH_FAST = true;
+	public static final boolean TKT_SEARCH_FAST = false;
 	public static final String FAST = "FAST";
 	
 	//Extension of the programming lengulanguageage

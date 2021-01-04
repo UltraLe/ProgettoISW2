@@ -311,13 +311,8 @@ public class GitInteractor {
 				continue;
 			}
 			
-			//if status is null add the classes
-			if(status == null) {
-				classes.add(fileName);
-				continue;
-			}
 			//otherwise add them only if status matches the requested one
-			if(status.compareTo(files.getJSONObject(i).getString("status")) == 0) {
+			if(status.compareTo(files.getJSONObject(i).getString("status")) == 0 || status == null) {
 				classes.add(fileName);
 			}
 			
