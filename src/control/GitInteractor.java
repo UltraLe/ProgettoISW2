@@ -312,7 +312,7 @@ public class GitInteractor {
 			}
 			
 			//otherwise add them only if status matches the requested one
-			if(status.compareTo(files.getJSONObject(i).getString("status")) == 0 || status == null) {
+			if(status.compareTo(files.getJSONObject(i).getString("status")) == 0 || status.compareTo("any") == 0) {
 				classes.add(fileName);
 			}
 			
