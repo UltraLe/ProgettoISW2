@@ -17,11 +17,13 @@ public class Starter {
 		GitInteractor.getBugsPerMonth();
 		
 		
+		
 		//project BOOKKEEPER
 		Constants.setJiraProjName(Constants.BOOKKEEPER_PRJ);
 		Constants.setGitProjName(Constants.BOOKKEEPER_PRJ_GIT);
 		Buggy.getBuggyFiles();
 		GitFilesAttributesFinder.getFinalTable();
+		
 		
 		
 		//project SYNCOPE
@@ -30,7 +32,15 @@ public class Starter {
 		Buggy.getBuggyFiles();
 		GitFilesAttributesFinder.getFinalTable();
 		
+		
+		
 		//evaluating results
+		// *	*	*	*	*	*	*
+		//The dataset (.csv) created with the previous method calls MUST BE converted in a .arff file
+		//removing the column that specifies the filenames and the number of bugs.
+		// *	*	*	*	*	*	*
+
+
 		DatasetAnalyzer da = new DatasetAnalyzer("finalTableBOOKKEEPER.arff", Constants.BOOKKEEPER_PRJ);
 		da.startAnalysis();
 		
