@@ -373,10 +373,10 @@ public class DatasetAnalyzer{
 	
 	public void startAnalysis(){
 		
-		boolean bools[] = {true, false};
-		String samplingMethods[] = {NONE, OVERSAMPLING, UNDERSAMPLING, SMOTE};
+		boolean[] fs = {true, false};
+		String[] samplingMethods = {NONE, OVERSAMPLING, UNDERSAMPLING, SMOTE};
 		
-		for(boolean b : bools) {
+		for(boolean b : fs) {
 			for(String sampling : samplingMethods) {
 				
 				try {
