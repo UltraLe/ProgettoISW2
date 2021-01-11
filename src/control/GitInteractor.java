@@ -307,7 +307,7 @@ public class GitInteractor {
 			String fileName = files.getJSONObject(i).getString("filename");
 			
 			//If the file is not a source code artifact, skip it
-			if(!fileName.contains(Constants.PROG_LANG_EXT)) {
+			if(!fileName.contains(Constants.getProgLangExt())) {
 				continue;
 			}
 			

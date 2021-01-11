@@ -372,35 +372,29 @@ public class DatasetAnalyzer{
 	}
 	
 	public void startAnalysis(){
-
-		try {
-			
-			this.calssifierEvaluation(false, NONE);
-			Constants.LOGGER.log(Level.INFO, "Analysis with only calssifiers done");
-			
-			this.calssifierEvaluation(true, NONE);
-			Constants.LOGGER.log(Level.INFO, "Analysis with calssifiers and feature selection done");
-			
-			this.calssifierEvaluation(false, OVERSAMPLING);
-			Constants.LOGGER.log(Level.INFO, "Analysis with calssifiers and balancing (oversampling) done");
-			this.calssifierEvaluation(false, UNDERSAMPLING);
-			Constants.LOGGER.log(Level.INFO, "Analysis with calssifiers and balancing (undersampling) done");
-			this.calssifierEvaluation(false, SMOTE);
-			Constants.LOGGER.log(Level.INFO, "Analysis with calssifiers and balancing (smote) done");
-			
-			this.calssifierEvaluation(true, OVERSAMPLING);
-			Constants.LOGGER.log(Level.INFO, "Analysis with calssifiers and balancing (oversampling) done");
-			this.calssifierEvaluation(true, UNDERSAMPLING);
-			Constants.LOGGER.log(Level.INFO, "Analysis with calssifiers and balancing (undersampling) done");
-			
-			this.calssifierEvaluation(true, SMOTE);
-			Constants.LOGGER.log(Level.INFO, "Analysis with calssifiers and balancing (smote) done");
+		
+		boolean bools[] = {true, false};
+		String samplingMethods[] = {NONE, OVERSAMPLING, UNDERSAMPLING, SMOTE};
+		
+		for(boolean b : bools) {
+			for(String sampling : samplingMethods) {
+				
+				try {
+					this.calssifierEvaluation(b, sampling);
+				} catch (IOException | EvaluationException e) {
+					//some releases could not have enough difective classes (AVRO in C Language) 
+					Constants.LOGGER.log(Level.SEVERE, e.getMessage());
+					continue;
+				}
+				Constants.LOGGER.log(Level.INFO, "Analysis with FS,Sampling = "+b+","+sampling+" done");
+			}
 			
 			//Storing results
-			CsvFileWriter.writeWekaResults(classifierAnalysis, this.projName);
-		} catch (Exception e) {
-			Constants.LOGGER.log(Level.SEVERE, e.getMessage());
+			try {
+				CsvFileWriter.writeWekaResults(classifierAnalysis, this.projName);
+			} catch (IOException e) {
+				Constants.LOGGER.log(Level.SEVERE, e.getMessage());
+			}
 		}
-		
 	}
 }

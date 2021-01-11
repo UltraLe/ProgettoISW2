@@ -14,14 +14,13 @@ public class Constants {
 	public static final String JIRA_SEARCH_URL = "https://issues.apache.org/jira/rest/api/2/search?jql=project=%22";
 	
 	//Project name used on GitHub
-	//bookkeeper
-	//syncope
 	private static String gitProjName;
 		
 	//Project name used on JIRA
-	//BOOKKEEPER
-	//SYNCOPE
 	private static String jiraProjName;
+	
+	//programming language of the project
+	private static String programmingLnagExt;
 		
 	//this token can be public because it has only read permission
 	//but it has to be obscured due to github policies
@@ -46,15 +45,17 @@ public class Constants {
 	public static final String AUTORIZATION = "Authorization";
 	public static final String TOKEN = "token ";
 	
+	//list of programming language of the application studied
+	public static final String JAVA_LANG = ".java";
+	public static final String PYTHON_LANG = ".py";
+	public static final String C_LANG = ".c";
+	
 	//Sometimes the tickets are referred in git not in the usual way
 	//(such us [PRJNAME-1234]) BUT all are like %-1234,
 	//In order to get as much commits as possible it is useful
 	//to search commits that contains '-0000' in the comment
 	public static final boolean TKT_SEARCH_FAST = false;
 	public static final String FAST = "FAST";
-	
-	//Extension of the programming lengulanguageage
-	public static final String PROG_LANG_EXT = ".java";
 	
 	//Projects name
 	public static final String DAFFODIL_PRJ = "DAFFODIL";
@@ -65,6 +66,12 @@ public class Constants {
 	
 	public static final String SYNCOPE_PRJ = "SYNCOPE";
 	public static final String SYNCOPE_PRJ_GIT = "syncope";
+
+	public static final String FALCON_PRJ = "FALCON";
+	public static final String FALCON_PRJ_GIT = "falcon";
+	
+	public static final String AVRO_PRJ = "AVRO";
+	public static final String AVRO_PRJ_GIT = "avro";
 	
 	public static final Logger LOGGER = Logger.getLogger(Constants.class.getName());
 	
@@ -82,6 +89,10 @@ public class Constants {
 		return "https://api.github.com/repos/apache/"+gitProjName+"/commits/%s";
 	}
 	
+	public static String getProgLangExt() {
+		return programmingLnagExt;
+	}
+	
 	public static String getJiraProjName() {
 		return jiraProjName;
 	}
@@ -96,6 +107,10 @@ public class Constants {
 	
 	public static void setGitProjName(String g) {
 		gitProjName = g;
+	}
+	
+	public static void setProgLangExt(String e) {
+		programmingLnagExt = e;
 	}
 
 }

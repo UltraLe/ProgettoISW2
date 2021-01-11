@@ -1,4 +1,180 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
+<record>
+  <date>2021-01-11T15:30:19</date>
+  <millis>1610375419382</millis>
+  <sequence>0</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.DatasetAnalyzer</class>
+  <method>calssifierEvaluation</method>
+  <thread>1</thread>
+  <message>Written results for 'only classifiers'</message>
+</record>
+<record>
+  <date>2021-01-11T15:30:19</date>
+  <millis>1610375419392</millis>
+  <sequence>1</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.DatasetAnalyzer</class>
+  <method>startAnalysis</method>
+  <thread>1</thread>
+  <message>Analysis with FS,Sampling = true,None done</message>
+</record>
+<record>
+  <date>2021-01-11T15:30:19</date>
+  <millis>1610375419400</millis>
+  <sequence>2</sequence>
+  <logger>entity.Constants</logger>
+  <level>SEVERE</level>
+  <class>control.DatasetAnalyzer</class>
+  <method>startAnalysis</method>
+  <thread>1</thread>
+  <message>weka.classifiers.trees.RandomTree: Not enough training instances with class labels (required: 1, provided: 0)!</message>
+</record>
+<record>
+  <date>2021-01-11T15:30:19</date>
+  <millis>1610375419401</millis>
+  <sequence>3</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.DatasetAnalyzer</class>
+  <method>startAnalysis</method>
+  <thread>1</thread>
+  <message>Skipping FS,Sampling = true,Oversampling done</message>
+</record>
+<record>
+  <date>2021-01-11T15:30:20</date>
+  <millis>1610375420052</millis>
+  <sequence>4</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.DatasetAnalyzer</class>
+  <method>calssifierEvaluation</method>
+  <thread>1</thread>
+  <message>Written results for 'only classifiers'</message>
+</record>
+<record>
+  <date>2021-01-11T15:30:20</date>
+  <millis>1610375420053</millis>
+  <sequence>5</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.DatasetAnalyzer</class>
+  <method>startAnalysis</method>
+  <thread>1</thread>
+  <message>Analysis with FS,Sampling = true,Undersampling done</message>
+</record>
+<record>
+  <date>2021-01-11T15:30:20</date>
+  <millis>1610375420055</millis>
+  <sequence>6</sequence>
+  <logger>entity.Constants</logger>
+  <level>SEVERE</level>
+  <class>control.DatasetAnalyzer</class>
+  <method>startAnalysis</method>
+  <thread>1</thread>
+  <message>Cannot use 0 neighbors!</message>
+</record>
+<record>
+  <date>2021-01-11T15:30:20</date>
+  <millis>1610375420056</millis>
+  <sequence>7</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.DatasetAnalyzer</class>
+  <method>startAnalysis</method>
+  <thread>1</thread>
+  <message>Skipping FS,Sampling = true,SMOTE done</message>
+</record>
+<record>
+  <date>2021-01-11T15:30:21</date>
+  <millis>1610375421580</millis>
+  <sequence>8</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.DatasetAnalyzer</class>
+  <method>calssifierEvaluation</method>
+  <thread>1</thread>
+  <message>Written results for 'only classifiers'</message>
+</record>
+<record>
+  <date>2021-01-11T15:30:21</date>
+  <millis>1610375421581</millis>
+  <sequence>9</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.DatasetAnalyzer</class>
+  <method>startAnalysis</method>
+  <thread>1</thread>
+  <message>Analysis with FS,Sampling = false,None done</message>
+</record>
+<record>
+  <date>2021-01-11T15:30:21</date>
+  <millis>1610375421582</millis>
+  <sequence>10</sequence>
+  <logger>entity.Constants</logger>
+  <level>SEVERE</level>
+  <class>control.DatasetAnalyzer</class>
+  <method>startAnalysis</method>
+  <thread>1</thread>
+  <message>weka.classifiers.trees.RandomTree: Not enough training instances with class labels (required: 1, provided: 0)!</message>
+</record>
+<record>
+  <date>2021-01-11T15:30:21</date>
+  <millis>1610375421583</millis>
+  <sequence>11</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.DatasetAnalyzer</class>
+  <method>startAnalysis</method>
+  <thread>1</thread>
+  <message>Skipping FS,Sampling = false,Oversampling done</message>
+</record>
+<record>
+  <date>2021-01-11T15:30:22</date>
+  <millis>1610375422039</millis>
+  <sequence>12</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.DatasetAnalyzer</class>
+  <method>calssifierEvaluation</method>
+  <thread>1</thread>
+  <message>Written results for 'only classifiers'</message>
+</record>
+<record>
+  <date>2021-01-11T15:30:22</date>
+  <millis>1610375422039</millis>
+  <sequence>13</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.DatasetAnalyzer</class>
+  <method>startAnalysis</method>
+  <thread>1</thread>
+  <message>Analysis with FS,Sampling = false,Undersampling done</message>
+</record>
+<record>
+  <date>2021-01-11T15:30:22</date>
+  <millis>1610375422040</millis>
+  <sequence>14</sequence>
+  <logger>entity.Constants</logger>
+  <level>SEVERE</level>
+  <class>control.DatasetAnalyzer</class>
+  <method>startAnalysis</method>
+  <thread>1</thread>
+  <message>Cannot use 0 neighbors!</message>
+</record>
+<record>
+  <date>2021-01-11T15:30:22</date>
+  <millis>1610375422041</millis>
+  <sequence>15</sequence>
+  <logger>entity.Constants</logger>
+  <level>INFO</level>
+  <class>control.DatasetAnalyzer</class>
+  <method>startAnalysis</method>
+  <thread>1</thread>
+  <message>Skipping FS,Sampling = false,SMOTE done</message>
+</record>
 </log>

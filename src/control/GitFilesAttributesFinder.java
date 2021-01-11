@@ -120,7 +120,7 @@ public class GitFilesAttributesFinder {
 			
 			String fileName = file.getString("filename");
 			
-			if(!fileName.contains(Constants.PROG_LANG_EXT)) {
+			if(!fileName.contains(Constants.getProgLangExt())) {
 				continue;
 			}
 			
